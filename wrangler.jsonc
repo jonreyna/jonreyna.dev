@@ -9,6 +9,10 @@
     "html_handling": "drop-trailing-slash",
     "not_found_handling": "404-page"
   },
+  // The Worker is the origin for the bare domain; Cloudflare creates the DNS record and
+  // the certificate. The deploy token needs Zone > Workers Routes > Edit on jonreyna.dev.
+  // The zone's mail records (Proton) are untouched.
+  "routes": [{ "pattern": "jonreyna.dev", "custom_domain": true }],
   "workers_dev": true,
   "preview_urls": true
 }
