@@ -46,7 +46,7 @@ Text sizes and colors all pass WCAG AA. No success, warning or error colors exis
 
 **Fallback while fonts load.** `tokens.css` defines "Alegreya Fallback": Georgia resized to Alegreya's width and line metrics (`size-adjust: 91.6%`, `ascent-override: 111.4%`, `descent-override: 38.2%`). Measured in Chrome, the sample paragraphs take exactly the same height in the fallback as in Alegreya, against 7% taller in plain Georgia, so text doesn't jump when the font arrives.
 
-**Font budget.** Self-host everything as WOFF2, subset to the characters the site uses (Latin, the math and arrow symbols in the essays, ▸ ▮ ⁂ ↩ §). Preload only Alegreya regular. Aim for about 150kB on a first visit. Libertinus Math is 822kB as an OTF; subset it in CI (`pyftsubset`, keeping the MATH table) to under 120kB. Browsers fetch it only on pages that contain math. No Google Fonts requests on the live site.
+**Font budget.** Self-host everything as WOFF2, subset to the characters the site uses (Latin, the math and arrow symbols in the essays, ▸ ▮ ⁂ ↩ §). Preload only Alegreya regular. Aim for about 150kB on a first visit. Libertinus Math is 822kB as an OTF; subset it in CI (`pyftsubset`, keeping the MATH table) to under 120kB. Browsers fetch it only on pages that contain math. No Google Fonts requests on the live site. All four families are under the SIL Open Font License: subsetting is allowed (none of the names used here is a Reserved Font Name), and each family's `OFL.txt` ships in `web/fonts/` beside its files.
 
 **Scale** (rem; the root is 21px on desktop and 18px at 640px or narrower):
 

@@ -29,3 +29,9 @@ make deploy   # upload dist/ to Cloudflare
 ```
 
 `make help` lists every target.
+
+## License
+
+- **Writing** (everything in `site/content/`: essays, page text and the résumé data): © Jon Reyna, licensed under [Creative Commons Attribution 4.0](https://creativecommons.org/licenses/by/4.0/) ([`LICENSE-CONTENT`](LICENSE-CONTENT)). Reuse it with credit and a link.
+- **Fonts** in `site/web/fonts/`: their own licenses, kept beside them. Libertinus Math is under the SIL Open Font License 1.1 ([`OFL.txt`](site/web/fonts/OFL.txt)).
+- **Everything else** (code, styles, build files, `DESIGN.md`): [MIT](LICENSE).
