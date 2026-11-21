@@ -1,0 +1,91 @@
+# Builds and checks the site on every push and pull request, then:
+#   - push to main  -> publishes to Cloudflare (production)
+#   - pull request  -> uploads a preview version and comments its URL on the PR
+#   - weekly        -> a build only, so toolchain breakage shows up before you need to publish
+# Cloudflare steps are skipped until the CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID
+# secrets exist. Third-party actions are pinned by commit SHA.
+name: site
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: "17 9 * * 1" # Mondays, 09:17 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: site-${{ github.ref }}
+  # Cancel superseded PR builds; never cancel a production deploy halfway.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  site:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      pull-requests: write # the preview URL comment
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # Jaspr 0.23.5 needs Dart 3.13 (see site/pubspec.yaml).
+      - uses: dart-lang/setup-dart@2286a0c042b44434fe26d292bbce8d34f7ec662b # v1.8.2
+        with:
+          sdk: 3.13.7
+
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.pub-cache
+          key: pub-${{ runner.os }}-dart3.13.7-${{ hashFiles('site/pubspec.lock') }}
+
+      - name: Fetch packages and the Jaspr CLI
+        run: make setup
+
+      - name: Analyze
+        run: make check
+
+      - name: Build and stage dist/
+        run: make dist
+
+      - name: Check the built pages
+        run: make verify
+
+      - name: Set up Node for Wrangler
+        if: env.CLOUDFLARE_API_TOKEN != '' && (github.event_name == 'push' || github.event_name == 'pull_request')
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "26"
+
+      - name: Publish to production
+        if: env.CLOUDFLARE_API_TOKEN != '' && github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: make deploy
+
+      - name: Upload a preview version
+        id: preview
+        if: env.CLOUDFLARE_API_TOKEN != '' && github.event_name == 'pull_request'
+        run: |
+          make preview ALIAS="pr-${PR_NUMBER}" | tee wrangler.log
+          url=$(grep -Eo 'https://pr-[0-9]+-[a-z0-9.-]+\.workers\.dev' wrangler.log | head -n 1)
+          echo "url=${url}" >> "$GITHUB_OUTPUT"
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+
+      - name: Comment the preview URL
+        if: steps.preview.outputs.url != ''
+        run: |
+          gh pr comment "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --edit-last --create-if-none \
+            --body "Preview of ${HEAD_SHA:0:7}: $URL"
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          URL: ${{ steps.preview.outputs.url }}

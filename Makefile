@@ -6,7 +6,10 @@
 DART_HOME ?= $(firstword $(wildcard /usr/local/opt/dart@3.13.7/libexec /opt/homebrew/opt/dart@3.13.7/libexec))
 export PATH := $(if $(DART_HOME),$(DART_HOME)/bin:)$(PATH):$(HOME)/.pub-cache/bin
 
-.PHONY: help setup site dist serve check deploy clean
+# Wrangler, pinned exactly; bump it on purpose.
+WRANGLER ?= npx --yes wrangler@4.158.0
+
+.PHONY: help setup site dist serve check verify deploy preview clean
 
 help:  ## List targets
 	@grep -E '^[a-z]+:.*## ' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  %-8s %s\n", $$1, $$2}'
@@ -33,8 +36,22 @@ serve: dist  ## Serve dist/ on http://localhost:8767
 check:  ## Static analysis
 	cd site && dart analyze
 
-deploy: dist  ## Upload dist/ to Cloudflare (needs `wrangler login` or CLOUDFLARE_API_TOKEN)
-	npx --yes wrangler@4 deploy
+verify: dist-exists  ## Check the staged pages (scripts, titles, descriptions)
+	python3 site/tool/verify_dist.py dist
+
+# deploy and preview upload whatever is in dist/, so CI builds once and the
+# same files are what you checked. Run `make dist` first.
+deploy: dist-exists  ## Publish dist/ to production (needs `wrangler login` or CLOUDFLARE_API_TOKEN)
+	$(WRANGLER) deploy
+
+# A preview version with its own URL; production is untouched. ALIAS names the URL.
+ALIAS ?= local
+preview: dist-exists  ## Upload dist/ as a preview version at <ALIAS>-jonreyna-dev.<account>.workers.dev
+	$(WRANGLER) versions upload --preview-alias $(ALIAS)
+
+.PHONY: dist-exists
+dist-exists:
+	@test -f dist/index.html || { echo "dist/ is missing: run make dist first"; exit 1; }
 
 clean:  ## Remove build output
 	rm -rf site/build dist .wrangler

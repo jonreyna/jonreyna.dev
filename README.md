@@ -30,6 +30,13 @@ make deploy   # upload dist/ to Cloudflare
 
 `make help` lists every target.
 
+## CI/CD
+
+`.github/workflows/site.yml` builds, analyzes and checks the site (`make verify`) on every push and pull request, and weekly. A push to `main` publishes to Cloudflare; a pull request gets a preview version, with its URL commented on the pull request. The Cloudflare steps run once two repository secrets exist:
+
+- `CLOUDFLARE_ACCOUNT_ID`: the account ID from the Cloudflare dashboard.
+- `CLOUDFLARE_API_TOKEN`: an API token made from the "Edit Cloudflare Workers" template, limited to this account.
+
 ## License
 
 - **Writing** (everything in `site/content/`: essays, page text and the résumé data): © Jon Reyna, licensed under [Creative Commons Attribution 4.0](https://creativecommons.org/licenses/by/4.0/) ([`LICENSE-CONTENT`](LICENSE-CONTENT)). Reuse it with credit and a link.

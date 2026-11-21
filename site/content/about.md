@@ -1,5 +1,6 @@
 ---
 title: About
+description: About Jon Reyna, a staff engineer who builds distributed systems and AI infrastructure.
 kind: page
 ---
 
