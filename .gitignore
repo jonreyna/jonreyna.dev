@@ -1,0 +1,15 @@
+# Dart and Jaspr
+.dart_tool/
+/site/build/
+
+# Deploy staging and Wrangler state
+/dist/
+.wrangler/
+
+# Private résumé data never enters this repository
+*.private.yaml
+!*.private.example.yaml
+
+.DS_Store
+.idea/
+*.iml

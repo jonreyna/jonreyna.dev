@@ -1,0 +1,14 @@
+// Cloudflare Workers Static Assets: the site is plain files, no Worker code.
+// `make dist` stages ./dist; `make deploy` (or CI) uploads it.
+{
+  "name": "jonreyna-dev",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": "./dist",
+    // /resume serves resume/index.html; /resume/ redirects to /resume.
+    "html_handling": "drop-trailing-slash",
+    "not_found_handling": "404-page"
+  },
+  "workers_dev": true,
+  "preview_urls": true
+}

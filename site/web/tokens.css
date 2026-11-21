@@ -1,0 +1,77 @@
+/* jonreyna.dev design tokens: direction J, "Red and black, with algorithms".
+   DESIGN.md explains each token's role. Pages use these names, never raw values. */
+
+/* Georgia resized to Alegreya's width and line metrics (measured in Chrome, 2026-11-20),
+   so text barely moves when Alegreya finishes loading. */
+@font-face {
+  font-family: "Alegreya Fallback"; src: local("Georgia");
+  size-adjust: 91.6%; ascent-override: 111.4%; descent-override: 38.2%; line-gap-override: 0%;
+}
+
+:root {
+  /* Color, light: parchment and ink */
+  --bg: #f6f0e1;          /* page ground, pale parchment */
+  --text: #2a2119;        /* body ink, brown-black; 13.9:1 on --bg */
+  --muted: #6d5e4a;       /* dates, bylines, captions, comments; 5.5:1 */
+  --rule: #d9ccb2;        /* quiet dividers only, never text */
+  --red: #9a2a17;         /* rubric red: headings, initials, links, algorithm labels; 6.8:1 */
+  --red-hover: #6a1a0c;   /* link hover and active */
+  --code-bg: #efe6d1;     /* code blocks */
+  --link-line: color-mix(in srgb, var(--red) 45%, transparent);  /* underline under links in prose */
+  --selection: color-mix(in srgb, var(--red) 22%, transparent);  /* selected text */
+  --highlight: color-mix(in srgb, var(--red) 12%, transparent);  /* the footnote, step or answer you jumped to */
+  --code-shade: color-mix(in srgb, var(--text) 16%, transparent); /* edge fade on code that scrolls */
+  color-scheme: light;
+
+  /* Type */
+  --font-text: "Alegreya", "Alegreya Fallback", Georgia, serif;
+  --font-sc: "Alegreya SC", "Alegreya", "Alegreya Fallback", serif;  /* true small capitals, weight 500 only */
+  --font-code: "Courier Prime", "Courier New", monospace;
+  --font-math: "Libertinus Math", "STIX Two Math", math;
+
+  --size-label: 0.75rem;   /* page labels, small-capital tags */
+  --size-note: 0.86rem;    /* footnotes, captions */
+  --size-small: 0.94rem;   /* exercises */
+  --size-body: 1rem;       /* 21px on desktop, 18px on phones */
+  --size-h2: 1.1rem;       /* section heads, small capitals */
+  --size-name: 1.65rem;    /* the masthead name */
+  --size-title: 1.9rem;    /* essay titles */
+  --size-code: 0.74rem;    /* code blocks */
+  --size-initial: 3.35em;  /* the drop cap, about three lines */
+
+  --leading-body: 1.5;
+  --leading-tight: 1.25;
+  --measure: 30rem;        /* measured in Chrome: 69 characters per line on average, 75 at most */
+
+  /* Space (rem) */
+  --space-1: 0.3rem;
+  --space-2: 0.6rem;
+  --space-3: 1rem;
+  --space-4: 1.4rem;
+  --space-5: 2rem;         /* before a section head */
+  --space-6: 3rem;         /* between page regions */
+  --gutter: 16px;          /* side margin on phones */
+  --indent: 1.4em;         /* paragraph indent */
+  --hang: 2.7rem;          /* algorithm step labels */
+
+  /* Rules: no radius, no shadows anywhere */
+  --rule-double: 3px double var(--red);
+  --rule-single: 1px solid var(--red);
+  --rule-table-outer: 1.5px solid var(--text);
+  --rule-table-inner: 0.75px solid var(--text);
+}
+
+/* Color, dark: leather and copper. Same roles, same names. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1a1612; --text: #e9e0cd; --muted: #a8997f; --rule: #3e352b;
+    --red: #e47d63; --red-hover: #f3ab98; --code-bg: #231e18; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1a1612; --text: #e9e0cd; --muted: #a8997f; --rule: #3e352b;
+  --red: #e47d63; --red-hover: #f3ab98; --code-bg: #231e18; color-scheme: dark;
+}
+
+html { font-size: 21px; -webkit-text-size-adjust: 100%; }
+@media (max-width: 640px) { html { font-size: 18px; } }
