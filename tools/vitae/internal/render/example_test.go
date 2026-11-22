@@ -22,10 +22,11 @@ func ExampleDates() {
 func ExampleFor() {
 
 	r := &variant.Resolved{
-		Variant:  "full",
-		Sections: []string{resume.SectionSummary},
-		Basics:   resume.Basics{Name: "Ada Example", Email: "ada@example.com"},
-		Summary:  "Builds *distributed* systems.",
+		Variant:     "full",
+		Description: "The whole résumé.",
+		Sections:    []string{resume.SectionSummary},
+		Basics:      resume.Basics{Name: "Ada Example", Email: "ada@example.com"},
+		Summary:     "Builds *distributed* systems.",
 	}
 	renderer, err := render.For("json")
 	if err != nil {
@@ -42,6 +43,7 @@ func ExampleFor() {
 	// {
 	//   "schema": 1,
 	//   "variant": "full",
+	//   "description": "The whole résumé.",
 	//   "sections": [
 	//     "summary"
 	//   ],

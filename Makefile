@@ -9,7 +9,7 @@ export PATH := $(if $(DART_HOME),$(DART_HOME)/bin:)$(PATH):$(HOME)/.pub-cache/bi
 # Wrangler, pinned exactly; bump it on purpose.
 WRANGLER ?= npx --yes wrangler@4.158.0
 
-.PHONY: help setup no-binaries fonts site dist serve check verify deploy preview clean vitae go-lint go-test resume-check resume resume-private
+.PHONY: help setup no-binaries fonts site dist serve check verify deploy preview clean vitae go-lint go-test resume-check resume site-resume resume-private
 
 help:  ## List targets
 	@grep -E '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  %-15s %s\n", $$1, $$2}'
@@ -45,7 +45,7 @@ $(MATH_FONT): $(LIBERTINUS_ZIP)
 
 fonts: $(MATH_FONT)  ## Download the pinned fonts into site/web/fonts (not in git)
 
-site: fonts  ## Build the static site into site/build/jaspr
+site: fonts site-resume  ## Build the static site into site/build/jaspr
 	cd site && jaspr build
 
 # Copy only the site's own files: the build also leaves packages/, .dart_tool/ and a manifest.
@@ -111,11 +111,19 @@ resume: vitae  ## Render every variant and format into build/resume (public fiel
 	rm -rf build/resume
 	$(VITAE) render -i resume/resume.yaml -o build/resume
 
+# The site's résumé page and downloads come from the same render (public fields only).
+# site/web/resume/ is git-ignored; Jaspr copies it into the build, so the files are
+# served at /resume/resume.<variant>.<format>.
+site-resume: resume  ## Copy the rendered résumé into site/web/resume for the site build
+	rm -rf site/web/resume
+	mkdir -p site/web/resume
+	cp build/resume/resume.* site/web/resume/
+
 # Adds the phone number from resume/resume.private.yaml. Local only: never in CI.
 resume-private: vitae  ## Render with the private overlay into build/resume-private
 	@test -f resume/resume.private.yaml || { echo "copy resume/resume.private.example.yaml to resume/resume.private.yaml first"; exit 1; }
 	rm -rf build/resume-private
 	$(VITAE) render -i resume/resume.yaml -private resume/resume.private.yaml -o build/resume-private
 
-clean:  ## Remove build output and downloaded fonts
-	rm -rf site/build dist .wrangler build $(MATH_FONT)
+clean:  ## Remove build output, the copied résumé and downloaded fonts
+	rm -rf site/build dist .wrangler build site/web/resume $(MATH_FONT)

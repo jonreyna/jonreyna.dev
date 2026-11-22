@@ -11,6 +11,8 @@ import (
 type Resolved struct {
 	// Variant is the name of the variant applied.
 	Variant string
+	// Description says what the variant is for, from the résumé file.
+	Description string
 	// Sections are the sections to print, in order.
 	Sections []string
 	// Basics is the header, with the variant's label if it sets one.

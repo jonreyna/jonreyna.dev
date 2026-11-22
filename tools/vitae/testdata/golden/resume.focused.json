@@ -1,6 +1,7 @@
 {
   "schema": 1,
   "variant": "focused",
+  "description": "boosted, trimmed, recent",
   "sections": [
     "summary",
     "experience",

@@ -1,6 +1,7 @@
 {
   "schema": 1,
   "variant": "full",
+  "description": "everything",
   "sections": [
     "summary",
     "skills",
