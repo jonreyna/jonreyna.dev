@@ -17,7 +17,7 @@ type errorExit struct {
 
 func (e *errorExit) Error() string { return e.msg }
 
-// errorUsage returns an errorExit with exitUsage, so main prints the usage after msg.
-func errorUsage(format string, args ...any) error {
+// newErrorUsage returns an errorExit with exitUsage, so main prints the usage after msg.
+func newErrorUsage(format string, args ...any) error {
 	return &errorExit{code: exitUsage, msg: fmt.Sprintf(format, args...)}
 }

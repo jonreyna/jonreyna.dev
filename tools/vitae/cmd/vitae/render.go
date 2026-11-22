@@ -35,7 +35,7 @@ func renderAll(r *resume.Resume, o *options, stdout, stderr io.Writer) error {
 		return err
 	}
 	if o.outDir == "-" && len(variants)*len(formats) != 1 {
-		return errorUsage("-o - writes one file; choose one -variant and one -format")
+		return newErrorUsage("-o - writes one file; choose one -variant and one -format")
 	}
 	for _, name := range variants {
 		resolved, err := variant.Apply(r, name)
@@ -53,7 +53,7 @@ func renderAll(r *resume.Resume, o *options, stdout, stderr io.Writer) error {
 
 // renderOne renders one variant in one format to outDir, or to stdout if outDir is "-".
 func renderOne(resolved *variant.Resolved, format, outDir string, stdout io.Writer) error {
-	renderer, err := render.For(format)
+	renderer, err := render.NewRenderer(format)
 	if err != nil {
 		return fmt.Errorf("render: %w", err)
 	}
@@ -82,7 +82,7 @@ func pick(choice string, all []string, what string) ([]string, error) {
 		return all, nil
 	}
 	if !slices.Contains(all, choice) {
-		return nil, errorUsage("unknown %s %q (have: %s)", what, choice, strings.Join(all, ", "))
+		return nil, newErrorUsage("unknown %s %q (have: %s)", what, choice, strings.Join(all, ", "))
 	}
 	return []string{choice}, nil
 }

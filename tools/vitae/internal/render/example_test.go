@@ -18,14 +18,14 @@ func ExampleDates() {
 	// Oct 2023 – Dec 2026
 }
 
-func ExampleFor() {
+func ExampleNewRenderer() {
 	r := &variant.Resolved{
 		Variant:  "full",
 		Sections: []string{resume.SectionSummary},
 		Basics:   resume.Basics{Name: "Ada Example", Email: "ada@example.com"},
 		Summary:  "Builds *distributed* systems.",
 	}
-	renderer, err := render.For("json")
+	renderer, err := render.NewRenderer("json")
 	if err != nil {
 		panic(err)
 	}

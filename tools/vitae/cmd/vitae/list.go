@@ -13,7 +13,7 @@ import (
 // list prints the variants or the tags, as args[0] asks.
 func list(r *resume.Resume, args []string, w io.Writer) error {
 	if len(args) != 1 {
-		return errorUsage("list needs one of: variants, tags")
+		return newErrorUsage("list needs one of: variants, tags")
 	}
 	var b strings.Builder
 	switch args[0] {
@@ -34,7 +34,7 @@ func list(r *resume.Resume, args []string, w io.Writer) error {
 			fmt.Fprintf(&b, "%-14s %2d  %s\n", t, counts[t], r.Tags[t])
 		}
 	default:
-		return errorUsage("list needs one of: variants, tags")
+		return newErrorUsage("list needs one of: variants, tags")
 	}
 	_, err := io.WriteString(w, b.String())
 	return err //nolint:wrapcheck // a failed write to stdout needs no context

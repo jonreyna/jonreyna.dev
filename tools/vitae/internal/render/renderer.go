@@ -12,13 +12,13 @@ type Renderer interface {
 	Render(r *variant.Resolved) ([]byte, error)
 }
 
-// Formats returns the names of the formats [For] knows, in a fixed order.
+// Formats returns the names of the formats [NewRenderer] knows, in a fixed order.
 func Formats() []string { return []string{"json"} }
 
-// For returns the renderer for the named format. The error wraps [ErrUnknownFormat].
+// NewRenderer returns the renderer for the named format. The error wraps [ErrUnknownFormat].
 //
-//nolint:ireturn // For chooses among implementations by name; returning the interface is its purpose.
-func For(format string) (Renderer, error) {
+//nolint:ireturn // NewRenderer chooses among implementations by name; returning the interface is its purpose.
+func NewRenderer(format string) (Renderer, error) {
 	switch format {
 	case "json":
 		return RendererFunc(JSON), nil

@@ -48,7 +48,7 @@ func checkGolden(t *testing.T, r *resume.Resume, name, format string) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	renderer, err := For(format)
+	renderer, err := NewRenderer(format)
 	if err != nil {
 		t.Fatal(err)
 	}

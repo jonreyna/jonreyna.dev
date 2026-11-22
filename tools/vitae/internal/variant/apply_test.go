@@ -8,15 +8,15 @@ import (
 	"github.com/jonreyna/jonreyna.dev/tools/vitae/internal/resume"
 )
 
-func hl(text string, weight int, tags ...string) resume.Highlight {
+func newHighlight(text string, weight int, tags ...string) resume.Highlight {
 	return resume.Highlight{Text: text, Weight: weight, Tags: tags}
 }
 
-func month(y, m int) *resume.Month { return &resume.Month{Year: y, Month: m} }
+func newMonth(y, m int) *resume.Month { return &resume.Month{Year: y, Month: m} }
 
 func TestHighlights(t *testing.T) {
 	t.Parallel()
-	all := []resume.Highlight{hl("a", 50, "go"), hl("b", 90), hl("c", 60, "ai"), hl("d", 95, "old")}
+	all := []resume.Highlight{newHighlight("a", 50, "go"), newHighlight("b", 90), newHighlight("c", 60, "ai"), newHighlight("d", 95, "old")}
 	tests := []struct {
 		name string
 		v    resume.Variant
@@ -48,9 +48,9 @@ func TestHighlights(t *testing.T) {
 func TestRoles(t *testing.T) {
 	t.Parallel()
 	all := []resume.Role{
-		{ID: "now", Start: *month(2024, 1)},
-		{ID: "mid", Start: *month(2015, 4), End: month(2023, 12)},
-		{ID: "old", Start: *month(2013, 9), End: month(2015, 1)},
+		{ID: "now", Start: *newMonth(2024, 1)},
+		{ID: "mid", Start: *newMonth(2015, 4), End: newMonth(2023, 12)},
+		{ID: "old", Start: *newMonth(2013, 9), End: newMonth(2015, 1)},
 	}
 	tests := []struct {
 		name string
@@ -58,8 +58,8 @@ func TestRoles(t *testing.T) {
 		want []string
 	}{
 		{name: "no limits", v: resume.Variant{}, want: []string{"now", "mid", "old"}},
-		{name: "since drops roles that ended before", v: resume.Variant{Since: month(2015, 4)}, want: []string{"now", "mid"}},
-		{name: "a role ending in the since month stays", v: resume.Variant{Since: month(2015, 1)}, want: []string{"now", "mid", "old"}},
+		{name: "since drops roles that ended before", v: resume.Variant{Since: newMonth(2015, 4)}, want: []string{"now", "mid"}},
+		{name: "a role ending in the since month stays", v: resume.Variant{Since: newMonth(2015, 1)}, want: []string{"now", "mid", "old"}},
 		{name: "max roles keeps the newest", v: resume.Variant{MaxRoles: 1}, want: []string{"now"}},
 	}
 	for _, tc := range tests {

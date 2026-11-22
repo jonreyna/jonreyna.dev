@@ -7,7 +7,7 @@ import (
 	"github.com/jonreyna/jonreyna.dev/tools/vitae/internal/variant"
 )
 
-func TestFor(t *testing.T) {
+func TestNewRenderer(t *testing.T) {
 	t.Parallel()
 	tests := []struct {
 		format  string
@@ -20,12 +20,12 @@ func TestFor(t *testing.T) {
 	for _, tc := range tests {
 		t.Run(tc.format, func(t *testing.T) {
 			t.Parallel()
-			r, err := For(tc.format)
+			r, err := NewRenderer(tc.format)
 			if !errors.Is(err, tc.wantErr) {
-				t.Fatalf("For(%q) error = %v, want %v", tc.format, err, tc.wantErr)
+				t.Fatalf("NewRenderer(%q) error = %v, want %v", tc.format, err, tc.wantErr)
 			}
 			if tc.wantErr == nil && r == nil {
-				t.Fatalf("For(%q) returned no renderer", tc.format)
+				t.Fatalf("NewRenderer(%q) returned no renderer", tc.format)
 			}
 		})
 	}

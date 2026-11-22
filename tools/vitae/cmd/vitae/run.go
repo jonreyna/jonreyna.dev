@@ -13,7 +13,7 @@ import (
 // run executes one vitae command. It never exits; main maps its error to an exit code.
 func run(args []string, stdout, stderr io.Writer) error {
 	if len(args) == 0 {
-		return errorUsage("no command")
+		return newErrorUsage("no command")
 	}
 	cmd, args := args[0], args[1:]
 	switch cmd {
@@ -25,7 +25,7 @@ func run(args []string, stdout, stderr io.Writer) error {
 		return err //nolint:wrapcheck // a failed write to stdout needs no context
 	case "validate", "render", "list":
 	default:
-		return errorUsage("unknown command %q", cmd)
+		return newErrorUsage("unknown command %q", cmd)
 	}
 
 	var o options
@@ -38,7 +38,7 @@ func run(args []string, stdout, stderr io.Writer) error {
 	fs.StringVar(&o.format, "format", "all", "format to render, or all")
 	fs.StringVar(&o.outDir, "o", ".", "output directory, or - for standard output")
 	if err := fs.Parse(args); err != nil {
-		return errorUsage("%v", err)
+		return newErrorUsage("%v", err)
 	}
 
 	r, err := resume.Load(o.input)
