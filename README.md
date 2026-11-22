@@ -14,7 +14,6 @@ site/        Jaspr project (static mode)
   DESIGN.md  the design system: color, type, components, typesetting rules
 resume/      the résumé as one YAML file (resume.yaml), the single source for every version
 tools/vitae/ Go CLI that validates resume.yaml and renders each variant (see its README)
-tools/blanklines/ checks the blank-line rules that no standard Go linter covers
 Makefile     the same targets locally and in CI
 wrangler.jsonc
 ```

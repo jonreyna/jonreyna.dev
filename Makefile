@@ -91,20 +91,15 @@ $(GOLANGCI_LINT):
 	GOBIN=$(CURDIR)/$(dir $(GOLANGCI_LINT)) go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@$(GOLANGCI_LINT_VERSION)
 
 # Go modules under tools/, each linted and tested the same way.
-GO_MODULES := tools/vitae tools/blanklines
-BLANKLINES := build/bin/blanklines
+GO_MODULES := tools/vitae
 
 vitae:  ## Build the vitae CLI into build/bin
 	cd tools/vitae && go build -o ../../$(VITAE) ./cmd/vitae
 
-$(BLANKLINES): $(wildcard tools/blanklines/*.go)
-	cd tools/blanklines && go build -o ../../$(BLANKLINES) .
-
-go-lint: $(GOLANGCI_LINT) $(BLANKLINES)  ## Check formatting, lint (tools/.golangci.yml) and blank lines in tools/
+go-lint: $(GOLANGCI_LINT)  ## Check formatting and lint every Go module in tools/ (tools/.golangci.yml)
 	for m in $(GO_MODULES); do \
 		(cd $$m && $(CURDIR)/$(GOLANGCI_LINT) fmt --diff ./... && $(CURDIR)/$(GOLANGCI_LINT) run ./...) || exit 1; \
 	done
-	$(BLANKLINES) $(GO_MODULES)
 
 go-test:  ## Vet and test every Go module in tools/
 	for m in $(GO_MODULES); do (cd $$m && go vet ./... && go test ./...) || exit 1; done

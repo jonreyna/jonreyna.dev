@@ -5,7 +5,6 @@
 /site/web/fonts/*
 !/site/web/fonts/OFL.txt
 # Go binaries that `go build` writes into a command's own folder.
-/tools/blanklines/blanklines
 /tools/vitae/vitae
 /tools/vitae/cmd/vitae/vitae
 
