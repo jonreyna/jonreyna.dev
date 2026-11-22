@@ -26,7 +26,7 @@ Planned: PDF, Word, text and Markdown output from `vitae`, and `play/` (interact
 Needs Dart 3.13 (Jaspr 0.23.5 doesn’t resolve on Dart 3.14 yet), Go for the résumé tools and, for deploying, Node.
 
 ```bash
-make setup    # dart pub get, and the Jaspr CLI
+make setup    # dart pub get, the Jaspr CLI, and the git hooks (no binaries in git)
 make serve    # build, stage dist/, serve on http://localhost:8767
 make deploy   # upload dist/ to Cloudflare
 make resume   # validate resume/resume.yaml and render every variant into build/resume
@@ -44,5 +44,5 @@ make resume   # validate resume/resume.yaml and render every variant into build/
 ## License
 
 - **Writing** (everything in `site/content/`: essays, page text and the résumé data): © Jon Reyna, licensed under [Creative Commons Attribution 4.0](https://creativecommons.org/licenses/by/4.0/) ([`LICENSE-CONTENT`](LICENSE-CONTENT)). Reuse it with credit and a link.
-- **Fonts** in `site/web/fonts/`: their own licenses, kept beside them. Libertinus Math is under the SIL Open Font License 1.1 ([`OFL.txt`](site/web/fonts/OFL.txt)).
+- **Fonts** in `site/web/fonts/`: their own licenses, kept beside them. The font files themselves aren't in git; `make fonts` downloads each from a pinned release and checks its SHA-256. Libertinus Math is under the SIL Open Font License 1.1 ([`OFL.txt`](site/web/fonts/OFL.txt)).
 - **Everything else** (code, styles, build files, `DESIGN.md`): [MIT](LICENSE).

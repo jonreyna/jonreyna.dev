@@ -9,16 +9,43 @@ export PATH := $(if $(DART_HOME),$(DART_HOME)/bin:)$(PATH):$(HOME)/.pub-cache/bi
 # Wrangler, pinned exactly; bump it on purpose.
 WRANGLER ?= npx --yes wrangler@4.158.0
 
-.PHONY: help setup site dist serve check verify deploy preview clean vitae go-lint go-test resume-check resume resume-private
+.PHONY: help setup no-binaries fonts site dist serve check verify deploy preview clean vitae go-lint go-test resume-check resume resume-private
 
 help:  ## List targets
 	@grep -E '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  %-15s %s\n", $$1, $$2}'
 
-setup:  ## Fetch Dart packages and the Jaspr CLI
+setup:  ## Fetch Dart packages and the Jaspr CLI, and turn on the git hooks
 	cd site && dart pub get
 	dart pub global activate jaspr_cli 0.23.5
+	git config core.hooksPath .githooks
 
-site:  ## Build the static site into site/build/jaspr
+# Binary files never go in git (.githooks/pre-commit refuses them; this catches any
+# that got past it). Git's own test decides what is binary.
+no-binaries:  ## Fail if git tracks a binary file
+	@bins=$$(git diff --numstat $$(git hash-object -t tree /dev/null) HEAD | awk '$$1 == "-" { print $$3 }'); \
+	if [ -n "$$bins" ]; then echo "binary files tracked in git:"; echo "$$bins"; exit 1; fi; \
+	echo "checked tracked files: no binaries"
+
+# Fonts are binaries, so they stay out of git: make downloads each from a pinned
+# release, checks its SHA-256 and unpacks it into site/web/fonts/ (git-ignored).
+LIBERTINUS_VERSION := 7.051
+LIBERTINUS_SHA256 := 4d9be29b5cb380c35af8ba967abcc752ad1e07be1f738a9789c33e0dd7478c92
+LIBERTINUS_ZIP := build/downloads/Libertinus-$(LIBERTINUS_VERSION).zip
+MATH_FONT := site/web/fonts/LibertinusMath-Regular.woff2
+
+$(LIBERTINUS_ZIP):
+	mkdir -p $(dir $@)
+	curl -sSfL -o $@.part https://github.com/alerque/libertinus/releases/download/v$(LIBERTINUS_VERSION)/Libertinus-$(LIBERTINUS_VERSION).zip
+	echo "$(LIBERTINUS_SHA256)  $@.part" | shasum -a 256 -c -
+	mv $@.part $@
+
+$(MATH_FONT): $(LIBERTINUS_ZIP)
+	unzip -o -q -j $< Libertinus-$(LIBERTINUS_VERSION)/static/WOFF2/LibertinusMath-Regular.woff2 -d $(dir $@)
+	touch $@
+
+fonts: $(MATH_FONT)  ## Download the pinned fonts into site/web/fonts (not in git)
+
+site: fonts  ## Build the static site into site/build/jaspr
 	cd site && jaspr build
 
 # Copy only the site's own files: the build also leaves packages/, .dart_tool/ and a manifest.
@@ -95,5 +122,5 @@ resume-private: vitae  ## Render with the private overlay into build/resume-priv
 	rm -rf build/resume-private
 	$(VITAE) render -i resume/resume.yaml -private resume/resume.private.yaml -o build/resume-private
 
-clean:  ## Remove build output
-	rm -rf site/build dist .wrangler build
+clean:  ## Remove build output and downloaded fonts
+	rm -rf site/build dist .wrangler build $(MATH_FONT)

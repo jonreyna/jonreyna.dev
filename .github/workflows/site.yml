@@ -68,6 +68,9 @@ jobs:
           path: ~/.pub-cache
           key: pub-${{ runner.os }}-dart3.13.7-${{ hashFiles('site/pubspec.lock') }}
 
+      - name: Check that no binary files are tracked
+        run: make no-binaries
+
       - name: Fetch packages and the Jaspr CLI
         run: make setup
 
