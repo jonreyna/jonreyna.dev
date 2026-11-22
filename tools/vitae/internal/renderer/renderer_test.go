@@ -1,4 +1,4 @@
-package render
+package renderer
 
 import (
 	"errors"
@@ -7,7 +7,7 @@ import (
 	"github.com/jonreyna/jonreyna.dev/tools/vitae/internal/variant"
 )
 
-func TestNewRenderer(t *testing.T) {
+func TestFor(t *testing.T) {
 	t.Parallel()
 	tests := []struct {
 		format  string
@@ -20,22 +20,22 @@ func TestNewRenderer(t *testing.T) {
 	for _, tc := range tests {
 		t.Run(tc.format, func(t *testing.T) {
 			t.Parallel()
-			r, err := NewRenderer(tc.format)
+			r, err := For(tc.format)
 			if !errors.Is(err, tc.wantErr) {
-				t.Fatalf("NewRenderer(%q) error = %v, want %v", tc.format, err, tc.wantErr)
+				t.Fatalf("For(%q) error = %v, want %v", tc.format, err, tc.wantErr)
 			}
 			if tc.wantErr == nil && r == nil {
-				t.Fatalf("NewRenderer(%q) returned no renderer", tc.format)
+				t.Fatalf("For(%q) returned no renderer", tc.format)
 			}
 		})
 	}
 }
 
-func TestRendererFunc(t *testing.T) {
+func TestFunc(t *testing.T) {
 	t.Parallel()
 	tests := []struct {
 		name string
-		f    RendererFunc
+		f    Func
 		want string
 	}{
 		{name: "passes the résumé through", f: func(r *variant.Resolved) ([]byte, error) { return []byte(r.Variant), nil }, want: "full"},

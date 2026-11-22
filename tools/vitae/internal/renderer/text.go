@@ -1,4 +1,4 @@
-package render
+package renderer
 
 import "github.com/jonreyna/jonreyna.dev/tools/vitae/internal/markup"
 

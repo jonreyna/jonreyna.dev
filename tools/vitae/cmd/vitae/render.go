@@ -9,7 +9,7 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/jonreyna/jonreyna.dev/tools/vitae/internal/render"
+	"github.com/jonreyna/jonreyna.dev/tools/vitae/internal/renderer"
 	"github.com/jonreyna/jonreyna.dev/tools/vitae/internal/resume"
 	"github.com/jonreyna/jonreyna.dev/tools/vitae/internal/variant"
 )
@@ -30,12 +30,12 @@ func renderAll(r *resume.Resume, o *options, stdout, stderr io.Writer) error {
 	if err != nil {
 		return err
 	}
-	formats, err := pick(o.format, render.Formats(), "format")
+	formats, err := pick(o.format, renderer.Formats(), "format")
 	if err != nil {
 		return err
 	}
 	if o.outDir == "-" && len(variants)*len(formats) != 1 {
-		return newErrorUsage("-o - writes one file; choose one -variant and one -format")
+		return errorUsage("-o - writes one file; choose one -variant and one -format")
 	}
 	for _, name := range variants {
 		resolved, err := variant.Apply(r, name)
@@ -53,11 +53,11 @@ func renderAll(r *resume.Resume, o *options, stdout, stderr io.Writer) error {
 
 // renderOne renders one variant in one format to outDir, or to stdout if outDir is "-".
 func renderOne(resolved *variant.Resolved, format, outDir string, stdout io.Writer) error {
-	renderer, err := render.NewRenderer(format)
+	rend, err := renderer.For(format)
 	if err != nil {
 		return fmt.Errorf("render: %w", err)
 	}
-	data, err := renderer.Render(resolved)
+	data, err := rend.Render(resolved)
 	if err != nil {
 		return fmt.Errorf("render %s as %s: %w", resolved.Variant, format, err)
 	}
@@ -82,7 +82,7 @@ func pick(choice string, all []string, what string) ([]string, error) {
 		return all, nil
 	}
 	if !slices.Contains(all, choice) {
-		return nil, newErrorUsage("unknown %s %q (have: %s)", what, choice, strings.Join(all, ", "))
+		return nil, errorUsage("unknown %s %q (have: %s)", what, choice, strings.Join(all, ", "))
 	}
 	return []string{choice}, nil
 }

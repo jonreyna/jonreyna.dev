@@ -1,4 +1,4 @@
-package render
+package renderer
 
 // DocumentHighlight is one bullet in a [DocumentRole].
 type DocumentHighlight struct {

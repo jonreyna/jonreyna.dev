@@ -1,4 +1,4 @@
-package render
+package renderer
 
 import (
 	"bytes"
@@ -48,11 +48,11 @@ func checkGolden(t *testing.T, r *resume.Resume, name, format string) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	renderer, err := NewRenderer(format)
+	rend, err := For(format)
 	if err != nil {
 		t.Fatal(err)
 	}
-	got, err := renderer.Render(resolved)
+	got, err := rend.Render(resolved)
 	if err != nil {
 		t.Fatal(err)
 	}
