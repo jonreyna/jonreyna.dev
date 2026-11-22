@@ -8,7 +8,7 @@ The site is static. It’s built with [Jaspr](https://jaspr.site) and [jaspr_con
 
 ```
 site/        Jaspr project (static mode)
-  content/   Markdown pages and data (content/_data/)
+  content/   Markdown pages, essays (content/writing/) and data (content/_data/)
   lib/       layout and Markdown components
   web/       CSS, fonts, favicon, response headers
   DESIGN.md  the design system: color, type, components, typesetting rules

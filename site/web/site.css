@@ -12,8 +12,9 @@ body {
 a { color: var(--red); text-decoration: none; }
 a:hover { color: var(--red-hover); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
 a:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
-/* Links inside running prose carry an underline, so color is not the only cue */
-p:not(.contact) a:not(sup a):not(.anchor), .ex li > span a, .answers li > span a {
+/* Links inside running prose carry an underline, so color is not the only cue. Links that
+   stand alone (the masthead name, the contact line, list titles, "more" links) don't. */
+p:not(.contact, .name, .entry, .more) a:not(sup a):not(.anchor), .ex li > span a, .answers li > span a {
   text-decoration: underline; text-decoration-color: var(--link-line); text-decoration-thickness: 1px; text-underline-offset: 3px;
 }
 p a:hover { text-decoration-color: currentColor; }
@@ -31,7 +32,7 @@ p a:hover { text-decoration-color: currentColor; }
 .masthead .motto { margin: 0.1rem 0 0.5rem; font-style: italic; color: var(--muted); }
 .masthead nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 0 0.2rem; font-family: var(--font-sc); font-weight: 500; letter-spacing: 0.06em; }
 .masthead nav a { color: var(--text); padding: 0 0.3rem; }
-.masthead nav a:hover { color: var(--red); text-decoration: none; }
+.masthead nav a:hover, .masthead nav a[aria-current] { color: var(--red); text-decoration: none; }
 .masthead nav a + a::before { content: "\00B7"; color: var(--red); margin-right: 0.6rem; display: inline-block; }
 @media (max-width: 640px) { .masthead nav { gap: 0 0.7rem; } .masthead nav a + a::before { display: none; } }
 
@@ -52,10 +53,13 @@ h2 .n { margin-right: 0.5rem; }
 h2:hover .anchor, .anchor:focus-visible { opacity: 1; }
 @media (hover: none) { .anchor { opacity: 0.5; } }
 
-.work { margin-bottom: 0.8rem; }
-.work + .work { text-indent: 0; }
-.work .t { font-weight: 500; }
-.work .m { font-style: italic; color: var(--muted); }
+/* Run-in entries: a work item, or an essay in the writing list (DESIGN.md, "Home page") */
+.work, .entry { margin-bottom: 0.8rem; }
+.work + .work, .entry + .entry, p.more, p.empty { text-indent: 0; }
+.work .t, .entry .t { font-weight: 500; }
+.work .m, .entry .m { font-style: italic; color: var(--muted); }
+p.more { font-style: italic; }
+p + .entries { margin-top: var(--space-3); }
 .plain { list-style: none; margin: 0; padding: 0; }
 .plain li { margin: 0 0 0.35rem; padding-left: 1.1rem; position: relative; }
 .plain li::before { content: "\2013"; color: var(--red); position: absolute; left: 0; }
@@ -67,6 +71,8 @@ h2:hover .anchor, .anchor:focus-visible { opacity: 1; }
 .essay-head .by { font-style: italic; text-indent: 0; }
 .essay-head .date { font-family: var(--font-sc); font-weight: 500; letter-spacing: 0.08em; color: var(--red); text-indent: 0; font-size: 0.9rem; }
 .fleuron { text-align: center; color: var(--red); margin: 1.2rem 0; font-size: 1.1rem; text-indent: 0; }
+.essay-foot { margin-top: var(--space-5); text-align: center; font-style: italic; color: var(--muted); }
+.essay-foot p { text-indent: 0; }
 .abstract { font-style: italic; margin: 0 1.5rem 1.6rem; text-align: center; color: var(--muted); }
 @media (max-width: 640px) { .abstract { margin: 0 0 1.4rem; } }
 

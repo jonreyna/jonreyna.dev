@@ -10,7 +10,7 @@ abstract: Reverse-mode automatic differentiation fits in forty lines of Go. Maki
 <!-- Typesetting specimen: exercises every component in DESIGN.md (MathML, footnotes, code, a table,
 an algorithm, exercises). Not linked from the site; used to check the typography after changes. -->
 
-## <span class="n">I.</span>The rule
+## The rule
 
 Every derivative a neural network needs comes from one fact. If <math><mi>y</mi><mo>=</mo><mi>f</mi><mo form="prefix" stretchy="false" lspace="0" rspace="0">(</mo><mi>u</mi><mo form="postfix" stretchy="false" lspace="0" rspace="0">)</mo></math> and <math><mi>u</mi><mo>=</mo><mi>g</mi><mo form="prefix" stretchy="false" lspace="0" rspace="0">(</mo><mi>x</mi><mo form="postfix" stretchy="false" lspace="0" rspace="0">)</mo></math>, the derivative of <math><mi>y</mi></math> with respect to <math><mi>x</mi></math> is the product of the two local derivatives. Backpropagation applies that fact to a graph instead of a chain: each node <math><msub><mi>v</mi><mi>i</mi></msub></math> receives an *adjoint*, the derivative of the loss with respect to that node, and passes a share of it back to each of its inputs:[^griewank]
 
@@ -42,7 +42,7 @@ Decrease <math><mi>i</mi></math> by&nbsp;1. If <span class="nowrap"><math><mi>i<
 
 </Algorithm>
 
-## <span class="n">II.</span>A value that remembers
+## A value that remembers
 
 In Go, [step&nbsp;B2](#step-b2) is a closure stored on each value when the forward pass creates it.
 
@@ -69,7 +69,7 @@ func Mul(a, b *Value) *Value {
 
 The `+=` is the sum in&nbsp;[(1)](#eq-1). Forgetting it, so that a node used twice keeps only its last contribution, is the classic first bug.
 
-## <span class="n">III.</span>What the tutorials skip
+## What the tutorials skip
 
 The code allocates a node for every multiplication and keeps all of them alive until [step&nbsp;B3](#step-b3) finishes. At the scale of a real model, that is where the memory goes.[^adam]
 
