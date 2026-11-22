@@ -15,6 +15,7 @@ func newHighlight(text string, weight int, tags ...string) resume.Highlight {
 func newMonth(y, m int) *resume.Month { return &resume.Month{Year: y, Month: m} }
 
 func TestHighlights(t *testing.T) {
+
 	t.Parallel()
 	all := []resume.Highlight{newHighlight("a", 50, "go"), newHighlight("b", 90), newHighlight("c", 60, "ai"), newHighlight("d", 95, "old")}
 	tests := []struct {
@@ -33,11 +34,13 @@ func TestHighlights(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
+
 			t.Parallel()
 			var got []string
 			for _, h := range highlights(all, &tc.v) {
 				got = append(got, h.Text)
 			}
+
 			if !slices.Equal(got, tc.want) {
 				t.Errorf("got %v, want %v", got, tc.want)
 			}
@@ -46,6 +49,7 @@ func TestHighlights(t *testing.T) {
 }
 
 func TestRoles(t *testing.T) {
+
 	t.Parallel()
 	all := []resume.Role{
 		{ID: "now", Start: *newMonth(2024, 1)},
@@ -64,11 +68,13 @@ func TestRoles(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
+
 			t.Parallel()
 			var got []string
 			for _, r := range roles(all, &tc.v) {
 				got = append(got, r.ID)
 			}
+
 			if !slices.Equal(got, tc.want) {
 				t.Errorf("got %v, want %v", got, tc.want)
 			}
@@ -77,6 +83,7 @@ func TestRoles(t *testing.T) {
 }
 
 func TestCourses(t *testing.T) {
+
 	t.Parallel()
 	all := []resume.Course{{Name: "linear algebra", Tags: []string{"math"}}, {Name: "pottery"}}
 	tests := []struct {
@@ -90,11 +97,13 @@ func TestCourses(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
+
 			t.Parallel()
 			var got []string
 			for _, c := range courses(all, tc.show) {
 				got = append(got, c.Name)
 			}
+
 			if !slices.Equal(got, tc.want) {
 				t.Errorf("got %v, want %v", got, tc.want)
 			}
@@ -103,6 +112,7 @@ func TestCourses(t *testing.T) {
 }
 
 func TestApply(t *testing.T) {
+
 	t.Parallel()
 	r := &resume.Resume{
 		Basics:  resume.Basics{Name: "Ada", Label: "Engineer"},
@@ -126,20 +136,25 @@ func TestApply(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
+
 			t.Parallel()
 			got, err := Apply(r, tc.variant)
 			if tc.wantErr != nil {
 				if !errors.Is(err, tc.wantErr) {
 					t.Fatalf("error = %v, want %v", err, tc.wantErr)
 				}
+
 				return
 			}
+
 			if err != nil {
 				t.Fatal(err)
 			}
+
 			if got.Summary != tc.wantSummary || got.Basics.Label != tc.wantLabel || got.Earlier != tc.wantEarlier {
 				t.Errorf("got summary %q, label %q, earlier %q", got.Summary, got.Basics.Label, got.Earlier)
 			}
+
 			if r.Basics.Label != "Engineer" {
 				t.Errorf("Apply changed the résumé's label to %q", r.Basics.Label)
 			}

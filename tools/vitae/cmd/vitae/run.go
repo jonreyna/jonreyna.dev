@@ -12,9 +12,11 @@ import (
 
 // run executes one vitae command. It never exits; main maps its error to an exit code.
 func run(args []string, stdout, stderr io.Writer) error {
+
 	if len(args) == 0 {
 		return errorUsage("no command")
 	}
+
 	cmd, args := args[0], args[1:]
 	switch cmd {
 	case "version":
@@ -45,6 +47,7 @@ func run(args []string, stdout, stderr io.Writer) error {
 	if err != nil {
 		return fmt.Errorf("load résumé: %w", err)
 	}
+
 	switch cmd {
 	case "list":
 		return list(r, fs.Args(), stdout)
@@ -58,21 +61,26 @@ func run(args []string, stdout, stderr io.Writer) error {
 // check prints every lint issue and fails if they include errors (or, when strict,
 // warnings). Then it merges the private overlay, if one was given.
 func check(r *resume.Resume, o *options, stderr io.Writer) error {
+
 	issues := lint.Check(r)
 	var report strings.Builder
 	for _, i := range issues {
 		report.WriteString(i.String() + "\n")
 	}
+
 	if _, err := io.WriteString(stderr, report.String()); err != nil {
 		return fmt.Errorf("report issues: %w", err)
 	}
+
 	if lint.HasErrors(issues, o.strict) {
 		return &errorExit{code: exitFailure, msg: fmt.Sprintf("%s: %d issues found", o.input, len(issues))}
 	}
+
 	if o.private != "" {
 		if err := resume.ApplyPrivate(r, o.private); err != nil {
 			return fmt.Errorf("load private overlay: %w", err)
 		}
 	}
+
 	return nil
 }

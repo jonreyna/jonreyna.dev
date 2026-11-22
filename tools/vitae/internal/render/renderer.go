@@ -19,6 +19,7 @@ func Formats() []string { return []string{"json"} }
 //
 //nolint:ireturn // For chooses among implementations by name; returning the interface is its purpose.
 func For(format string) (Renderer, error) {
+
 	switch format {
 	case "json":
 		return RendererFunc(JSON), nil

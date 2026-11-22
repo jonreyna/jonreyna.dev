@@ -36,9 +36,9 @@ jobs:
       - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
         with:
           go-version-file: tools/vitae/go.mod
-          cache-dependency-path: tools/vitae/go.sum
+          cache-dependency-path: tools/*/go.mod
 
-      - name: Lint and test vitae, and validate the résumé
+      - name: Lint and test the Go tools, and validate the résumé
         run: make resume-check
 
       - name: Render every variant

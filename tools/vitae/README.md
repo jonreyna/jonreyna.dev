@@ -31,7 +31,7 @@ Output is deterministic, so `testdata/golden/` holds exact expected files for `t
 
 ## Code rules
 
-Each public type has its own file, and every package, type and field has a doc comment. Tests are table-driven, and examples run as tests. golangci-lint v2.15.0 runs with the strict config in `.golangci.yml`. `make go-lint` checks formatting and lint, and `make resume-check` runs it along with the tests.
+Each public type has its own file, and every package, type and field has a doc comment. Tests are table-driven, and examples run as tests. Function bodies longer than three lines start with a blank line, and a blank line follows each block's closing brace. golangci-lint v2.15.0 runs with the strict config in `tools/.golangci.yml`, and `tools/blanklines` checks the blank lines. `make go-lint` runs both, and `make resume-check` runs them along with the tests.
 
 ## Private fields
 

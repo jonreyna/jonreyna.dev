@@ -29,6 +29,7 @@ type DocumentEducation struct {
 }
 
 func newDocumentEducation(s *resume.School) DocumentEducation {
+
 	e := DocumentEducation{
 		Org: s.Org, Program: s.Program, Minors: s.Minors,
 		Dates: strconv.Itoa(s.Start) + " – " + strconv.Itoa(s.End),
@@ -37,8 +38,10 @@ func newDocumentEducation(s *resume.School) DocumentEducation {
 	if s.Conferred != nil && *s.Conferred {
 		e.Degree = s.Degree
 	}
+
 	for _, c := range s.Courses {
 		e.Courses = append(e.Courses, c.Name)
 	}
+
 	return e
 }

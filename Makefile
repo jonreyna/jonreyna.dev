@@ -9,7 +9,7 @@ export PATH := $(if $(DART_HOME),$(DART_HOME)/bin:)$(PATH):$(HOME)/.pub-cache/bi
 # Wrangler, pinned exactly; bump it on purpose.
 WRANGLER ?= npx --yes wrangler@4.158.0
 
-.PHONY: help setup site dist serve check verify deploy preview clean vitae go-lint resume-check resume resume-private
+.PHONY: help setup site dist serve check verify deploy preview clean vitae go-lint go-test resume-check resume resume-private
 
 help:  ## List targets
 	@grep -E '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  %-15s %s\n", $$1, $$2}'
@@ -63,14 +63,26 @@ GOLANGCI_LINT := build/tools/golangci-lint-$(GOLANGCI_LINT_VERSION)/golangci-lin
 $(GOLANGCI_LINT):
 	GOBIN=$(CURDIR)/$(dir $(GOLANGCI_LINT)) go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@$(GOLANGCI_LINT_VERSION)
 
+# Go modules under tools/, each linted and tested the same way.
+GO_MODULES := tools/vitae tools/blanklines
+BLANKLINES := build/bin/blanklines
+
 vitae:  ## Build the vitae CLI into build/bin
 	cd tools/vitae && go build -o ../../$(VITAE) ./cmd/vitae
 
-go-lint: $(GOLANGCI_LINT)  ## Check vitae's formatting and lint it (strict config in tools/vitae/.golangci.yml)
-	cd tools/vitae && $(CURDIR)/$(GOLANGCI_LINT) fmt --diff ./... && $(CURDIR)/$(GOLANGCI_LINT) run ./...
+$(BLANKLINES): $(wildcard tools/blanklines/*.go)
+	cd tools/blanklines && go build -o ../../$(BLANKLINES) .
 
-resume-check: vitae go-lint  ## Lint, vet and test vitae, and validate resume.yaml strictly
-	cd tools/vitae && go vet ./... && go test ./...
+go-lint: $(GOLANGCI_LINT) $(BLANKLINES)  ## Check formatting, lint (tools/.golangci.yml) and blank lines in tools/
+	for m in $(GO_MODULES); do \
+		(cd $$m && $(CURDIR)/$(GOLANGCI_LINT) fmt --diff ./... && $(CURDIR)/$(GOLANGCI_LINT) run ./...) || exit 1; \
+	done
+	$(BLANKLINES) $(GO_MODULES)
+
+go-test:  ## Vet and test every Go module in tools/
+	for m in $(GO_MODULES); do (cd $$m && go vet ./... && go test ./...) || exit 1; done
+
+resume-check: vitae go-lint go-test  ## Lint and test the Go tools, and validate resume.yaml strictly
 	$(VITAE) validate -strict -i resume/resume.yaml
 
 resume: vitae  ## Render every variant and format into build/resume (public fields only)

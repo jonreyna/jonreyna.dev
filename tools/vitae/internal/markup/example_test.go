@@ -7,13 +7,16 @@ import (
 )
 
 func ExampleParse() {
+
 	spans, err := markup.Parse("Built *küber* in `Go`; see [the site](https://jonreyna.dev).")
 	if err != nil {
 		panic(err)
 	}
+
 	for _, s := range spans {
 		fmt.Printf("%s %q\n", s.Kind, s.Text)
 	}
+
 	// Output:
 	// text "Built "
 	// emph "küber"

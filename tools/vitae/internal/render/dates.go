@@ -10,9 +10,11 @@ import (
 // Dates formats a role's span as the résumé prints it: "Oct 2023 – Present" for a
 // current role (end is nil), "Aug 2019 – Apr 2020" otherwise.
 func Dates(start resume.Month, end *resume.Month) string {
+
 	if end == nil {
 		return formatMonth(start) + " – Present"
 	}
+
 	return formatMonth(start) + " – " + formatMonth(*end)
 }
 

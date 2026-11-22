@@ -17,6 +17,7 @@ const (
 
 // String returns the kind's name.
 func (k Kind) String() string {
+
 	switch k {
 	case Text:
 		return "text"

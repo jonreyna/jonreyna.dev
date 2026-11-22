@@ -20,14 +20,17 @@ type Month struct {
 
 // ParseMonth reads a month written "YYYY-MM". The error wraps [ErrInvalidMonth].
 func ParseMonth(s string) (Month, error) {
+
 	if len(s) != monthLayoutLen || s[4] != '-' {
 		return Month{}, fmt.Errorf("%w: %q", ErrInvalidMonth, s)
 	}
+
 	y, errY := strconv.Atoi(s[:4])
 	m, errM := strconv.Atoi(s[5:])
 	if errY != nil || errM != nil || m < 1 || m > 12 {
 		return Month{}, fmt.Errorf("%w: %q", ErrInvalidMonth, s)
 	}
+
 	return Month{Year: y, Month: m}, nil
 }
 
@@ -44,13 +47,16 @@ func (m Month) IsZero() bool { return m == Month{} }
 
 // UnmarshalYAML decodes a "YYYY-MM" scalar.
 func (m *Month) UnmarshalYAML(n *yaml.Node) error {
+
 	if n.Kind != yaml.ScalarNode {
 		return fmt.Errorf("line %d: %w: not a string", n.Line, ErrInvalidMonth)
 	}
+
 	v, err := ParseMonth(n.Value)
 	if err != nil {
 		return fmt.Errorf("line %d: %w", n.Line, err)
 	}
+
 	*m = v
 	return nil
 }

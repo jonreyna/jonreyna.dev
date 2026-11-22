@@ -13,9 +13,11 @@ type Text struct {
 // newText converts inline markup that lint has already validated. It returns nil for
 // empty input, so the field is left out of the JSON.
 func newText(s string) *Text {
+
 	if s == "" {
 		return nil
 	}
+
 	spans := markup.MustParse(s)
 	return &Text{Plain: markup.Plain(spans), HTML: markup.HTML(spans)}
 }

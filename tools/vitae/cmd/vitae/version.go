@@ -7,6 +7,7 @@ const shortRevision = 7
 
 // version returns "vitae <commit>" from the build info, or "vitae dev".
 func version() string {
+
 	if info, ok := debug.ReadBuildInfo(); ok {
 		for _, s := range info.Settings {
 			if s.Key == "vcs.revision" && len(s.Value) >= shortRevision {
@@ -14,5 +15,6 @@ func version() string {
 			}
 		}
 	}
+
 	return "vitae dev"
 }

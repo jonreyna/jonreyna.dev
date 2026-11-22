@@ -7,6 +7,7 @@ import (
 )
 
 func TestDates(t *testing.T) {
+
 	t.Parallel()
 	oct2023 := resume.Month{Year: 2023, Month: 10}
 	tests := []struct {
@@ -21,6 +22,7 @@ func TestDates(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
+
 			t.Parallel()
 			if got := Dates(tc.start, tc.end); got != tc.want {
 				t.Errorf("Dates = %q, want %q", got, tc.want)

@@ -6,6 +6,7 @@ import (
 )
 
 func TestParseMonth(t *testing.T) {
+
 	t.Parallel()
 	tests := []struct {
 		name    string
@@ -24,17 +25,21 @@ func TestParseMonth(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
+
 			t.Parallel()
 			got, err := ParseMonth(tc.in)
 			if tc.wantErr {
 				if !errors.Is(err, ErrInvalidMonth) {
 					t.Fatalf("ParseMonth(%q) error = %v, want ErrInvalidMonth", tc.in, err)
 				}
+
 				return
 			}
+
 			if err != nil || got != tc.want {
 				t.Fatalf("ParseMonth(%q) = %v, %v; want %v", tc.in, got, err, tc.want)
 			}
+
 			if got.String() != tc.in {
 				t.Errorf("String() = %q, want %q", got.String(), tc.in)
 			}
@@ -43,6 +48,7 @@ func TestParseMonth(t *testing.T) {
 }
 
 func TestMonthBefore(t *testing.T) {
+
 	t.Parallel()
 	tests := []struct {
 		name string
@@ -56,6 +62,7 @@ func TestMonthBefore(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
+
 			t.Parallel()
 			if got := tc.a.Before(tc.b); got != tc.want {
 				t.Errorf("%v.Before(%v) = %v, want %v", tc.a, tc.b, got, tc.want)
@@ -65,6 +72,7 @@ func TestMonthBefore(t *testing.T) {
 }
 
 func TestMonthJSON(t *testing.T) {
+
 	t.Parallel()
 	tests := []struct {
 		name string
@@ -76,6 +84,7 @@ func TestMonthJSON(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
+
 			t.Parallel()
 			got, err := tc.in.MarshalJSON()
 			if err != nil || string(got) != tc.want {

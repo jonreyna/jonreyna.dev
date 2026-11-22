@@ -13,8 +13,10 @@ const (
 
 // String returns "warning" or "error".
 func (s Severity) String() string {
+
 	if s == Error {
 		return "error"
 	}
+
 	return "warning"
 }

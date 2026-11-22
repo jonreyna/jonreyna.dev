@@ -6,6 +6,7 @@ import (
 )
 
 func TestParse(t *testing.T) {
+
 	t.Parallel()
 	tests := []struct {
 		name, in, plain, html string
@@ -24,14 +25,17 @@ func TestParse(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
+
 			t.Parallel()
 			spans, err := Parse(tc.in)
 			if err != nil {
 				t.Fatalf("Parse(%q): %v", tc.in, err)
 			}
+
 			if got := Plain(spans); got != tc.plain {
 				t.Errorf("Plain = %q, want %q", got, tc.plain)
 			}
+
 			if got := HTML(spans); got != tc.html {
 				t.Errorf("HTML = %q, want %q", got, tc.html)
 			}
@@ -40,6 +44,7 @@ func TestParse(t *testing.T) {
 }
 
 func TestParseErrors(t *testing.T) {
+
 	t.Parallel()
 	tests := []struct {
 		name string
@@ -56,6 +61,7 @@ func TestParseErrors(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
+
 			t.Parallel()
 			if _, err := Parse(tc.in); !errors.Is(err, tc.want) {
 				t.Errorf("Parse(%q) error = %v, want %v", tc.in, err, tc.want)
@@ -65,6 +71,7 @@ func TestParseErrors(t *testing.T) {
 }
 
 func TestKindString(t *testing.T) {
+
 	t.Parallel()
 	tests := []struct {
 		kind Kind
@@ -74,6 +81,7 @@ func TestKindString(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.want, func(t *testing.T) {
+
 			t.Parallel()
 			if got := tc.kind.String(); got != tc.want {
 				t.Errorf("String() = %q, want %q", got, tc.want)
@@ -83,6 +91,7 @@ func TestKindString(t *testing.T) {
 }
 
 func TestMustParsePanics(t *testing.T) {
+
 	t.Parallel()
 	tests := []struct {
 		name      string
@@ -94,12 +103,14 @@ func TestMustParsePanics(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
+
 			t.Parallel()
 			defer func() {
 				if got := recover() != nil; got != tc.wantPanic {
 					t.Errorf("panicked = %v, want %v", got, tc.wantPanic)
 				}
 			}()
+
 			MustParse(tc.in)
 		})
 	}

@@ -34,6 +34,7 @@ type Document struct {
 // NewDocument builds the JSON document for a resolved résumé whose text lint has
 // already validated.
 func NewDocument(r *variant.Resolved) Document {
+
 	b := r.Basics
 	d := Document{
 		Schema:   DocumentSchema,
@@ -49,11 +50,14 @@ func NewDocument(r *variant.Resolved) Document {
 	for i := range r.Experience {
 		d.Experience = append(d.Experience, newDocumentRole(&r.Experience[i]))
 	}
+
 	for _, g := range r.Skills {
 		d.Skills = append(d.Skills, DocumentSkills{Group: g.Group, Items: g.Items})
 	}
+
 	for i := range r.Education {
 		d.Education = append(d.Education, newDocumentEducation(&r.Education[i]))
 	}
+
 	return d
 }

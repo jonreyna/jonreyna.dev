@@ -10,17 +10,20 @@ import (
 const fixture = "../../testdata/resume.yaml"
 
 func load(t *testing.T, path string) *resume.Resume {
+
 	t.Helper()
 	r, err := resume.Load(path)
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	return r
 }
 
 // The fixture and the real résumé must both pass strict validation; CI relies on the
 // second.
 func TestCleanFiles(t *testing.T) {
+
 	t.Parallel()
 	tests := []struct {
 		name, path string
@@ -30,6 +33,7 @@ func TestCleanFiles(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
+
 			t.Parallel()
 			for _, i := range Check(load(t, tc.path)) {
 				t.Error(i)
@@ -40,6 +44,7 @@ func TestCleanFiles(t *testing.T) {
 
 // Each case breaks the fixture one way and expects an issue mentioning want.
 func TestRules(t *testing.T) {
+
 	t.Parallel()
 	tests := []struct {
 		name    string
@@ -67,20 +72,24 @@ func TestRules(t *testing.T) {
 			v.Sections = append(v.Sections, "hobbies")
 			r.Variants["full"] = v
 		}, `unknown section "hobbies"`, Error},
+
 		{"variant selects nothing", func(r *resume.Resume) {
 			v := r.Variants["focused"]
 			v.MinWeight = 1000
 			r.Variants["focused"] = v
 		}, "selects no highlights", Error},
+
 		{"long highlight", func(r *resume.Resume) {
 			r.Experience[0].Highlights[0].Text = strings.Repeat("word ", 140)
 		}, "characters", Warning},
+
 		{"straight quote", func(r *resume.Resume) { r.Earlier = "it's" }, "straight quote", Warning},
 		{"hyphen as dash", func(r *resume.Resume) { r.Earlier = "1999 - 2009" }, "dash", Warning},
 		{"unused tag", func(r *resume.Resume) { r.Tags["unused"] = "x" }, "never used", Warning},
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
+
 			t.Parallel()
 			r := load(t, fixture)
 			tc.breakIt(r)
@@ -90,12 +99,14 @@ func TestRules(t *testing.T) {
 					return
 				}
 			}
+
 			t.Errorf("no %v mentioning %q; got %v", tc.sev, tc.want, issues)
 		})
 	}
 }
 
 func TestHasErrors(t *testing.T) {
+
 	t.Parallel()
 	warning := Issue{Severity: Warning}
 	errIssue := Issue{Severity: Error}
@@ -112,6 +123,7 @@ func TestHasErrors(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
+
 			t.Parallel()
 			if got := HasErrors(tc.issues, tc.strict); got != tc.want {
 				t.Errorf("HasErrors = %v, want %v", got, tc.want)

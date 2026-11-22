@@ -9,6 +9,7 @@ import (
 
 // The degree must reach the output only when it was conferred.
 func TestNewDocumentDegree(t *testing.T) {
+
 	t.Parallel()
 	yes, no := true, false
 	tests := []struct {
@@ -22,6 +23,7 @@ func TestNewDocumentDegree(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
+
 			t.Parallel()
 			r := &variant.Resolved{
 				Sections: []string{resume.SectionEducation},
@@ -37,6 +39,7 @@ func TestNewDocumentDegree(t *testing.T) {
 }
 
 func TestNewDocumentHighlightsNeverNull(t *testing.T) {
+
 	t.Parallel()
 	tests := []struct {
 		name       string
@@ -48,6 +51,7 @@ func TestNewDocumentHighlightsNeverNull(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
+
 			t.Parallel()
 			r := &variant.Resolved{Experience: []resume.Role{{ID: "x", Highlights: tc.highlights}}}
 			got := NewDocument(r).Experience[0].Highlights

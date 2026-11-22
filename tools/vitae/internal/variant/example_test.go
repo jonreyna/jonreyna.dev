@@ -9,6 +9,7 @@ import (
 
 // A variant keeps the best-scoring highlights and leaves them in their original order.
 func ExampleApply() {
+
 	r := &resume.Resume{
 		Experience: []resume.Role{{
 			ID: "acme",
@@ -28,9 +29,11 @@ func ExampleApply() {
 	if err != nil {
 		panic(err)
 	}
+
 	for _, h := range out.Experience[0].Highlights {
 		fmt.Println(h.Text)
 	}
+
 	// Output:
 	// Ran the on-call rotation
 	// Built the ML feature store

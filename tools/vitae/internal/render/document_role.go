@@ -25,6 +25,7 @@ type DocumentRole struct {
 }
 
 func newDocumentRole(role *resume.Role) DocumentRole {
+
 	out := DocumentRole{
 		ID: role.ID, Org: role.Org, Title: role.Title, Location: role.Location,
 		Start: role.Start, End: role.End, Dates: Dates(role.Start, role.End),
@@ -33,5 +34,6 @@ func newDocumentRole(role *resume.Role) DocumentRole {
 	for _, h := range role.Highlights {
 		out.Highlights = append(out.Highlights, DocumentHighlight{Lead: h.Lead, Text: *newText(h.Text), Tags: h.Tags})
 	}
+
 	return out
 }

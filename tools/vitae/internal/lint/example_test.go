@@ -8,6 +8,7 @@ import (
 )
 
 func ExampleCheck() {
+
 	no := false
 	r := &resume.Resume{
 		Schema:     1,
@@ -22,6 +23,7 @@ func ExampleCheck() {
 	for _, i := range issues {
 		fmt.Println(i)
 	}
+
 	fmt.Println("fails:", lint.HasErrors(issues, false))
 	// Output:
 	// error: education[0].program: claims a degree that was not conferred: "B.S. in Physics"

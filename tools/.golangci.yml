@@ -1,4 +1,5 @@
-# Strict golangci-lint v2 configuration for vitae (from the go-best-practices skill).
+# Strict golangci-lint v2 configuration for every Go module under tools/ (from the
+# go-best-practices skill). golangci-lint finds it from each module's directory.
 #
 # Everything is on except the linters below, each disabled for a stated reason. Fix
 # findings rather than suppress them; a //nolint must name the linter and say why.
@@ -18,6 +19,7 @@ linters:
     - noinlineerr  # forbids `if err := f(); err != nil`, which is idiomatic Go
     - nlreturn     # blank-line style is the formatter's job
     - testpackage  # white-box tests of unexported helpers are valuable; examples use _test packages anyway
+    - whitespace   # flags the blank line after a signature that rule 13 requires
     - varnamelen   # flags idiomatic short names (i, r, w, tt)
     - wsl          # deprecated, replaced by wsl_v5
     - wsl_v5       # blank-line style is the formatter's job
@@ -83,12 +85,13 @@ linters:
         text: "G304|G703"
 
 formatters:
+  # gofmt, not gofumpt: gofumpt deletes the blank line after a signature (rule 13).
   enable:
-    - gofumpt
+    - gofmt
     - goimports
   settings:
     goimports:
-      local-prefixes: [github.com/jonreyna/jonreyna.dev/tools/vitae]
+      local-prefixes: [github.com/jonreyna/jonreyna.dev]
 
 issues:
   max-issues-per-linter: 0

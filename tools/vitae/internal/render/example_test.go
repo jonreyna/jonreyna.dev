@@ -9,6 +9,7 @@ import (
 )
 
 func ExampleDates() {
+
 	start := resume.Month{Year: 2023, Month: 10}
 	end := resume.Month{Year: 2026, Month: 12}
 	fmt.Println(render.Dates(start, nil))
@@ -19,6 +20,7 @@ func ExampleDates() {
 }
 
 func ExampleFor() {
+
 	r := &variant.Resolved{
 		Variant:  "full",
 		Sections: []string{resume.SectionSummary},
@@ -29,10 +31,12 @@ func ExampleFor() {
 	if err != nil {
 		panic(err)
 	}
+
 	out, err := renderer.Render(r)
 	if err != nil {
 		panic(err)
 	}
+
 	fmt.Print(string(out))
 	// Output:
 	// {

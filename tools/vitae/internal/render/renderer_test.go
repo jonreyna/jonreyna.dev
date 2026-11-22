@@ -8,6 +8,7 @@ import (
 )
 
 func TestFor(t *testing.T) {
+
 	t.Parallel()
 	tests := []struct {
 		format  string
@@ -19,11 +20,13 @@ func TestFor(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.format, func(t *testing.T) {
+
 			t.Parallel()
 			r, err := For(tc.format)
 			if !errors.Is(err, tc.wantErr) {
 				t.Fatalf("For(%q) error = %v, want %v", tc.format, err, tc.wantErr)
 			}
+
 			if tc.wantErr == nil && r == nil {
 				t.Fatalf("For(%q) returned no renderer", tc.format)
 			}
@@ -32,6 +35,7 @@ func TestFor(t *testing.T) {
 }
 
 func TestRendererFunc(t *testing.T) {
+
 	t.Parallel()
 	tests := []struct {
 		name string
@@ -42,6 +46,7 @@ func TestRendererFunc(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
+
 			t.Parallel()
 			got, err := tc.f.Render(&variant.Resolved{Variant: "full"})
 			if err != nil || string(got) != tc.want {

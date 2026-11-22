@@ -36,23 +36,28 @@ type Resume struct {
 // Load reads and decodes the résumé at path. Unknown fields are errors. Load doesn't
 // validate the content; package lint does that.
 func Load(path string) (*Resume, error) {
+
 	var r Resume
 	if err := decodeFile(path, &r); err != nil {
 		return nil, err
 	}
+
 	return &r, nil
 }
 
 // decodeFile decodes the YAML file at path into v, rejecting fields v doesn't have.
 func decodeFile(path string, v any) error {
+
 	data, err := os.ReadFile(path) //nolint:gosec // G304: reading the file the user names is the point
 	if err != nil {
 		return fmt.Errorf("read: %w", err)
 	}
+
 	dec := yaml.NewDecoder(bytes.NewReader(data))
 	dec.KnownFields(true)
 	if err := dec.Decode(v); err != nil {
 		return fmt.Errorf("decode %s: %w", path, err)
 	}
+
 	return nil
 }
