@@ -4,7 +4,7 @@ package resume
 // public output.
 type Private struct {
 	// Basics holds the private header fields.
-	Basics PrivateBasics `yaml:"basics"`
+	Basics BasicsPrivate `yaml:"basics"`
 }
 
 // ApplyPrivate merges the overlay at path into r. Fields the overlay leaves empty keep

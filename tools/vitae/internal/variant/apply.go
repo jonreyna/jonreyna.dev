@@ -66,11 +66,6 @@ func roles(all []resume.Role, v *resume.Variant) []resume.Role {
 	return out
 }
 
-// scored is a highlight's index in its role and its score under a variant.
-type scored struct {
-	index, score int
-}
-
 // highlights keeps the highlights v selects, in their original order.
 func highlights(all []resume.Highlight, v *resume.Variant) []resume.Highlight {
 	boostBy := v.BoostBy

@@ -12,7 +12,7 @@ func main() {
 		return
 	}
 	code := exitFailure
-	if ee, ok := errors.AsType[*exitError](err); ok {
+	if ee, ok := errors.AsType[*errorExit](err); ok {
 		code = ee.code
 	}
 	if code == exitUsage {

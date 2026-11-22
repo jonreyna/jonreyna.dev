@@ -11,6 +11,7 @@ linters:
   default: all
   disable:
     - depguard     # needs a per-project import allow list; nothing to enforce without one
+    - errname      # wants xxxError; our rule 10 puts the type first (errorExit)
     - exhaustruct     # demands every field in every literal, fighting useful zero values
     - exhaustruct_v5  # the same linter under its v2.15 name
     - gomodguard   # deprecated since v2.12; gomodguard_v2 (enabled by default: all) replaces it

@@ -19,7 +19,7 @@ func vitae(t *testing.T, args ...string) (string, int) {
 	if err == nil {
 		return out.String(), 0
 	}
-	if ee, ok := errors.AsType[*exitError](err); ok {
+	if ee, ok := errors.AsType[*errorExit](err); ok {
 		return out.String() + ee.msg, ee.code
 	}
 	return out.String() + err.Error(), exitFailure
