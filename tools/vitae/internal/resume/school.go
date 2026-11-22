@@ -9,7 +9,7 @@ type School struct {
 	// Program is what was studied, as printed ("Computer Science major"). It must not
 	// claim a degree that wasn't conferred.
 	Program string `yaml:"program"`
-	// Degree is the degree's name. Renderers print it only when Conferred is true.
+	// Degree is the degree's name. Every output format prints it only when Conferred is true.
 	Degree string `yaml:"degree"`
 	// Conferred reports whether the degree was awarded. It is a pointer so that
 	// leaving it out is an error rather than a silent default.
