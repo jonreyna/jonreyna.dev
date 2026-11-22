@@ -1,4 +1,4 @@
-// Package renderer writes a resolved résumé ([variant.Resolved]) in each output format.
+// Package render writes a resolved résumé ([variant.Resolved]) in each output format.
 //
 // Each format is a [Renderer]; [For] returns the one for a format name and [Formats]
 // lists them. So far there is one: "json", the [Document] that the website reads, in
@@ -11,4 +11,4 @@
 //
 // The degree rule holds here too: a [Document] carries a degree only when it was
 // conferred.
-package renderer
+package render

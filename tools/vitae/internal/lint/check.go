@@ -13,7 +13,7 @@ const MaxHighlight = 650
 
 // Check returns every issue in r, errors and warnings, in file order.
 func Check(r *resume.Resume) []Issue {
-	c := &checker{r: r, used: map[string]bool{}}
+	c := &checkState{r: r, used: map[string]bool{}}
 	c.basics()
 	c.summary()
 	c.experience()

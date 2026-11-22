@@ -7,7 +7,7 @@
 // merges the git-ignored overlay ([Private]) that holds the phone number.
 //
 // This package only decodes. Package lint validates a [Resume], package variant applies
-// a [Variant], and package renderer writes the result.
+// a [Variant], and package render writes the result.
 //
 // Dates in the file are months written "YYYY-MM" ([Month]); education uses plain years.
 // A role whose End is nil is current.

@@ -1,4 +1,4 @@
-package renderer
+package render
 
 import "github.com/jonreyna/jonreyna.dev/tools/vitae/internal/resume"
 

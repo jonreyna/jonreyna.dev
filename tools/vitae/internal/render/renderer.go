@@ -1,4 +1,4 @@
-package renderer
+package render
 
 import (
 	"fmt"
@@ -21,7 +21,7 @@ func Formats() []string { return []string{"json"} }
 func For(format string) (Renderer, error) {
 	switch format {
 	case "json":
-		return Func(JSON), nil
+		return RendererFunc(JSON), nil
 	default:
 		return nil, fmt.Errorf("%w: %q", ErrUnknownFormat, format)
 	}

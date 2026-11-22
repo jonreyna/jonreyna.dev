@@ -1,9 +1,9 @@
-package renderer_test
+package render_test
 
 import (
 	"fmt"
 
-	"github.com/jonreyna/jonreyna.dev/tools/vitae/internal/renderer"
+	"github.com/jonreyna/jonreyna.dev/tools/vitae/internal/render"
 	"github.com/jonreyna/jonreyna.dev/tools/vitae/internal/resume"
 	"github.com/jonreyna/jonreyna.dev/tools/vitae/internal/variant"
 )
@@ -11,8 +11,8 @@ import (
 func ExampleDates() {
 	start := resume.Month{Year: 2023, Month: 10}
 	end := resume.Month{Year: 2026, Month: 12}
-	fmt.Println(renderer.Dates(start, nil))
-	fmt.Println(renderer.Dates(start, &end))
+	fmt.Println(render.Dates(start, nil))
+	fmt.Println(render.Dates(start, &end))
 	// Output:
 	// Oct 2023 – Present
 	// Oct 2023 – Dec 2026
@@ -25,11 +25,11 @@ func ExampleFor() {
 		Basics:   resume.Basics{Name: "Ada Example", Email: "ada@example.com"},
 		Summary:  "Builds *distributed* systems.",
 	}
-	rend, err := renderer.For("json")
+	renderer, err := render.For("json")
 	if err != nil {
 		panic(err)
 	}
-	out, err := rend.Render(r)
+	out, err := renderer.Render(r)
 	if err != nil {
 		panic(err)
 	}

@@ -1,4 +1,4 @@
-package renderer
+package render
 
 import (
 	"errors"
@@ -31,11 +31,11 @@ func TestFor(t *testing.T) {
 	}
 }
 
-func TestFunc(t *testing.T) {
+func TestRendererFunc(t *testing.T) {
 	t.Parallel()
 	tests := []struct {
 		name string
-		f    Func
+		f    RendererFunc
 		want string
 	}{
 		{name: "passes the résumé through", f: func(r *variant.Resolved) ([]byte, error) { return []byte(r.Variant), nil }, want: "full"},

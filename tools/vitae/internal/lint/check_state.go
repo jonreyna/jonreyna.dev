@@ -12,23 +12,23 @@ import (
 	"github.com/jonreyna/jonreyna.dev/tools/vitae/internal/variant"
 )
 
-// checker collects issues for one [Check] call.
-type checker struct {
+// checkState is one [Check] call in progress: the résumé and the issues so far.
+type checkState struct {
 	r      *resume.Resume
 	issues []Issue
 	used   map[string]bool // tags seen anywhere, for the unused-tag warning
 }
 
-func (c *checker) errorf(where, format string, args ...any) {
+func (c *checkState) errorf(where, format string, args ...any) {
 	c.issues = append(c.issues, Issue{Severity: Error, Where: where, Msg: fmt.Sprintf(format, args...)})
 }
 
-func (c *checker) warnf(where, format string, args ...any) {
+func (c *checkState) warnf(where, format string, args ...any) {
 	c.issues = append(c.issues, Issue{Severity: Warning, Where: where, Msg: fmt.Sprintf(format, args...)})
 }
 
 // tags reports undeclared tags and records the ones it sees as used.
-func (c *checker) tags(where string, tags []string) {
+func (c *checkState) tags(where string, tags []string) {
 	for _, t := range tags {
 		if _, ok := c.r.Tags[t]; !ok {
 			c.errorf(where, "unknown tag %q; declare it under tags", t)
@@ -39,7 +39,7 @@ func (c *checker) tags(where string, tags []string) {
 
 // text parses s's inline markup and checks its typography. It returns the spans, or nil
 // if s is empty or doesn't parse.
-func (c *checker) text(where, s string) []markup.Span {
+func (c *checkState) text(where, s string) []markup.Span {
 	if s == "" {
 		return nil
 	}
@@ -70,7 +70,7 @@ const (
 	maxWeight = 100
 )
 
-func (c *checker) basics() {
+func (c *checkState) basics() {
 	b := c.r.Basics
 	if c.r.Schema != 1 {
 		c.errorf("schema", "must be 1, not %d", c.r.Schema)
@@ -95,7 +95,7 @@ func (c *checker) basics() {
 	}
 }
 
-func (c *checker) summary() {
+func (c *checkState) summary() {
 	if c.r.Summary["default"] == "" {
 		c.errorf("summary.default", "required")
 	}
@@ -104,7 +104,7 @@ func (c *checker) summary() {
 	}
 }
 
-func (c *checker) experience() {
+func (c *checkState) experience() {
 	if len(c.r.Experience) == 0 {
 		c.errorf("experience", "at least one role is required")
 	}
@@ -128,7 +128,7 @@ func (c *checker) experience() {
 }
 
 // role checks one role's fields and its place in the list.
-func (c *checker) role(where string, i int, role *resume.Role) {
+func (c *checkState) role(where string, i int, role *resume.Role) {
 	if role.Org == "" || role.Title == "" {
 		c.errorf(where, "org and title are required")
 	}
@@ -149,7 +149,7 @@ func (c *checker) role(where string, i int, role *resume.Role) {
 	}
 }
 
-func (c *checker) highlight(where string, h resume.Highlight) {
+func (c *checkState) highlight(where string, h resume.Highlight) {
 	if h.Text == "" {
 		c.errorf(where, "text is required")
 	}
@@ -165,7 +165,7 @@ func (c *checker) highlight(where string, h resume.Highlight) {
 	c.tags(where, h.Tags)
 }
 
-func (c *checker) skills() {
+func (c *checkState) skills() {
 	for i, g := range c.r.Skills {
 		where := fmt.Sprintf("skills[%d]", i)
 		if g.Group == "" || len(g.Items) == 0 {
@@ -177,7 +177,7 @@ func (c *checker) skills() {
 	}
 }
 
-func (c *checker) education() {
+func (c *checkState) education() {
 	for i := range c.r.Education {
 		s := &c.r.Education[i]
 		where := fmt.Sprintf("education[%d]", i)
@@ -199,7 +199,7 @@ func (c *checker) education() {
 }
 
 // degree enforces the rule for unconferred degrees: say so, and claim it nowhere.
-func (c *checker) degree(where string, s *resume.School) {
+func (c *checkState) degree(where string, s *resume.School) {
 	switch {
 	case s.Conferred == nil:
 		c.errorf(where, "conferred must be stated: true or false")
@@ -224,7 +224,7 @@ func (c *checker) degree(where string, s *resume.School) {
 	}
 }
 
-func (c *checker) variants() {
+func (c *checkState) variants() {
 	if _, ok := c.r.Variants["full"]; !ok {
 		c.errorf("variants", "a variant named full is required")
 	}
@@ -234,7 +234,7 @@ func (c *checker) variants() {
 	}
 }
 
-func (c *checker) variant(where, name string, v *resume.Variant) {
+func (c *checkState) variant(where, name string, v *resume.Variant) {
 	c.sections(where, v.Sections)
 	if v.Summary != "" && c.r.Summary[v.Summary] == "" {
 		c.errorf(where, "summary %q is not in summary", v.Summary)
@@ -257,7 +257,7 @@ func (c *checker) variant(where, name string, v *resume.Variant) {
 }
 
 // sections checks a variant's section list: known names, each once.
-func (c *checker) sections(where string, sections []string) {
+func (c *checkState) sections(where string, sections []string) {
 	if len(sections) == 0 {
 		c.errorf(where, "sections are required")
 	}

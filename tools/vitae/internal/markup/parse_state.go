@@ -8,15 +8,15 @@ import (
 // excerptLen is how much of the text an error quotes.
 const excerptLen = 20
 
-// parser holds the state of one [Parse] call.
-type parser struct {
+// parseState is one [Parse] call in progress: the input and the spans so far.
+type parseState struct {
 	rs    []rune
 	spans []Span
 	buf   strings.Builder
 }
 
 // step consumes the markup that starts at rs[i] and returns the index of its last rune.
-func (p *parser) step(i int) (int, error) {
+func (p *parseState) step(i int) (int, error) {
 	switch c := p.rs[i]; c {
 	case '\\':
 		if i+1 == len(p.rs) {
@@ -38,7 +38,7 @@ func (p *parser) step(i int) (int, error) {
 }
 
 // delimited reads *emphasis* or `code` starting at rs[i].
-func (p *parser) delimited(i int, delim rune) (int, error) {
+func (p *parseState) delimited(i int, delim rune) (int, error) {
 	end := indexRune(p.rs, i+1, delim)
 	switch {
 	case end < 0:
@@ -56,7 +56,7 @@ func (p *parser) delimited(i int, delim rune) (int, error) {
 }
 
 // link reads [text](url) starting at rs[i].
-func (p *parser) link(i int) (int, error) {
+func (p *parseState) link(i int) (int, error) {
 	closeBracket := indexRune(p.rs, i+1, ']')
 	if closeBracket < 0 || closeBracket+1 >= len(p.rs) || p.rs[closeBracket+1] != '(' {
 		return 0, fmt.Errorf("%w: [ without (url) at %q", ErrBadLink, excerpt(p.rs, i))
@@ -76,7 +76,7 @@ func (p *parser) link(i int) (int, error) {
 }
 
 // flush ends the current text span, if any.
-func (p *parser) flush() {
+func (p *parseState) flush() {
 	if p.buf.Len() > 0 {
 		p.spans = append(p.spans, Span{Kind: Text, Text: p.buf.String()})
 		p.buf.Reset()

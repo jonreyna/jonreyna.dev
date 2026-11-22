@@ -5,7 +5,7 @@ const nbsp = " "
 
 // Parse splits s into spans. Adjacent text is merged into one [Text] span.
 func Parse(s string) ([]Span, error) {
-	p := &parser{rs: []rune(s)}
+	p := &parseState{rs: []rune(s)}
 	for i := 0; i < len(p.rs); i++ {
 		last, err := p.step(i)
 		if err != nil {

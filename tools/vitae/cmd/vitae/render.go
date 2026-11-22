@@ -9,7 +9,7 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/jonreyna/jonreyna.dev/tools/vitae/internal/renderer"
+	"github.com/jonreyna/jonreyna.dev/tools/vitae/internal/render"
 	"github.com/jonreyna/jonreyna.dev/tools/vitae/internal/resume"
 	"github.com/jonreyna/jonreyna.dev/tools/vitae/internal/variant"
 )
@@ -30,7 +30,7 @@ func renderAll(r *resume.Resume, o *options, stdout, stderr io.Writer) error {
 	if err != nil {
 		return err
 	}
-	formats, err := pick(o.format, renderer.Formats(), "format")
+	formats, err := pick(o.format, render.Formats(), "format")
 	if err != nil {
 		return err
 	}
@@ -53,11 +53,11 @@ func renderAll(r *resume.Resume, o *options, stdout, stderr io.Writer) error {
 
 // renderOne renders one variant in one format to outDir, or to stdout if outDir is "-".
 func renderOne(resolved *variant.Resolved, format, outDir string, stdout io.Writer) error {
-	rend, err := renderer.For(format)
+	renderer, err := render.For(format)
 	if err != nil {
 		return fmt.Errorf("render: %w", err)
 	}
-	data, err := rend.Render(resolved)
+	data, err := renderer.Render(resolved)
 	if err != nil {
 		return fmt.Errorf("render %s as %s: %w", resolved.Variant, format, err)
 	}

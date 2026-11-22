@@ -1,4 +1,4 @@
-package renderer
+package render
 
 // DocumentSkills is one labeled skill line in a [Document].
 type DocumentSkills struct {
