@@ -4,6 +4,7 @@
 
 # Deploy staging and Wrangler state
 /dist/
+/build/
 .wrangler/
 
 # Private résumé data never enters this repository

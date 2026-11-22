@@ -9,10 +9,10 @@ export PATH := $(if $(DART_HOME),$(DART_HOME)/bin:)$(PATH):$(HOME)/.pub-cache/bi
 # Wrangler, pinned exactly; bump it on purpose.
 WRANGLER ?= npx --yes wrangler@4.158.0
 
-.PHONY: help setup site dist serve check verify deploy preview clean
+.PHONY: help setup site dist serve check verify deploy preview clean vitae resume-check resume resume-private
 
 help:  ## List targets
-	@grep -E '^[a-z]+:.*## ' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  %-8s %s\n", $$1, $$2}'
+	@grep -E '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  %-15s %s\n", $$1, $$2}'
 
 setup:  ## Fetch Dart packages and the Jaspr CLI
 	cd site && dart pub get
@@ -53,5 +53,25 @@ preview: dist-exists  ## Upload dist/ as a preview version at <ALIAS>-jonreyna-d
 dist-exists:
 	@test -f dist/index.html || { echo "dist/ is missing: run make dist first"; exit 1; }
 
+# ---- Résumé (tools/vitae, resume/resume.yaml) ----
+VITAE := build/bin/vitae
+
+vitae:  ## Build the vitae CLI into build/bin
+	cd tools/vitae && go build -o ../../$(VITAE) ./cmd/vitae
+
+resume-check: vitae  ## Vet and test vitae, and validate resume.yaml strictly
+	cd tools/vitae && go vet ./... && go test ./...
+	$(VITAE) validate --strict -i resume/resume.yaml
+
+resume: vitae  ## Render every variant and format into build/resume (public fields only)
+	rm -rf build/resume
+	$(VITAE) render -i resume/resume.yaml -o build/resume
+
+# Adds the phone number from resume/resume.private.yaml. Local only: never in CI.
+resume-private: vitae  ## Render with the private overlay into build/resume-private
+	@test -f resume/resume.private.yaml || { echo "copy resume/resume.private.example.yaml to resume/resume.private.yaml first"; exit 1; }
+	rm -rf build/resume-private
+	$(VITAE) render -i resume/resume.yaml --private resume/resume.private.yaml -o build/resume-private
+
 clean:  ## Remove build output
-	rm -rf site/build dist .wrangler
+	rm -rf site/build dist .wrangler build
