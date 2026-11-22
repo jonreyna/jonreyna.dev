@@ -9,7 +9,7 @@ export PATH := $(if $(DART_HOME),$(DART_HOME)/bin:)$(PATH):$(HOME)/.pub-cache/bi
 # Wrangler, pinned exactly; bump it on purpose.
 WRANGLER ?= npx --yes wrangler@4.158.0
 
-.PHONY: help setup site dist serve check verify deploy preview clean vitae resume-check resume resume-private
+.PHONY: help setup site dist serve check verify deploy preview clean vitae go-lint resume-check resume resume-private
 
 help:  ## List targets
 	@grep -E '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  %-15s %s\n", $$1, $$2}'
@@ -56,12 +56,22 @@ dist-exists:
 # ---- Résumé (tools/vitae, resume/resume.yaml) ----
 VITAE := build/bin/vitae
 
+# golangci-lint, pinned exactly and installed per version, so a bump reinstalls it.
+GOLANGCI_LINT_VERSION := v2.15.0
+GOLANGCI_LINT := build/tools/golangci-lint-$(GOLANGCI_LINT_VERSION)/golangci-lint
+
+$(GOLANGCI_LINT):
+	GOBIN=$(CURDIR)/$(dir $(GOLANGCI_LINT)) go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@$(GOLANGCI_LINT_VERSION)
+
 vitae:  ## Build the vitae CLI into build/bin
 	cd tools/vitae && go build -o ../../$(VITAE) ./cmd/vitae
 
-resume-check: vitae  ## Vet and test vitae, and validate resume.yaml strictly
+go-lint: $(GOLANGCI_LINT)  ## Check vitae's formatting and lint it (strict config in tools/vitae/.golangci.yml)
+	cd tools/vitae && $(CURDIR)/$(GOLANGCI_LINT) fmt --diff ./... && $(CURDIR)/$(GOLANGCI_LINT) run ./...
+
+resume-check: vitae go-lint  ## Lint, vet and test vitae, and validate resume.yaml strictly
 	cd tools/vitae && go vet ./... && go test ./...
-	$(VITAE) validate --strict -i resume/resume.yaml
+	$(VITAE) validate -strict -i resume/resume.yaml
 
 resume: vitae  ## Render every variant and format into build/resume (public fields only)
 	rm -rf build/resume
@@ -71,7 +81,7 @@ resume: vitae  ## Render every variant and format into build/resume (public fiel
 resume-private: vitae  ## Render with the private overlay into build/resume-private
 	@test -f resume/resume.private.yaml || { echo "copy resume/resume.private.example.yaml to resume/resume.private.yaml first"; exit 1; }
 	rm -rf build/resume-private
-	$(VITAE) render -i resume/resume.yaml --private resume/resume.private.yaml -o build/resume-private
+	$(VITAE) render -i resume/resume.yaml -private resume/resume.private.yaml -o build/resume-private
 
 clean:  ## Remove build output
 	rm -rf site/build dist .wrangler build

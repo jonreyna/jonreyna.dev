@@ -1,4 +1,4 @@
-# Copy to resume.private.yaml (git-ignored) and fill in. `vitae render --private
+# Copy to resume.private.yaml (git-ignored) and fill in. `vitae render -private
 # resume/resume.private.yaml` merges these fields; public outputs never contain them.
 # Build private PDFs on your own machine only, never in CI.
 basics:

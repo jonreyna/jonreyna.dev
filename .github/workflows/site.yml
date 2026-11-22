@@ -38,7 +38,7 @@ jobs:
           go-version-file: tools/vitae/go.mod
           cache-dependency-path: tools/vitae/go.sum
 
-      - name: Test vitae and validate the résumé
+      - name: Lint and test vitae, and validate the résumé
         run: make resume-check
 
       - name: Render every variant
