@@ -1,0 +1,11 @@
+#!/bin/sh
+# Refuses a commit that adds or changes a binary file. Binaries never go in this
+# repository: build output goes to build/ or dist/, and fonts are downloaded by
+# `make fonts`. `make setup` points git at this folder (core.hooksPath).
+binaries=$(git diff --cached --numstat --diff-filter=AM | awk '$1 == "-" && $2 == "-" { print $3 }')
+if [ -n "$binaries" ]; then
+	echo "pre-commit: refused to commit binary files:" >&2
+	echo "$binaries" | sed 's/^/  /' >&2
+	echo "Unstage them (git restore --staged <file>) and keep them out of git." >&2
+	exit 1
+fi

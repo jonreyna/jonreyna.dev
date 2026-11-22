@@ -1,9 +1,16 @@
 # Dart and Jaspr
 .dart_tool/
 /site/build/
+# Fonts are downloaded by `make fonts`; only their licenses are in git.
+/site/web/fonts/*
+!/site/web/fonts/OFL.txt
+# Go binaries that `go build` writes into a command's own folder.
+/tools/vitae/vitae
+/tools/vitae/cmd/vitae/vitae
 
 # Deploy staging and Wrangler state
 /dist/
+/build/
 .wrangler/
 
 # Private résumé data never enters this repository

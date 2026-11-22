@@ -1,0 +1,139 @@
+{
+  "schema": 1,
+  "variant": "full",
+  "sections": [
+    "summary",
+    "skills",
+    "experience",
+    "earlier",
+    "education"
+  ],
+  "basics": {
+    "name": "Ada Example",
+    "label": "Staff Engineer",
+    "location": "Somewhere, FL",
+    "remote": true,
+    "email": "ada@example.com",
+    "links": [
+      {
+        "kind": "site",
+        "url": "https://example.com",
+        "text": "example.com"
+      }
+    ]
+  },
+  "summary": {
+    "plain": "Builds distributed systems in Go; see the site.",
+    "html": "Builds <em>distributed</em> systems in <code>Go</code>; see <a href=\"https://example.com\">the site</a>."
+  },
+  "experience": [
+    {
+      "id": "now",
+      "org": "Now Corp",
+      "title": "Staff Engineer",
+      "location": "Remote",
+      "start": "2024-01",
+      "end": null,
+      "dates": "Jan 2024 – Present",
+      "highlights": [
+        {
+          "lead": "First",
+          "text": {
+            "plain": "Strong Go work for 2,000 clusters.",
+            "html": "Strong Go work for 2,000 clusters."
+          },
+          "tags": [
+            "go"
+          ]
+        },
+        {
+          "lead": "Second",
+          "text": {
+            "plain": "AI work, *literally*.",
+            "html": "AI work, *literally*."
+          },
+          "tags": [
+            "ai"
+          ]
+        },
+        {
+          "text": {
+            "plain": "Old habits.",
+            "html": "Old habits."
+          },
+          "tags": [
+            "legacy"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "before",
+      "org": "Before & Co",
+      "title": "Engineer",
+      "location": "Atlanta, GA",
+      "start": "2015-03",
+      "end": "2023-12",
+      "dates": "Mar 2015 – Dec 2023",
+      "highlights": [
+        {
+          "text": {
+            "plain": "Middling work.",
+            "html": "Middling work."
+          },
+          "tags": [
+            "go"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "long-ago",
+      "org": "Long Ago Inc",
+      "title": "Developer",
+      "location": "Atlanta, GA",
+      "start": "2010-01",
+      "end": "2014-12",
+      "dates": "Jan 2010 – Dec 2014",
+      "highlights": [
+        {
+          "text": {
+            "plain": "Early work in C.",
+            "html": "Early work in C."
+          },
+          "tags": [
+            "legacy"
+          ]
+        }
+      ]
+    }
+  ],
+  "earlier": {
+    "plain": "Odd jobs (1999–2009).",
+    "html": "Odd jobs (1999–2009)."
+  },
+  "skills": [
+    {
+      "group": "Languages",
+      "items": [
+        "Go",
+        "C"
+      ]
+    }
+  ],
+  "education": [
+    {
+      "org": "Example University",
+      "program": "Computer Science major",
+      "dates": "2006 – 2010",
+      "note": {
+        "plain": "Two courses short of the degree.",
+        "html": "Two courses short of the degree."
+      },
+      "courses": [
+        "linear algebra",
+        "pottery"
+      ]
+    }
+  ]
+}

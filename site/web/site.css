@@ -1,4 +1,4 @@
-@font-face { font-family: "Libertinus Math"; src: url(/fonts/LibertinusMath-Regular.otf) format("opentype"); font-display: swap; }
+@font-face { font-family: "Libertinus Math"; src: url(/fonts/LibertinusMath-Regular.woff2) format("woff2"); font-display: swap; }
 
 * { box-sizing: border-box; }
 [id] { scroll-margin-top: 1rem; }

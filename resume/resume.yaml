@@ -1,0 +1,308 @@
+# Jon Reyna's résumé: the single source for every format and variant.
+#
+# `vitae validate` checks this file; `vitae render` turns it into JSON, LaTeX, text and
+# Markdown (tools/vitae). Public fields only: the phone number lives in
+# resume.private.yaml, which is git-ignored (copy resume.private.example.yaml).
+#
+# Inline markup in text fields: *emphasis*, `code`, [text](https://url), and ~ for a
+# non-breaking space (as in TeX). Write \~ or \* for the literal characters.
+#
+# Highlight order here is the order on the page. Variants choose which highlights to
+# keep (by tag and weight), never their order.
+
+schema: 1
+
+basics:
+  name: Jon Reyna
+  label: Senior Staff Software Engineer
+  location: Tampa Bay, FL
+  remote: true
+  email: jon@jonreyna.dev
+  links:
+    - { kind: linkedin, url: "https://www.linkedin.com/in/jonreyna", text: linkedin.com/in/jonreyna }
+    - { kind: github, url: "https://github.com/jonreyna", text: github.com/jonreyna }
+    - { kind: site, url: "https://jonreyna.dev", text: jonreyna.dev }
+
+summary:
+  default: >-
+    Senior Staff engineer with 13 years building distributed systems in Go, C++, C and
+    Java, most of them keeping large fleets of infrastructure in their intended state:
+    fabric control for exascale supercomputers, GitOps deployment to 2,317 edge
+    Kubernetes clusters, and Temporal orchestration across Equinix Fabric, AWS, Google
+    Cloud and Azure. Now building infrastructure for AI inference and agents. Studied
+    computer science, mathematics and statistics.
+
+# Every tag a highlight or variant uses must be listed here.
+tags:
+  go: Go
+  java: Java
+  cpp: C and C++
+  python: Python
+  distributed: distributed systems and orchestration
+  kubernetes: Kubernetes, GitOps and fleet deployment
+  networking: networks, network automation and connectivity
+  hpc: supercomputers and high-performance computing
+  ai: AI inference, agents and evaluation
+  observability: monitoring, metrics and reliability
+  data: data pipelines and databases
+  leadership: leading projects and teams
+  mentoring: teaching and mentoring
+  payments: payments and transaction processing
+  math: mathematics and statistics coursework
+
+experience:
+  - id: equinix
+    org: Equinix
+    title: Senior Staff Engineer
+    location: Remote
+    start: 2023-10
+    end: null
+    highlights:
+      - lead: Temporal orchestration
+        text: >-
+          Designed the Temporal workflows for a service that provisions connectivity
+          from Equinix Fabric Cloud Routers to AWS, Google Cloud and Azure; it reached
+          production and was demoed at Google Cloud Next~’24. Led its deprovisioning
+          feature: destroy workflows that reverse every deployment step across clouds.
+          Built a composable middleware framework for its workflows and activities in Go
+          (retries, logging, Prometheus metrics and rollback as stackable layers),
+          solving an undocumented registration problem by tracing the Temporal SDK.
+          Every engineer on the team used it, and the team building Equinix’s private
+          AI-inference service adopted it too.
+        tags: [go, distributed, networking, leadership]
+        weight: 95
+      - lead: Carrier integration
+        text: >-
+          Lead the direct API integration of a tier-1 international carrier into Equinix
+          Fabric’s last-mile connectivity, end to end: design, program-increment readouts
+          and timelines, epics and stories, implementation, test plans and integration
+          testing. Picked up Java with the move to Fabric and built the carrier’s MEF
+          Sonata client in it (OAuth 2.0, address validation, product qualification,
+          quoting); coordinate with the carrier’s engineers.
+        tags: [java, networking, leadership]
+        weight: 85
+      - lead: AI-inference connectivity
+        text: >-
+          Co-owned the platform orchestration for Equinix Fabric Application Connect, a
+          private connectivity service for AI inference, through its December 2025
+          production release: Temporal workflows for its core resources, integration with
+          Network Edge virtual devices and Fabric Cloud Router, the gRPC and REST boundary
+          between the customer API and the orchestration workers, and alert rules as code.
+        tags: [go, distributed, networking, ai]
+        weight: 90
+      - lead: AI agent tooling
+        text: >-
+          Built connection-search and inventory skills for Fabric Super Agent, Equinix’s
+          AI agent, over its MCP server; the rewrite shipped in August 2026 across the
+          Equinix Portal, Slack and Microsoft Teams and eliminated a recurring production
+          error. Hardened its LLM-as-judge evaluation harness. Built a read-only Claude
+          Code plugin for on-call triage that correlates incidents with logs, traces and
+          past resolutions and grows its knowledge base from each resolved incident.
+        tags: [ai, python, observability]
+        weight: 80
+      - lead: Metering and billing
+        text: >-
+          Designed and built the metering and billing pipeline for a pre-launch
+          multicloud networking product on a team of about 20: per-tenant usage captured
+          from the VPP dataplane over IPFIX, enriched with customer IDs, stored in
+          CockroachDB and billed by Go services. Accountable for the billing-platform
+          integration; wrote the requirements, design and functional-analysis documents;
+          mentored a junior engineer onto the project.
+        tags: [go, data, networking, mentoring]
+        weight: 70
+      - lead: Reliability and observability
+        text: >-
+          In Fabric’s Java connection and last-mile services, fixed thread starvation and
+          timeouts that breached a 60-second sidecar limit, bridged Micrometer metrics
+          into OpenTelemetry, and moved the team’s Grafana dashboards into Terraform.
+        tags: [java, observability]
+        weight: 60
+
+  - id: home-depot
+    org: The Home Depot
+    title: Senior Software Engineer (contract, then full-time)
+    location: Remote
+    start: 2020-04
+    end: 2023-10
+    highlights:
+      - lead: GitOps deployment at fleet scale
+        text: >-
+          Hired to replace a failing proof-of-concept deployment service; redesigned and
+          rewrote it from scratch as the GitOps deployment service for the in-store
+          Kubernetes platform, which spans 2,317 store and distribution-center clusters.
+          It renders each deployable unit through Go templates and kustomize and commits
+          the result to every target store’s repository, where Flux syncs it. It still
+          runs, handling about 15,000 deployments a week for 24 teams, 99.8% of them
+          successful.
+        tags: [go, kubernetes, distributed]
+        weight: 95
+      - lead: In-memory filesystem
+        text: >-
+          Made rendering reliable and testable by writing an in-memory filesystem that
+          implemented both go-git’s and kustomize’s filesystem interfaces, so cloning,
+          templating and committing never touched disk and every step could be
+          unit-tested. Built in 2020, before Go’s standard library had a filesystem
+          interface.
+        tags: [go]
+        weight: 70
+      - lead: Fleet heartbeat monitoring
+        text: >-
+          Built a dead man’s switch for the fleet’s monitoring: each cluster’s Prometheus
+          sends a heartbeat every 20 minutes, and a cluster that falls silent raises an
+          alert, catching network outages that in-cluster monitoring cannot report.
+          Clusters register themselves; it still watches 2,232 production targets.
+        tags: [go, observability, kubernetes]
+        weight: 80
+      - text: Mentored a junior engineer who now maintains the deployment service.
+        tags: [mentoring]
+        weight: 55
+
+  - id: cray
+    org: Cray
+    title: Senior Software Engineer (contract)
+    location: Remote
+    start: 2019-08
+    end: 2020-04
+    highlights:
+      - lead: Supercomputer fabric controller
+        text: >-
+          Designed the fabric controller for Cray’s Shasta exascale supercomputers: Go
+          microservices behind a configuration API that controlled the system’s entire
+          high-speed network and wrote changes directly into switch memory. The design
+          drew on RFC~8342’s intended and operational configuration, and on etcd.
+        tags: [go, hpc, networking, distributed]
+        weight: 95
+      - text: Moved the existing C++ fabric controller to Go.
+        tags: [go, cpp]
+        weight: 50
+
+  - id: juniper
+    org: Juniper Networks
+    title: Resident Consultant, Advanced Services
+    location: Alpharetta, GA
+    start: 2015-04
+    end: 2019-03
+    highlights:
+      - lead: Brought automation and Go
+        text: >-
+          On site with WOW!, a U.S. cable operator serving 19 markets (about 3~million
+          homes passed), whose engineers did nearly everything by logging into routers by
+          hand. Introduced Go for its simple concurrency model and built the automation
+          platform: a Junos library over NETCONF and SSH, an ORM over the MySQL device
+          database, and Docker deployments. Taught network engineers to automate their
+          own work.
+        tags: [go, networking, mentoring]
+        weight: 90
+      - lead: Tools the whole team used
+        text: >-
+          Built a health check every engineer relied on, scanning routers for chassis
+          alarms, core dumps and down BGP, OSPF, RSVP, MPLS and layer-2 sessions; an
+          inventory system the manager used for capacity planning; and a public looking
+          glass that let other providers run traceroutes and BGP route lookups on the
+          network.
+        tags: [go, networking, observability]
+        weight: 75
+      - lead: DDoS response and troubleshooting
+        text: >-
+          Built the chat bot the team used to blackhole DDoS and spam traffic and run
+          diagnostics (contributing TLS support to its open-source framework), tools for
+          tracing MPLS and multicast LSPs, and a bulk CLI and NETCONF execution service.
+        tags: [go, networking]
+        weight: 65
+
+  - id: first-data
+    org: First Data
+    title: Application Developer, North Front-End Authorization Switch
+    location: Atlanta, GA
+    start: 2013-09
+    end: 2015-01
+    highlights:
+      - lead: Real-time statistics monitor
+        text: >-
+          Built the C++ switch-side collector for USM, a real-time monitor of transaction
+          rates across the authorization switches: it read statistics from shared memory
+          and streamed them to a central aggregator, and its builder-pattern design
+          wrapped the existing C, so a new statistic took a few lines.
+        tags: [cpp, observability, payments]
+        weight: 70
+      - lead: Payments at scale
+        text: >-
+          C and C++ on AIX for a switch handling up to 6,000 card authorizations a second
+          at holiday peak, sized for about 24,000 to survive a site failure, under a
+          contractual 99.999% availability target.
+        tags: [cpp, payments, distributed]
+        weight: 85
+      - lead: Modernization without breaking production
+        text: >-
+          Introduced GCC alongside IBM XL~C (later the standard) and Clang’s static
+          analyzer and sanitizers; fixed thousands of lines of the switch’s C without a
+          production incident.
+        tags: [cpp]
+        weight: 60
+
+# Shown after the roles, in one line.
+earlier: >-
+  Lab technician and teaching assistant, Nova Southeastern (2011–2013); IT and technical
+  support (1999–2013).
+
+skills:
+  - group: Languages
+    items: [Go (Golang), C++, C, Java, Python, SQL, Bash]
+  - group: Distributed systems
+    items: [Temporal, Kafka, gRPC, REST, Kubernetes, Helm, "GitOps (Flux, kustomize)"]
+  - group: Data
+    items: [PostgreSQL, CockroachDB, MongoDB, MySQL]
+  - group: Observability
+    items: [Prometheus, OpenTelemetry, "Grafana (as code, with Terraform)", Loki, Tempo, Splunk]
+  - group: Cloud and networking
+    items: [AWS, Google Cloud, Azure, Equinix Fabric, VPP, IPFIX, NETCONF]
+  - group: AI engineering
+    items: [MCP servers and agent skills, LLM-as-judge evaluation, Claude Code plugins and hooks]
+
+education:
+  - id: nsu
+    org: Nova Southeastern University
+    program: Computer Science major
+    # The B.S. was never conferred (two physics courses short). Renderers print the
+    # program and the note, never the degree as earned; `vitae validate` enforces this.
+    degree: B.S. in Computer Science
+    conferred: false
+    minors: [mathematics, applied statistics, information assurance]
+    start: 2010
+    end: 2014
+    note: >-
+      Completed all major and minor requirements; two physics courses short of
+      the~B.S.~degree.
+    gpa: "3.91"
+    honors: [Dean’s List every year, Alpha Chi, Delta Epsilon Iota]
+    courses:
+      - { name: linear algebra, tags: [math] }
+      - { name: probability and statistics, tags: [math] }
+      - { name: applied regression, tags: [math] }
+      - { name: applied multivariate statistical analysis, tags: [math] }
+      - { name: abstract algebra, tags: [math] }
+      - { name: functional analysis, tags: [math] }
+
+# Variants choose sections and highlights; they never reword. A highlight's score is its
+# weight plus `boost_by` (default 20) for each boosted tag it carries.
+variants:
+  full:
+    description: The two-page résumé, everything in this file.
+    sections: [summary, skills, experience, earlier, education]
+  onepage:
+    description: One page for quick reads; the strongest highlights from Juniper on.
+    sections: [summary, experience, skills, education]
+    since: 2015-04
+    max_highlights: 3
+    min_weight: 70
+  go:
+    description: For Go roles.
+    sections: [summary, skills, experience, education]
+    boost: [go, distributed]
+    max_highlights: 4
+  ai-infra:
+    description: For AI and ML infrastructure roles.
+    sections: [summary, skills, experience, education]
+    boost: [ai, hpc, distributed, networking]
+    max_highlights: 4
+    show_courses: [math]

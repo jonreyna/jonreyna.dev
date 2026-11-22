@@ -1,0 +1,74 @@
+# Fixture for golden tests: small, stable, and touching every feature.
+schema: 1
+basics:
+  name: Ada Example
+  label: Staff Engineer
+  location: Somewhere, FL
+  remote: true
+  email: ada@example.com
+  links:
+    - { kind: site, url: "https://example.com", text: example.com }
+summary:
+  default: Builds *distributed* systems in `Go`; see [the site](https://example.com).
+  short: Builds systems.
+tags:
+  go: Go
+  ai: AI
+  legacy: old work
+  math: math
+experience:
+  - id: now
+    org: Now Corp
+    title: Staff Engineer
+    location: Remote
+    start: 2024-01
+    end: null
+    highlights:
+      - { lead: First, text: "Strong Go work for 2,000~clusters.", tags: [go], weight: 90 }
+      - { lead: Second, text: "AI work, \\*literally\\*.", tags: [ai], weight: 60 }
+      - { text: "Old habits.", tags: [legacy], weight: 80 }
+  - id: before
+    org: Before & Co
+    title: Engineer
+    location: Atlanta, GA
+    start: 2015-03
+    end: 2023-12
+    highlights:
+      - { text: "Middling work.", tags: [go], weight: 50 }
+  - id: long-ago
+    org: Long Ago Inc
+    title: Developer
+    location: Atlanta, GA
+    start: 2010-01
+    end: 2014-12
+    highlights:
+      - { text: "Early work in C.", tags: [legacy], weight: 70 }
+earlier: Odd jobs (1999–2009).
+skills:
+  - { group: Languages, items: [Go, C] }
+education:
+  - id: uni
+    org: Example University
+    program: Computer Science major
+    degree: B.S. in Computer Science
+    conferred: false
+    start: 2006
+    end: 2010
+    note: Two courses short of the~degree.
+    courses:
+      - { name: linear algebra, tags: [math] }
+      - { name: pottery, tags: [] }
+variants:
+  full:
+    description: everything
+    sections: [summary, skills, experience, earlier, education]
+  focused:
+    description: boosted, trimmed, recent
+    summary: short
+    label: AI Engineer
+    sections: [summary, experience, education]
+    since: 2015-01
+    boost: [ai]
+    exclude: [legacy]
+    max_highlights: 1
+    show_courses: [math]
