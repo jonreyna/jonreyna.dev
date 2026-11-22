@@ -2,18 +2,15 @@ import 'package:jaspr/dom.dart';
 import 'package:jaspr/server.dart';
 import 'package:jaspr_content/jaspr_content.dart';
 
+import '../dates.dart';
+
 /// Design J ("Red and black, with algorithms") as a jaspr_content layout.
-/// See ../../../site-specimens/DESIGN.md for the rules this follows.
+/// See DESIGN.md (in site/) for the rules this follows.
 class JLayout extends PageLayoutBase {
   const JLayout();
 
   @override
   Pattern get name => 'j';
-
-  static const _months = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December',
-  ];
 
   // PageLayoutBase.buildHead hard-codes "Title | Base", so this replaces it rather than
   // calling it. It covers the parts of the base that the site uses: title, description,
@@ -32,6 +29,9 @@ class JLayout extends PageLayoutBase {
     if (data['description'] case final String description) {
       yield meta(name: 'description', content: description);
       yield meta(attributes: {'property': 'og:description'}, content: description);
+    }
+    if (data['kind'] == 'essay' && data['date'] is String) {
+      yield meta(attributes: {'property': 'article:published_time'}, content: data['date'] as String);
     }
     if (data['image'] case final String image) {
       yield meta(attributes: {'property': 'og:image'}, content: image);
@@ -74,16 +74,22 @@ class JLayout extends PageLayoutBase {
           if (isHome) h1(classes: 'name', [name]) else p(classes: 'name', [name]),
           p(classes: 'motto', [.text('distributed systems & AI infrastructure')]),
           nav(attributes: {'aria-label': 'Site'}, [
-            a(href: '/#work', [.text('work')]),
-            a(href: '/#writing', [.text('writing')]),
-            a(href: '/#play', [.text('play')]),
-            a(href: '/resume', [.text('résumé')]),
+            for (final (href, label) in _nav)
+              a(
+                href: href,
+                attributes: {if (_inSection(page.url, href)) 'aria-current': 'page'},
+                [.text(label)],
+              ),
           ]),
         ]),
         main_(id: 'main', classes: data['kind'] == 'essay' ? 'essay' : null, [
-          if (data['kind'] == 'essay') _essayHead(data),
-          if (data['kind'] == 'page' && data['title'] is String) h1(classes: 'page-title', [.text(data['title'] as String)]),
-          child,
+          if (data['kind'] == 'essay')
+            article([_essayHead(data), child, _essayFoot()])
+          else ...[
+            if (data['kind'] == 'page' && data['title'] is String)
+              h1(classes: 'page-title', [.text(data['title'] as String)]),
+            child,
+          ],
         ]),
         footer(classes: 'site-foot', [
           a(href: '/about', [.text('about')]),
@@ -96,10 +102,31 @@ class JLayout extends PageLayoutBase {
     ]);
   }
 
+  /// The four nav items (DESIGN.md, "Masthead"). Play has no page until Phase 6, so it
+  /// points at the home page's section.
+  static const _nav = [
+    ('/work', 'work'),
+    ('/writing', 'writing'),
+    ('/#play', 'play'),
+    ('/resume', 'résumé'),
+  ];
+
+  /// Whether [url] is the nav item's page or one below it (an essay under /writing).
+  static bool _inSection(String url, String href) =>
+      !href.contains('#') && (url == href || url.startsWith('$href/'));
+
+  /// Ends every essay: who wrote it and the way back to the list.
+  Component _essayFoot() => footer(classes: 'essay-foot', [
+    p([
+      .text('Written by Jon Reyna. '),
+      a(href: '/writing', [.text('All writing')]),
+      .text('.'),
+    ]),
+  ]);
+
   Component _essayHead(Map<String, Object?> data) {
     final date = '${data['date'] ?? ''}';
-    final parts = date.split('-');
-    final shown = parts.length >= 2 ? '${_months[int.parse(parts[1]) - 1]} ${parts[0]}' : date;
+    final shown = formatMonth(date);
     return Component.fragment([
       header(classes: 'essay-head', [
         h1([.text('${data['title']}')]),

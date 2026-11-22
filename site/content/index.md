@@ -12,10 +12,11 @@ I build distributed systems that keep large fleets of infrastructure in their in
 <p class="work"><span class="t">küber</span>, <span class="m">The Home Depot, 2020–2023.</span> GitOps deployment to 2,317 store Kubernetes clusters. It still carries about 15,000 deployments a week for 24 teams.</p>
 <p class="work"><span class="t">Watchdog</span>, <span class="m">The Home Depot, 2021.</span> A dead man’s switch that raises an alert when a store’s monitoring goes silent. It watches 2,232 production targets.</p>
 <p class="work"><span class="t">Temporal middleware</span>, <span class="m">Equinix, 2024–2025.</span> Composable retries, metrics and rollback for the workflows that connect Equinix Fabric to AWS, Google Cloud and Azure.</p>
+<p class="more"><a href="/work">More work, and the story behind each</a></p>
 
 <h2 id="writing">Writing</h2>
 
-Nothing published yet.
+<EssayList limit="3"/>
 
 <h2 id="play">Play</h2>
 

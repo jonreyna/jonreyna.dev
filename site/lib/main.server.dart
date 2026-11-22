@@ -5,8 +5,10 @@ import 'package:jaspr/server.dart';
 import 'package:jaspr_content/jaspr_content.dart';
 import 'package:jaspr_content/theme.dart';
 
+import 'components/essay_list.dart';
 import 'components/knuth.dart';
 import 'components/resume_view.dart';
+import 'essay_sections.dart';
 import 'layouts/j_layout.dart';
 import 'main.server.options.dart';
 
@@ -21,9 +23,13 @@ void main() {
 
   runApp(
     ContentApp(
+      // The writing index and the home page list other pages, so load them all first.
+      eagerlyLoadAllPages: true,
       parsers: [MarkdownParser()],
+      extensions: [const EssaySectionsExtension()],
       components: [
         ...knuthComponents(),
+        EssayList.component(),
         CustomComponent(pattern: 'Resume', builder: (_, _, _) => const ResumeView()),
       ],
       layouts: [const JLayout()],
