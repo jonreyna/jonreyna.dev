@@ -21,7 +21,7 @@ func Apply(r *resume.Resume, name string) (*Resolved, error) {
 		return nil, fmt.Errorf("%w: %q", ErrUnknown, name)
 	}
 
-	out := &Resolved{Variant: name, Sections: v.Sections, Basics: r.Basics}
+	out := &Resolved{Variant: name, Description: v.Description, Sections: v.Sections, Basics: r.Basics}
 	if v.Label != "" {
 		out.Basics.Label = v.Label
 	}

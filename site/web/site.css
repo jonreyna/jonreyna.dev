@@ -155,13 +155,21 @@ sup { font-size: 0.7em; line-height: 0; }
 a.footnote-backref { margin-left: 0.2em; }
 .footnotes li p { text-indent: 0; display: inline; }
 
-/* Résumé page, from résumé JSON */
-.resume .role { margin-bottom: var(--space-4); }
-.resume .role-head { font-weight: 500; }
-.resume .role-head .m { font-weight: 400; font-style: italic; color: var(--muted); }
-.resume ul { margin: var(--space-1) 0 0; padding-left: 1.1rem; }
-.resume li { margin-bottom: var(--space-1); }
-.resume li::marker { color: var(--red); content: "\2013\00a0"; }
+/* Résumé page (lib/components/resume_view.dart): run-in entries like the home page's */
+.resume .contact { margin-top: 0; }
+.resume .contact + .contact { margin-top: var(--space-1); }
+.resume .summary { margin-top: var(--space-4); text-indent: 0; }
+.resume .contact a { white-space: nowrap; }
+.resume .contact .sep { margin: 0 0.2em 0 0.45em; }
+.resume .run { text-indent: 0; }
+.resume .run .t { font-weight: 500; }
+.resume .run .m { font-style: italic; color: var(--muted); }
+.resume p.run + p.run { margin-top: var(--space-1); }
+.resume .role { margin-bottom: var(--space-3); }
+.resume .role .plain { margin-top: var(--space-1); }
+.resume .lead { font-style: italic; }
+.resume .downloads .files { white-space: nowrap; }
+.resume .downloads .sep { color: var(--red); margin: 0 0.45em; }
 
 /* Markdown output mapped onto design J */
 .essay h2:first-of-type + p::first-letter { float: left; font-size: var(--size-initial); line-height: 0.82; padding: 0.06em 0.1em 0 0; color: var(--red); font-weight: 500; }
@@ -178,3 +186,21 @@ main > table { margin: 1.4rem 0; }
 
 /* Markdown inside a component arrives as a paragraph; keep it inline in the list item */
 .algorithm li > p, .ex li > span > p { display: inline; text-indent: 0; }
+
+/* Print: black ink on white, no masthead rules or navigation, URLs after links
+   (DESIGN.md, "Print"). Written for the résumé page; other pages print the same way. */
+@media print {
+  @page { margin: 0.6in 0.7in; }
+  :root { font-size: 10.5pt; }
+  body { background: #fff; color: #000; }
+  .wrap { max-width: none; padding: 0; }
+  .skip, .masthead nav, .masthead .motto, .site-foot, .anchor, #downloads, .downloads, .resume .contact + .contact { display: none; }
+  .masthead { border: 0; margin: 0; padding: 0 0 0.4rem; }
+  main { padding-top: 0; }
+  .page-title { display: none; }
+  a, h2, .sep, .contact .sep, .plain li::before, .m, .contact { color: #000 !important; }
+  a { text-decoration: none !important; }
+  a[href^="http"]:not(.bare)::after { content: " (" attr(href) ")"; font-size: 0.9em; }
+  h2 { margin: 1rem 0 0.3rem; break-after: avoid; }
+  li, .run { break-inside: avoid; }
+}

@@ -15,6 +15,9 @@ type Document struct {
 	Schema int `json:"schema"`
 	// Variant is the name of the variant this document shows.
 	Variant string `json:"variant"`
+	// Description says what the variant is for, in a sentence a visitor can read; the
+	// website labels the variant's downloads with it.
+	Description string `json:"description"`
 	// Sections are the sections to print, in order.
 	Sections []string `json:"sections"`
 	// Basics is the header.
@@ -37,9 +40,10 @@ func NewDocument(r *variant.Resolved) Document {
 
 	b := r.Basics
 	d := Document{
-		Schema:   DocumentSchema,
-		Variant:  r.Variant,
-		Sections: r.Sections,
+		Schema:      DocumentSchema,
+		Variant:     r.Variant,
+		Description: r.Description,
+		Sections:    r.Sections,
 		Basics: DocumentBasics{
 			Name: b.Name, Label: b.Label, Location: b.Location, Remote: b.Remote,
 			Email: b.Email, Phone: b.Phone, Links: append([]resume.Link{}, b.Links...),

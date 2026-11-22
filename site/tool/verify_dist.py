@@ -5,7 +5,7 @@ Run by `make verify`. Fails (exit 1) if any page:
   - loads the island bundle without containing an island,
   - lacks a <title>, a lang attribute, or a meta description (the 404 page is exempt
     from the description),
-or if a file the deploy needs is missing.
+or if a file the deploy needs is missing (including the résumé page and its JSON).
 """
 
 import pathlib
@@ -33,7 +33,7 @@ for page in sorted(DIST.rglob("*.html")):
     if rel.name != "404.html" and '<meta name="description"' not in html:
         problems.append(f"{rel}: no meta description")
 
-for required in ("index.html", "404.html", "_headers"):
+for required in ("index.html", "404.html", "_headers", "resume/index.html", "resume/resume.full.json"):
     if not (DIST / required).is_file():
         problems.append(f"missing {required}")
 

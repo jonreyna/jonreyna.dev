@@ -26,22 +26,22 @@ Needs Dart 3.13 (Jaspr 0.23.5 doesn’t resolve on Dart 3.14 yet), Go for the r�
 
 ```bash
 make setup    # dart pub get, the Jaspr CLI, and the git hooks (no binaries in git)
-make serve    # build, stage dist/, serve on http://localhost:8767
+make serve    # build (the résumé page included), stage dist/, serve on http://localhost:8767
 make deploy   # upload dist/ to Cloudflare
-make resume   # validate resume/resume.yaml and render every variant into build/resume
+make resume   # render every variant of resume/resume.yaml into build/resume
 ```
 
 `make help` lists every target.
 
 ## CI/CD
 
-`.github/workflows/site.yml` builds, analyzes and checks the site (`make verify`) on every push and pull request, and weekly. A second job tests `vitae`, validates the résumé strictly and renders every public variant. A push to `main` publishes to Cloudflare; a pull request gets a preview version, with its URL commented on the pull request. The Cloudflare steps run once two repository secrets exist:
+`.github/workflows/site.yml` builds, analyzes and checks the site (`make verify`) on every push and pull request, and weekly. A second job lints and tests `vitae` and validates the résumé strictly. The site build renders every public variant itself: the résumé page shows `resume.full.json`, and `/resume/` serves each rendered file for download. A push to `main` publishes to Cloudflare; a pull request gets a preview version, with its URL commented on the pull request. The Cloudflare steps run once two repository secrets exist:
 
 - `CLOUDFLARE_ACCOUNT_ID`: the account ID from the Cloudflare dashboard.
 - `CLOUDFLARE_API_TOKEN`: an API token made from the "Edit Cloudflare Workers" template, limited to this account.
 
 ## License
 
-- **Writing** (everything in `site/content/`: essays, page text and the résumé data): © Jon Reyna, licensed under [Creative Commons Attribution 4.0](https://creativecommons.org/licenses/by/4.0/) ([`LICENSE-CONTENT`](LICENSE-CONTENT)). Reuse it with credit and a link.
+- **Writing** (everything in `site/content/` and `resume/`: essays, page text and the résumé): © Jon Reyna, licensed under [Creative Commons Attribution 4.0](https://creativecommons.org/licenses/by/4.0/) ([`LICENSE-CONTENT`](LICENSE-CONTENT)). Reuse it with credit and a link.
 - **Fonts** in `site/web/fonts/`: their own licenses, kept beside them. The font files themselves aren't in git; `make fonts` downloads each from a pinned release and checks its SHA-256. Libertinus Math is under the SIL Open Font License 1.1 ([`OFL.txt`](site/web/fonts/OFL.txt)).
 - **Everything else** (code, styles, build files, `DESIGN.md`): [MIT](LICENSE).

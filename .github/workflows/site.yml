@@ -23,8 +23,9 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
-  # The résumé pipeline: vitae's tests, strict validation of resume.yaml, and a render of
-  # every public variant. Never given the private overlay.
+  # The résumé pipeline: vitae's lint and tests, and strict validation of resume.yaml.
+  # The site job renders the public variants for the résumé page. Neither job is ever
+  # given the private overlay.
   resume:
     runs-on: ubuntu-24.04
     timeout-minutes: 10
@@ -40,9 +41,6 @@ jobs:
 
       - name: Lint and test the Go tools, and validate the résumé
         run: make resume-check
-
-      - name: Render every variant
-        run: make resume
 
   site:
     runs-on: ubuntu-24.04
@@ -67,6 +65,12 @@ jobs:
         with:
           path: ~/.pub-cache
           key: pub-${{ runner.os }}-dart3.13.7-${{ hashFiles('site/pubspec.lock') }}
+
+      # `make site` builds vitae and renders the résumé that the résumé page shows.
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: tools/vitae/go.mod
+          cache-dependency-path: tools/*/go.mod
 
       - name: Check that no binary files are tracked
         run: make no-binaries

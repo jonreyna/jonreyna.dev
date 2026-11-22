@@ -287,21 +287,21 @@ education:
 # weight plus `boost_by` (default 20) for each boosted tag it carries.
 variants:
   full:
-    description: The two-page résumé, everything in this file.
+    description: The full résumé, two pages.
     sections: [summary, skills, experience, earlier, education]
   onepage:
-    description: One page for quick reads; the strongest highlights from Juniper on.
+    description: One page, with the strongest work since 2015.
     sections: [summary, experience, skills, education]
     since: 2015-04
     max_highlights: 3
     min_weight: 70
   go:
-    description: For Go roles.
+    description: For Go roles, with Go and distributed-systems work first.
     sections: [summary, skills, experience, education]
     boost: [go, distributed]
     max_highlights: 4
   ai-infra:
-    description: For AI and ML infrastructure roles.
+    description: For AI and ML infrastructure roles, with AI, HPC and networking work first.
     sections: [summary, skills, experience, education]
     boost: [ai, hpc, distributed, networking]
     max_highlights: 4

@@ -88,6 +88,10 @@ Text sizes and colors all pass WCAG AA. No success, warning or error colors exis
 
 **Writing list** (`/writing`, and on the home page). The same run-in form: the essay's title as a link in weight 500, its month and year in italic `--muted`, then its abstract (or its description). Newest first. Essays live in `content/writing/` and appear once they have `kind: essay`, a `date` and no `draft` or `noindex`. With none, the list says "Nothing published yet."
 
+**Résumé page** (`/resume`, `<Resume/>` in `lib/components/resume_view.dart`). Built from `resume.full.json`, which `vitae` renders from `resume/resume.yaml` in the same build. First the contact line (label, location, email, LinkedIn and GitHub, with the profile URLs as their text) and a "Download:" line with the full résumé's files, so a recruiter has the PDF in five seconds (principle 6). Then the summary, unindented, and the sections in the order the JSON lists them. Roles and schools are run in like the home page's work entries: the employer in weight 500, the title in roman, the place and dates in italic `--muted`. Highlights are a red-dash list; each opens with its lead in italics. Last, *Downloads*: one line per variant, labeled with its description, with a link per format. The page links only files the build actually produced, so no link is dead, and the build fails if `resume.full.json` is missing.
+
+**Print.** One stylesheet for every page, written for the résumé: black ink on white, 10.5pt, no masthead rules, nav, motto, footer, § links or page title, and no Downloads section. A link to another site prints its URL after it, unless its text is already the URL (class `bare`). Headings stay with what follows; list items and entries don't split across pages.
+
 **Essay foot.** A centered italic line after the essay, before the footer: "Written by Jon Reyna. All writing."
 
 **Essay head.** Centered: the title (`<h1>`), "by Jon Reyna" in italics, and the month and year in red small capitals inside `<time datetime>`. Then an optional abstract: centered, italic, `--muted`, at most about 50 words, inset 1.5rem on each side (no inset on phones).
@@ -170,8 +174,6 @@ No photos in the design and no icon set. Diagrams are inline SVG drawn in `curre
 
 - The final favicon: a red "J" in Alegreya SC, outlined to a path at build time. (`favicon.svg` uses Georgia for now.)
 - The Open Graph image (1200×630): the masthead as a title page, on parchment.
-- A print stylesheet: black ink only, URLs after links, no masthead rules.
-- The résumé page (Phase 5d): the same type, with work entries in the home page's run-in style.
 
 ## Review log
 
