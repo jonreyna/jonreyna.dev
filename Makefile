@@ -9,7 +9,7 @@ export PATH := $(if $(DART_HOME),$(DART_HOME)/bin:)$(PATH):$(HOME)/.pub-cache/bi
 # Wrangler, pinned exactly; bump it on purpose.
 WRANGLER ?= npx --yes wrangler@4.158.0
 
-.PHONY: help setup no-binaries fonts site dist serve check verify deploy preview clean vitae go-lint go-test resume-check resume site-resume resume-private
+.PHONY: help setup no-binaries fonts site dist serve check verify deploy preview clean vitae go-lint go-test resume-check resume resume-pdf site-resume resume-private
 
 help:  ## List targets
 	@grep -E '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  %-15s %s\n", $$1, $$2}'
@@ -111,19 +111,39 @@ resume: vitae  ## Render every variant and format into build/resume (public fiel
 	rm -rf build/resume
 	$(VITAE) render -i resume/resume.yaml -o build/resume
 
+# PDFs: latexmk and pdfLaTeX turn each resume.<variant>.tex into a PDF beside it. The
+# design is resume/latex/jrresume.cls, found through TEXINPUTS. Auxiliary files go to
+# build/latex/. SOURCE_DATE_EPOCH (the last commit's time) keeps the PDFs reproducible.
+LATEXMK ?= latexmk
+PDF_DATE := $(shell git log -1 --format=%ct 2>/dev/null || echo 0)
+define build-pdfs
+	for tex in $(1)/resume.*.tex; do \
+		name=$$(basename $$tex .tex); \
+		SOURCE_DATE_EPOCH=$(PDF_DATE) FORCE_SOURCE_DATE=1 TEXINPUTS=$(CURDIR)/resume/latex//: \
+			$(LATEXMK) -pdf -silent -interaction=nonstopmode -halt-on-error \
+			-outdir=$(CURDIR)/build/latex/$(notdir $(1)) $$tex || exit 1; \
+		cp build/latex/$(notdir $(1))/$$name.pdf $(1)/$$name.pdf; \
+		echo "wrote $(1)/$$name.pdf"; \
+	done
+endef
+
+resume-pdf: resume  ## Build a PDF of every variant into build/resume (needs TeX Live)
+	$(call build-pdfs,build/resume)
+
 # The site's résumé page and downloads come from the same render (public fields only).
 # site/web/resume/ is git-ignored; Jaspr copies it into the build, so the files are
-# served at /resume/resume.<variant>.<format>.
-site-resume: resume  ## Copy the rendered résumé into site/web/resume for the site build
+# served at /resume/resume.<variant>.<format>. The .tex sources stay out.
+site-resume: resume-pdf  ## Copy the rendered résumé into site/web/resume for the site build
 	rm -rf site/web/resume
 	mkdir -p site/web/resume
-	cp build/resume/resume.* site/web/resume/
+	cp build/resume/resume.*.json build/resume/resume.*.pdf site/web/resume/
 
 # Adds the phone number from resume/resume.private.yaml. Local only: never in CI.
 resume-private: vitae  ## Render with the private overlay into build/resume-private
 	@test -f resume/resume.private.yaml || { echo "copy resume/resume.private.example.yaml to resume/resume.private.yaml first"; exit 1; }
 	rm -rf build/resume-private
 	$(VITAE) render -i resume/resume.yaml -private resume/resume.private.yaml -o build/resume-private
+	$(call build-pdfs,build/resume-private)
 
 clean:  ## Remove build output, the copied résumé and downloaded fonts
 	rm -rf site/build dist .wrangler build site/web/resume $(MATH_FONT)

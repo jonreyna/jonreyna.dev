@@ -18,17 +18,18 @@ Makefile     the same targets locally and in CI
 wrangler.jsonc
 ```
 
-Planned: PDF, Word, text and Markdown output from `vitae`, and `play/` (interactive pieces, each a self-contained bundle).
+Planned: Word, text and Markdown output from `vitae`, and `play/` (interactive pieces, each a self-contained bundle).
 
 ## Building
 
-Needs Dart 3.13 (Jaspr 0.23.5 doesn’t resolve on Dart 3.14 yet), Go for the résumé tools and, for deploying, Node.
+Needs Dart 3.13 (Jaspr 0.23.5 doesn’t resolve on Dart 3.14 yet), Go for the résumé tools, TeX Live with latexmk for the résumé PDFs (the packages are listed in `resume/latex/texlive-packages.txt`) and, for deploying, Node.
 
 ```bash
 make setup    # dart pub get, the Jaspr CLI, and the git hooks (no binaries in git)
 make serve    # build (the résumé page included), stage dist/, serve on http://localhost:8767
 make deploy   # upload dist/ to Cloudflare
 make resume   # render every variant of resume/resume.yaml into build/resume
+make resume-pdf   # ...and build a PDF of each (fails if one runs past its max_pages)
 ```
 
 `make help` lists every target.

@@ -79,6 +79,12 @@ func TestRules(t *testing.T) {
 			r.Variants["focused"] = v
 		}, "selects no highlights", Error},
 
+		{"negative page limit", func(r *resume.Resume) {
+			v := r.Variants["focused"]
+			v.MaxPages = -1
+			r.Variants["focused"] = v
+		}, "can't be negative", Error},
+
 		{"long highlight", func(r *resume.Resume) {
 			r.Experience[0].Highlights[0].Text = strings.Repeat("word ", 140)
 		}, "characters", Warning},

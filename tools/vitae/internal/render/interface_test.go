@@ -13,6 +13,7 @@ func TestFor(t *testing.T) {
 		wantErr error
 	}{
 		{format: "json"},
+		{format: "tex"},
 		{format: "pdf", wantErr: ErrUnknownFormat},
 		{format: "", wantErr: ErrUnknownFormat},
 	}

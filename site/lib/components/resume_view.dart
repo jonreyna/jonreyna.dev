@@ -137,8 +137,15 @@ class ResumeView extends StatelessComponent {
     a(classes: 'anchor', href: '#$id', attributes: {'aria-label': 'Link to section $title'}, [.text('§')]),
   ]);
 
+  /// Links to [names]. Files meant to be saved (everything but JSON) download under a
+  /// name a recruiter can file: Jon-Reyna-Resume.pdf, Jon-Reyna-Resume-onepage.pdf.
   List<Component> _fileLinks(List<String> names) => _dotted([
-    for (final name in names) a(href: '$urlBase/$name', [.text(ResumeFiles.formatLabel(name))]),
+    for (final name in names)
+      a(
+        href: '$urlBase/$name',
+        attributes: {if (!name.endsWith('.json')) 'download': ResumeFiles.downloadName(name)},
+        [.text(ResumeFiles.formatLabel(name))],
+      ),
   ]);
 
   /// Puts the contact line's red middle dot between [parts]. The space after each dot
@@ -224,6 +231,13 @@ class ResumeFiles {
     'md': 'Markdown',
     'json': 'JSON',
   };
+
+  /// The name a file saves under: resume.full.pdf becomes Jon-Reyna-Resume.pdf, and
+  /// resume.onepage.pdf becomes Jon-Reyna-Resume-onepage.pdf.
+  static String downloadName(String name) {
+    final [_, variant, ext] = name.split('.');
+    return variant == 'full' ? 'Jon-Reyna-Resume.$ext' : 'Jon-Reyna-Resume-$variant.$ext';
+  }
 
   /// The link text for a file name's format.
   static String formatLabel(String name) {

@@ -285,7 +285,7 @@ func (c *checkState) variant(where, name string, v *resume.Variant) {
 	c.tags(where+".boost", v.Boost)
 	c.tags(where+".exclude", v.Exclude)
 	c.tags(where+".show_courses", v.ShowCourses)
-	if v.MaxRoles < 0 || v.MaxHighlights < 0 || v.MinWeight < 0 || v.BoostBy < 0 {
+	if v.MaxRoles < 0 || v.MaxHighlights < 0 || v.MinWeight < 0 || v.BoostBy < 0 || v.MaxPages < 0 {
 		c.errorf(where, "limits can't be negative")
 	}
 

@@ -289,20 +289,24 @@ variants:
   full:
     description: The full résumé, two pages.
     sections: [summary, skills, experience, earlier, education]
+    max_pages: 2
   onepage:
     description: One page, with the strongest work since 2015.
-    sections: [summary, experience, skills, education]
+    sections: [summary, experience, education]
     since: 2015-04
-    max_highlights: 3
-    min_weight: 70
+    max_highlights: 2
+    min_weight: 85
+    max_pages: 1
   go:
     description: For Go roles, with Go and distributed-systems work first.
     sections: [summary, skills, experience, education]
     boost: [go, distributed]
     max_highlights: 4
+    max_pages: 2
   ai-infra:
     description: For AI and ML infrastructure roles, with AI, HPC and networking work first.
     sections: [summary, skills, experience, education]
     boost: [ai, hpc, distributed, networking]
     max_highlights: 4
     show_courses: [math]
+    max_pages: 2

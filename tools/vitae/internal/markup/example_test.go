@@ -36,3 +36,8 @@ func ExampleHTML() {
 	fmt.Println(markup.HTML(markup.MustParse("Go & C, [GitHub](https://github.com/jonreyna)")))
 	// Output: Go &amp; C, <a href="https://github.com/jonreyna">GitHub</a>
 }
+
+func ExampleLaTeX() {
+	fmt.Println(markup.LaTeX(markup.MustParse("99.8% of *15,000* a week; RFC~8342, [GitHub](https://github.com/jonreyna)")))
+	// Output: 99.8\% of \emph{15,000} a week; RFC~8342, \href{https://github.com/jonreyna}{GitHub}
+}

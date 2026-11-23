@@ -25,7 +25,7 @@ Each package has a `doc.go`; `go doc ./internal/<package>` is the reference. In 
   - an education entry must say whether the degree was conferred, and if it wasn't, only its note may mention the degree.
 - **`internal/variant`** applies a variant. Each highlight scores its weight plus `boost_by` (default 20) per boosted tag. Excluded tags and scores under `min_weight` drop out, and the best `max_highlights` survive in their original order.
 - **`internal/markup`** handles the markup allowed in text fields: `*emphasis*`, `` `code` ``, `[text](https://url)`, and `~` for a non-breaking space.
-- **`internal/render`** writes the outputs. Each format implements `render.Interface` (one method, with a `render.Func` adapter), built by `render.For(format)`. JSON so far. LaTeX, plain text and Markdown come next, then PDF (latexmk) and Word (Pandoc) from `make`.
+- **`internal/render`** writes the outputs. Each format implements `render.Interface` (one method, with a `render.Func` adapter), built by `render.For(format)`. JSON for the website, and LaTeX for the PDF: `internal/render/latex.tmpl` lays out the content, and the design lives in `resume/latex/jrresume.cls`. `make resume-pdf` runs latexmk (pdfLaTeX) on each `.tex`, and the class stops the build when a PDF runs past its variant's `max_pages`. Plain text and Markdown come next, then Word (Pandoc) from `make`.
 
 Output is deterministic, so `testdata/golden/` holds exact expected files for `testdata/resume.yaml`. After an intended change, run `go test ./... -update` and review the diff.
 
