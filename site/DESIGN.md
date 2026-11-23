@@ -137,11 +137,16 @@ The Markdown processor applies these, so authors never have to:
 - **Punctuation stays with math:** a comma or period after inline math is wrapped with it so it can't start a line. The last word before inline math at the end of a sentence stays with it too ("for all *j*.").
 - **Dashes and signs:** en dash for ranges (2019–2020), em dash without spaces for breaks, true minus (−) and multiplication (×) signs, curly quotes and apostrophes.
 - **Back links** (↩) are tied to the last word of their note.
-- **MathML:**
+- **Math is written in TeX** and becomes MathML when the site is built (`lib/tex_math.dart`, with the pinned Pandoc; no script on the page):
+  - `$…$` inline, `$$…$$` display. A `$$…$$` paragraph becomes `<div class="eq">`; a numbered equation is one line, `<div class="eq num" id="eq-1">$$…$$<span class="no">(1)</span></div>`. `\$` is a dollar sign, and a `$` before a digit or after a space isn't math, so prices need no escaping.
+  - Upright names: `\mathrm{out}` or `\operatorname{out}`. Overbars: `\bar{v}`. Arrows: `\gets`.
+  - TeX that Pandoc can't read stops the build, naming the page and the formula.
+- **MathML rules,** applied to Pandoc's output automatically and covered by `make site-test`:
   - Parentheses get `stretchy="false"` with zero `lspace` and `rspace`, or Chrome spaces them like operators.
   - Overbars (adjoints and similar) use `<mover accent="false">` with U+00AF, or the bar collapses to a sub-pixel line.
   - A slash used as division inside a formula gets zero `lspace` and `rspace`.
-- Add golden tests for all of this in Phase 5e.
+  - An ellipsis is an operator; an upright name is one `<mi>`.
+  - A period, comma or other punctuation right after inline math is wrapped with it (the punctuation rule above). Keeping the word before it on the line is still by hand: `<span class="nowrap">all&nbsp;$j$.</span>`.
 
 ## Page template
 
