@@ -30,6 +30,14 @@ void main() {
         [('x = 1', true, false, '')],
       ),
       ('inline math stops at a blank line', 'a \$b\n\nc\$ d', []),
+      // Review on PR #8: each case below is read as Pandoc 3.13 reads it.
+      ('prices before math stay text', r'It cost $5 and $10; use $x$.', [('x', false, false, '.')]),
+      ('a dollar inside braces belongs to the formula', r'$\text{if $x$ then}$ ok', [(r'\text{if $x$ then}', false, false, '')]),
+      ('an unclosed brace is not math', r'$\frac{a$ b', []),
+      ('an escaped brace does not open a group', r'$\{a$ and', [(r'\{a', false, false, '')]),
+      ('an escaped dollar inside display math', 'a \$\$\\\$\$\$ b', [(r'\$', true, false, '')]),
+      ('a longer closing fence closes the fence', '```\n\$a\$\n````\n\n\$b\$', [('b', false, false, '')]),
+      ('a shorter run does not close the fence', '````\n```\n\$a\$\n````\n\$b\$', [('b', false, false, '')]),
     ];
     for (final (name, source, want) in cases) {
       test(name, () {
@@ -136,8 +144,15 @@ void main() {
       });
     }
 
+    test('a dollar inside \\text, as the scanner finds it', skip: skip, () async {
+      final spans = findMath(r'$\text{if $x$ then}$');
+      final [math] = await convertWithPandoc(spans, pandoc, 'test');
+      expect(math, allOf(contains('if </mtext>'), contains('<mi>x</mi>'), contains(' then</mtext>')));
+    });
+
     test('TeX that Pandoc cannot parse fails', skip: skip, () async {
-      final spans = findMath(r'$\frac{a$');
+      final spans = findMath(r'$a^$');
+      expect(spans, hasLength(1));
       await expectLater(convertWithPandoc(spans, pandoc, 'test'), throwsStateError);
     });
   });

@@ -76,12 +76,16 @@ List<MathSpan> findMath(String source) {
   var lineStart = true;
   while (i < source.length) {
     final c = source[i];
-    // Code fences: ``` or ~~~ at the start of a line, closed by the same run.
+    // Code fences: ``` or ~~~ at the start of a line, closed (as in CommonMark) by a
+    // run of the same character at least as long.
     if (lineStart) {
       final fence = RegExp(r' {0,3}(`{3,}|~{3,})').matchAsPrefix(source, i);
       if (fence != null) {
         final marker = fence.group(1)!;
-        final close = RegExp('^ {0,3}${RegExp.escape(marker)}[ \t]*\$', multiLine: true);
+        final close = RegExp(
+          '^ {0,3}${RegExp.escape(marker[0])}{${marker.length},}[ \t]*\$',
+          multiLine: true,
+        );
         final afterOpen = source.indexOf('\n', i);
         final m = afterOpen < 0 ? null : close.firstMatch(source.substring(afterOpen + 1));
         i = m == null ? source.length : afterOpen + 1 + m.end;
@@ -106,8 +110,8 @@ List<MathSpan> findMath(String source) {
       continue;
     }
     if (source.startsWith(r'$$', i)) {
-      final close = source.indexOf(r'$$', i + 2);
-      if (close < 0 || source.substring(i + 2, close).contains(RegExp(r'\n[ \t]*\n'))) {
+      final close = _closingDoubleDollar(source, i + 2);
+      if (close == null || source.substring(i + 2, close).contains(RegExp(r'\n[ \t]*\n'))) {
         throw FormatException(r'unclosed $$ (display math may not contain a blank line)', source, i);
       }
       final end = close + 2;
@@ -152,9 +156,15 @@ List<MathSpan> findMath(String source) {
   return spans;
 }
 
-/// The closing `$` of inline math opened just before [from], or null if there is
-/// none before a blank line: a non-space before it, no digit after it, unescaped.
+/// The closing `$` of inline math opened just before [from], or null if it has none.
+///
+/// As in Pandoc, the formula ends at the first unescaped `$` outside braces: a `$`
+/// inside a group, as in `$\text{if $x$ then}$`, belongs to the formula. That `$`
+/// closes it only with a non-space before it and no digit after it; otherwise the
+/// opening `$` is just a dollar sign, so "It cost $5 and $10" stays text. A blank
+/// line also ends the search.
 int? _closingDollar(String source, int from) {
+  var depth = 0;
   for (var j = from; j < source.length; j++) {
     final c = source[j];
     if (c == '\\') {
@@ -162,11 +172,25 @@ int? _closingDollar(String source, int from) {
       continue;
     }
     if (c == '\n' && RegExp(r'\n[ \t]*\n').matchAsPrefix(source, j) != null) return null;
-    if (c == r'$') {
+    if (c == '{') depth++;
+    if (c == '}' && depth > 0) depth--;
+    if (c == r'$' && depth == 0) {
       final digitAfter = j + 1 < source.length && RegExp(r'\d').hasMatch(source[j + 1]);
-      if (!_isSpace(source[j - 1]) && !digitAfter && j > from) return j;
-      if (j + 1 < source.length && source[j + 1] == r'$') return null;
+      return j > from && !_isSpace(source[j - 1]) && !digitAfter ? j : null;
     }
+  }
+  return null;
+}
+
+/// The closing `$$` of display math whose TeX starts at [from], or null. Escaped
+/// characters are skipped, so `$$\$$$` holds a dollar sign.
+int? _closingDoubleDollar(String source, int from) {
+  for (var j = from; j < source.length - 1; j++) {
+    if (source[j] == '\\') {
+      j++;
+      continue;
+    }
+    if (source.startsWith(r'$$', j)) return j;
   }
   return null;
 }
