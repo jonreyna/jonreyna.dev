@@ -49,7 +49,8 @@ $(MATH_FONT): $(LIBERTINUS_ZIP)
 
 fonts: $(MATH_FONT)  ## Download the pinned fonts into site/web/fonts (not in git)
 
-# PANDOC converts the pages' TeX math to MathML (site/lib/tex_math.dart). It is
+# PANDOC converts the pages' TeX math to MathML and highlights their code
+# (site/lib/tex_math.dart, site/lib/code_highlight.dart). It is
 # defined further down, so it can't be a prerequisite here; site-resume's Word step
 # downloads it.
 site: fonts site-resume  ## Build the static site into site/build/jaspr
@@ -72,9 +73,9 @@ serve: dist  ## Serve dist/ on http://localhost:8767
 check:  ## Static analysis
 	cd site && dart analyze
 
-# The site's Dart tests. PANDOC lets the TeX-to-MathML tests run end to end; it comes
+# The site's Dart tests. PANDOC lets the math and highlighting tests run end to end; it comes
 # from site-resume's Word step, like `make site`.
-site-test: resume-word  ## Run the site's Dart tests (TeX-to-MathML among them)
+site-test: resume-word  ## Run the site's Dart tests (TeX to MathML, code highlighting)
 	cd site && PANDOC=$(CURDIR)/$(PANDOC) dart test
 
 verify: dist-exists  ## Check the staged pages (scripts, titles, descriptions) and the feed and sitemap

@@ -5,6 +5,7 @@ import 'package:jaspr/server.dart';
 import 'package:jaspr_content/jaspr_content.dart';
 import 'package:jaspr_content/theme.dart';
 
+import 'code_highlight.dart';
 import 'components/essay_list.dart';
 import 'components/knuth.dart';
 import 'components/resume_view.dart';
@@ -29,7 +30,8 @@ void main() {
       // TeX math ($…$, $$…$$) becomes MathML before the Markdown is parsed.
       templateEngine: const TexMath(),
       parsers: [MarkdownParser()],
-      extensions: [const EssaySectionsExtension()],
+      // Code blocks are highlighted while the site is built (Pandoc, as for the math).
+      extensions: [const EssaySectionsExtension(), const CodeHighlightExtension()],
       components: [
         ...knuthComponents(),
         EssayList.component(),
