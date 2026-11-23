@@ -107,7 +107,7 @@ func TestRun(t *testing.T) {
 			check: func(t *testing.T, out string) {
 
 				t.Helper()
-				if strings.Count(out, "wrote ") != 4 || !strings.Contains(out, "resume.full.json") ||
+				if strings.Count(out, "wrote ") != 8 || !strings.Contains(out, "resume.full.json") ||
 					!strings.Contains(out, "resume.full.tex") {
 					t.Errorf("output %q", out)
 				}

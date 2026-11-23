@@ -41,3 +41,8 @@ func ExampleLaTeX() {
 	fmt.Println(markup.LaTeX(markup.MustParse("99.8% of *15,000* a week; RFC~8342, [GitHub](https://github.com/jonreyna)")))
 	// Output: 99.8\% of \emph{15,000} a week; RFC~8342, \href{https://github.com/jonreyna}{GitHub}
 }
+
+func ExampleMarkdown() {
+	fmt.Println(markup.Markdown(markup.MustParse("*küber* in `Go`, $5 [site](https://jonreyna.dev)")))
+	// Output: *küber* in `Go`, \$5 [site](https://jonreyna.dev)
+}

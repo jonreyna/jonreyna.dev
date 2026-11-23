@@ -168,7 +168,8 @@ a.footnote-backref { margin-left: 0.2em; }
 .resume .role { margin-bottom: var(--space-3); }
 .resume .role .plain { margin-top: var(--space-1); }
 .resume .lead { font-style: italic; }
-.resume .downloads .files { white-space: nowrap; }
+.resume .downloads .files { display: block; }
+.resume .downloads .files a { white-space: nowrap; }
 .resume .downloads .sep { color: var(--red); margin: 0 0.45em; }
 
 /* Markdown output mapped onto design J */

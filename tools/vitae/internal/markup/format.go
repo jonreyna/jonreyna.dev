@@ -90,3 +90,52 @@ func escapeLaTeX(s string) string {
 func escapeLaTeXURL(url string) string {
 	return strings.NewReplacer("%", `\%`, "#", `\#`).Replace(url)
 }
+
+// Markdown writes spans as CommonMark: ASCII punctuation that Markdown (or Pandoc's
+// extensions) would read as markup is backslash-escaped, ties stay as U+00A0, emphasis
+// is *…*, code is `…` and links are [text](url).
+func Markdown(spans []Span) string {
+
+	var b strings.Builder
+	for _, s := range spans {
+		switch s.Kind {
+		case Text:
+			b.WriteString(escapeMarkdown(s.Text))
+		case Emph:
+			b.WriteString("*" + escapeMarkdown(s.Text) + "*")
+		case Code:
+			fence := "`"
+			if strings.Contains(s.Text, "`") {
+				fence = "``"
+			}
+
+			b.WriteString(fence + s.Text + fence)
+		case Link:
+			b.WriteString("[" + escapeMarkdown(s.Text) + "](" + escapeMarkdownURL(s.URL) + ")")
+		}
+	}
+
+	return b.String()
+}
+
+// escapeMarkdown backslash-escapes the characters that start markup in CommonMark or
+// in Pandoc's Markdown: emphasis, code, links, HTML, math, sub- and superscript, and
+// table pipes.
+func escapeMarkdown(s string) string {
+
+	var b strings.Builder
+	for _, r := range s {
+		if strings.ContainsRune("\\`*_[]<>$^~|", r) {
+			b.WriteRune('\\')
+		}
+
+		b.WriteRune(r)
+	}
+
+	return b.String()
+}
+
+// escapeMarkdownURL percent-encodes the characters that would end a link destination.
+func escapeMarkdownURL(url string) string {
+	return strings.NewReplacer(" ", "%20", "(", "%28", ")", "%29", "<", "%3C", ">", "%3E").Replace(url)
+}

@@ -1,0 +1,48 @@
+# {{escape .Basics.Name}}
+
+**{{escape .Basics.Label}}**
+
+{{contact $}}
+{{- range .Sections}}
+{{- if eq . "summary"}}{{with $.Summary}}
+
+{{markup .}}
+{{- end}}
+{{- else if eq . "skills"}}{{with $.Skills}}
+
+## Skills
+{{range .}}
+- **{{escape .Group}}:** {{items .Items}}
+{{- end}}
+{{- end}}
+{{- else if eq . "experience"}}{{with $.Experience}}
+
+## Experience
+{{- range .}}
+
+### {{escape .Org}} — {{escape .Title}}
+
+*{{escape .Location}} · {{dates .Start .End}}*
+{{range .Highlights}}
+- {{with .Lead}}**{{escape .}}.** {{end}}{{markup .Text}}
+{{- end}}
+{{- end}}
+{{- end}}
+{{- else if eq . "earlier"}}{{with $.Earlier}}
+
+*Earlier:* {{markup .}}
+{{- end}}
+{{- else if eq . "education"}}{{with schools $}}
+
+## Education
+{{- range .}}
+
+### {{escape .Org}} — {{escape (program .)}}
+
+*{{.Start}} – {{.End}}{{with minors .Minors}} · {{.}}{{end}}*
+
+{{schoolDetails .}}
+{{- end}}
+{{- end}}
+{{- end}}
+{{- end}}
