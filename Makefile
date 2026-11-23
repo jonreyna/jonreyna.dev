@@ -9,7 +9,7 @@ export PATH := $(if $(DART_HOME),$(DART_HOME)/bin:)$(PATH):$(HOME)/.pub-cache/bi
 # Wrangler, pinned exactly; bump it on purpose.
 WRANGLER ?= npx --yes wrangler@4.158.0
 
-.PHONY: help setup no-binaries fonts site dist serve check verify deploy preview clean vitae go-lint go-test resume-check resume resume-pdf site-resume resume-private
+.PHONY: help setup no-binaries fonts site dist serve check verify deploy preview clean vitae go-lint go-test resume-check resume resume-pdf resume-word site-resume resume-private
 
 help:  ## List targets
 	@grep -E '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  %-15s %s\n", $$1, $$2}'
@@ -130,13 +130,71 @@ endef
 resume-pdf: resume  ## Build a PDF of every variant into build/resume (needs TeX Live)
 	$(call build-pdfs,build/resume)
 
+# Word: Pandoc turns each resume.<variant>.md into a .docx, styled by a reference
+# document. Pandoc is a pinned release binary, downloaded and checked like the fonts;
+# the reference document is generated (resume/word/reference.py), since binaries
+# never go in git.
+PANDOC_VERSION := 3.13
+ifeq ($(shell uname -s),Darwin)
+  ifeq ($(shell uname -m),arm64)
+    PANDOC_ASSET := pandoc-$(PANDOC_VERSION)-arm64-macOS.zip
+    PANDOC_SHA256 := f436d18bebbfb3ddd326597686dacab9fac5dc23bd060495020f35a28a43a7c3
+  else
+    PANDOC_ASSET := pandoc-$(PANDOC_VERSION)-x86_64-macOS.zip
+    PANDOC_SHA256 := 1823278715aa405aaf21b59cde5dc789346aa8d4fc307467f9a9ee84162bedc5
+  endif
+else
+  ifeq ($(shell uname -m),aarch64)
+    PANDOC_ASSET := pandoc-$(PANDOC_VERSION)-linux-arm64.tar.gz
+    PANDOC_SHA256 := 21e1d4ba09bd0b334590d204580fd4f6629b21be4ab6a32b26cc98982e9e0c68
+  else
+    PANDOC_ASSET := pandoc-$(PANDOC_VERSION)-linux-amd64.tar.gz
+    PANDOC_SHA256 := 38aa33b325a2bc96a4c39409631212db55702f564250bcdbead180b3bf646389
+  endif
+endif
+PANDOC := build/tools/pandoc-$(PANDOC_VERSION)/pandoc
+PANDOC_ARCHIVE := build/downloads/$(PANDOC_ASSET)
+WORD_REFERENCE := build/word/reference.docx
+
+$(PANDOC_ARCHIVE):
+	mkdir -p $(dir $@)
+	curl -sSfL -o $@.part https://github.com/jgm/pandoc/releases/download/$(PANDOC_VERSION)/$(PANDOC_ASSET)
+	echo "$(PANDOC_SHA256)  $@.part" | shasum -a 256 -c -
+	mv $@.part $@
+
+$(PANDOC): $(PANDOC_ARCHIVE)
+	mkdir -p $(dir $@)
+	case $< in \
+		*.zip) unzip -o -q -j $< '*/bin/pandoc' -d $(dir $@) ;; \
+		*) tar -xzf $< -C $(dir $@) --strip-components=2 --wildcards '*/bin/pandoc' ;; \
+	esac
+	touch $@
+
+$(WORD_REFERENCE): $(PANDOC) resume/word/reference.py
+	mkdir -p $(dir $@)
+	$(PANDOC) -o build/word/pandoc-reference.docx --print-default-data-file reference.docx
+	python3 -I resume/word/reference.py build/word/pandoc-reference.docx $@
+
+define build-word
+	for md in $(1)/resume.*.md; do \
+		name=$$(basename $$md .md); \
+		SOURCE_DATE_EPOCH=$(PDF_DATE) $(PANDOC) -f commonmark -t docx \
+			--reference-doc=$(WORD_REFERENCE) -o $(1)/$$name.docx $$md || exit 1; \
+		echo "wrote $(1)/$$name.docx"; \
+	done
+endef
+
+resume-word: resume $(WORD_REFERENCE)  ## Build a Word file of every variant into build/resume
+	$(call build-word,build/resume)
+
 # The site's résumé page and downloads come from the same render (public fields only).
 # site/web/resume/ is git-ignored; Jaspr copies it into the build, so the files are
 # served at /resume/resume.<variant>.<format>. The .tex sources stay out.
-site-resume: resume-pdf  ## Copy the rendered résumé into site/web/resume for the site build
+site-resume: resume-pdf resume-word  ## Copy the rendered résumé into site/web/resume for the site build
 	rm -rf site/web/resume
 	mkdir -p site/web/resume
-	cp build/resume/resume.*.json build/resume/resume.*.pdf site/web/resume/
+	cp build/resume/resume.*.json build/resume/resume.*.pdf build/resume/resume.*.docx \
+		build/resume/resume.*.txt build/resume/resume.*.md site/web/resume/
 
 # Adds the phone number from resume/resume.private.yaml. Local only: never in CI.
 resume-private: vitae  ## Render with the private overlay into build/resume-private
@@ -144,6 +202,8 @@ resume-private: vitae  ## Render with the private overlay into build/resume-priv
 	rm -rf build/resume-private
 	$(VITAE) render -i resume/resume.yaml -private resume/resume.private.yaml -o build/resume-private
 	$(call build-pdfs,build/resume-private)
+	$(MAKE) --no-print-directory $(WORD_REFERENCE)
+	$(call build-word,build/resume-private)
 
 clean:  ## Remove build output, the copied résumé and downloaded fonts
 	rm -rf site/build dist .wrangler build site/web/resume $(MATH_FONT)

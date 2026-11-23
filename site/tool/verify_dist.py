@@ -33,7 +33,8 @@ for page in sorted(DIST.rglob("*.html")):
     if rel.name != "404.html" and '<meta name="description"' not in html:
         problems.append(f"{rel}: no meta description")
 
-for required in ("index.html", "404.html", "_headers", "resume/index.html", "resume/resume.full.json", "resume/resume.full.pdf"):
+for required in ("index.html", "404.html", "_headers", "resume/index.html", "resume/resume.full.json", "resume/resume.full.pdf",
+                 "resume/resume.full.docx", "resume/resume.full.txt", "resume/resume.full.md"):
     if not (DIST / required).is_file():
         problems.append(f"missing {required}")
 
