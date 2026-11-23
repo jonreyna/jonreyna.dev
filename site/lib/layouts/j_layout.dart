@@ -30,13 +30,19 @@ class JLayout extends PageLayoutBase {
       yield meta(name: 'description', content: description);
       yield meta(attributes: {'property': 'og:description'}, content: description);
     }
+    // The feed and sitemap (tool/feed_sitemap.py) read an essay's dates from these.
     if (data['kind'] == 'essay' && data['date'] is String) {
       yield meta(attributes: {'property': 'article:published_time'}, content: data['date'] as String);
+    }
+    if (data['kind'] == 'essay' && data['updated'] is String) {
+      yield meta(attributes: {'property': 'article:modified_time'}, content: data['updated'] as String);
     }
     if (data['image'] case final String image) {
       yield meta(attributes: {'property': 'og:image'}, content: image);
     }
-    if (data['noindex'] == true) {
+    // A draft is built (so it can be previewed) but, like a noindex page, stays out of
+    // search engines, the essay lists, the feed and the sitemap.
+    if (data['noindex'] == true || data['draft'] == true) {
       yield meta(name: 'robots', content: 'noindex');
     }
     // Google Fonts for now; self-hosted subset WOFF2 files replace this before launch.

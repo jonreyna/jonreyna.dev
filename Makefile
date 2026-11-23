@@ -6,6 +6,10 @@
 DART_HOME ?= $(firstword $(wildcard /usr/local/opt/dart@3.13.7/libexec /opt/homebrew/opt/dart@3.13.7/libexec))
 export PATH := $(if $(DART_HOME),$(DART_HOME)/bin:)$(PATH):$(HOME)/.pub-cache/bin
 
+# The last commit's time (Unix seconds). Passed as SOURCE_DATE_EPOCH so generated files
+# (PDFs, Word files, the feed) are the same on every build of a commit.
+COMMIT_TIME := $(shell git log -1 --format=%ct 2>/dev/null || echo 0)
+
 # Wrangler, pinned exactly; bump it on purpose.
 WRANGLER ?= npx --yes wrangler@4.158.0
 
@@ -55,6 +59,8 @@ dist: site  ## Stage the deployable files in dist/
 	cp site/web/_headers dist/_headers
 	# Cloudflare's 404-page handling looks for 404.html; Jaspr writes 404/index.html.
 	mv dist/404/index.html dist/404.html && rmdir dist/404
+	# The Atom feed and the sitemap, from the staged pages (site/tool/feed_sitemap.py).
+	SOURCE_DATE_EPOCH=$(COMMIT_TIME) python3 -I site/tool/feed_sitemap.py dist
 	@echo "dist: $$(find dist -type f | wc -l | tr -d ' ') files, $$(du -sh dist | cut -f1)"
 
 serve: dist  ## Serve dist/ on http://localhost:8767
@@ -63,7 +69,7 @@ serve: dist  ## Serve dist/ on http://localhost:8767
 check:  ## Static analysis
 	cd site && dart analyze
 
-verify: dist-exists  ## Check the staged pages (scripts, titles, descriptions)
+verify: dist-exists  ## Check the staged pages (scripts, titles, descriptions) and the feed and sitemap
 	python3 site/tool/verify_dist.py dist
 
 # deploy and preview upload whatever is in dist/, so CI builds once and the
@@ -127,11 +133,10 @@ resume: vitae  ## Render every variant and format into build/resume (public fiel
 # design is resume/latex/jrresume.cls, found through TEXINPUTS. Auxiliary files go to
 # build/latex/. SOURCE_DATE_EPOCH (the last commit's time) keeps the PDFs reproducible.
 LATEXMK ?= latexmk
-PDF_DATE := $(shell git log -1 --format=%ct 2>/dev/null || echo 0)
 define build-pdfs
 	for tex in $(1)/resume.*.tex; do \
 		name=$$(basename $$tex .tex); \
-		SOURCE_DATE_EPOCH=$(PDF_DATE) FORCE_SOURCE_DATE=1 TEXINPUTS=$(CURDIR)/resume/latex//: \
+		SOURCE_DATE_EPOCH=$(COMMIT_TIME) FORCE_SOURCE_DATE=1 TEXINPUTS=$(CURDIR)/resume/latex//: \
 			$(LATEXMK) -pdf -silent -interaction=nonstopmode -halt-on-error \
 			-outdir=$(CURDIR)/build/latex/$(notdir $(1)) $$tex || exit 1; \
 		cp build/latex/$(notdir $(1))/$$name.pdf $(1)/$$name.pdf; \
@@ -190,7 +195,7 @@ $(WORD_REFERENCE): $(PANDOC) resume/word/reference.py
 define build-word
 	for md in $(1)/resume.*.md; do \
 		name=$$(basename $$md .md); \
-		SOURCE_DATE_EPOCH=$(PDF_DATE) $(PANDOC) -f commonmark -t docx \
+		SOURCE_DATE_EPOCH=$(COMMIT_TIME) $(PANDOC) -f commonmark -t docx \
 			--reference-doc=$(WORD_REFERENCE) -o $(1)/$$name.docx $$md || exit 1; \
 		echo "wrote $(1)/$$name.docx"; \
 	done
