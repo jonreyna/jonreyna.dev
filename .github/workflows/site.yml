@@ -2,6 +2,8 @@
 #   - push to main  -> publishes to Cloudflare (production)
 #   - pull request  -> uploads a preview version and comments its URL on the PR
 #   - weekly        -> a build only, so toolchain breakage shows up before you need to publish
+#   - tag resume-v* -> attaches the résumé files to a GitHub release (the release job)
+# Every run keeps the rendered résumé files as an artifact named resume-<commit>.
 # Cloudflare steps are skipped until the CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID
 # secrets exist. Third-party actions are pinned by commit SHA.
 name: site
@@ -9,6 +11,7 @@ name: site
 on:
   push:
     branches: [main]
+    tags: ["resume-v*"]
   pull_request:
   schedule:
     - cron: "17 9 * * 1" # Mondays, 09:17 UTC
@@ -23,7 +26,8 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
-  # The résumé pipeline: vitae's lint and tests, and strict validation of resume.yaml.
+  # The résumé pipeline: vitae's lint and tests, and strict validation of resume.yaml;
+  # also actionlint on this workflow.
   # The site job renders the public variants for the résumé page. Neither job is ever
   # given the private overlay.
   resume:
@@ -41,6 +45,9 @@ jobs:
 
       - name: Lint and test the Go tools, and validate the résumé
         run: make resume-check
+
+      - name: Lint the workflows
+        run: make workflow-lint
 
   site:
     runs-on: ubuntu-24.04
@@ -93,8 +100,28 @@ jobs:
       - name: Check the built pages
         run: make verify
 
+      # What an applicant-tracking system reads: pdftotext must extract every passage
+      # of each PDF intact and in order. Poppler comes from Ubuntu's archive.
+      - name: Install pdftotext
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq --no-install-recommends poppler-utils
+
+      - name: Check the résumé PDFs' extracted text
+        run: make resume-text-check
+
+      - name: Stage the résumé files under their download names
+        run: make resume-release
+
+      # Public fields only, as on the site. The private overlay never reaches CI.
+      - name: Keep the résumé files
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: resume-${{ github.sha }}
+          path: build/resume-release/
+          if-no-files-found: error
+          retention-days: 30 # tagged releases keep their files for good
+
       - name: Set up Node for Wrangler
-        if: env.CLOUDFLARE_API_TOKEN != '' && (github.event_name == 'push' || github.event_name == 'pull_request')
+        if: env.CLOUDFLARE_API_TOKEN != '' && ((github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'pull_request')
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: "26"
@@ -123,3 +150,36 @@ jobs:
           PR_NUMBER: ${{ github.event.pull_request.number }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
           URL: ${{ steps.preview.outputs.url }}
+
+  # On a tag such as resume-v2026.11.22, attaches the files the site job built from
+  # that commit to a GitHub release, so each version sent out stays downloadable as it
+  # was. The tag never deploys: the site publishes only from main.
+  release:
+    needs: [resume, site]
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/resume-v')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: write # create the release
+    steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: resume-${{ github.sha }}
+          path: resume
+
+      - name: Publish the release
+        run: |
+          {
+            echo "Jon Reyna's résumé, built by CI from \`resume/resume.yaml\` at ${GITHUB_SHA:0:7}."
+            echo
+            echo "Each version comes as PDF, Word, plain text, Markdown and JSON:"
+            echo
+            for f in resume/Jon-Reyna-Resume.json resume/Jon-Reyna-Resume-*.json; do
+              echo "- \`$(basename "$f" .json).*\`: $(jq -r '.description // .variant' "$f")"
+            done
+          } > notes.md
+          gh release create "$TAG" resume/* --repo "$GITHUB_REPOSITORY" --verify-tag \
+            --title "Résumé ${TAG#resume-v}" --notes-file notes.md
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
