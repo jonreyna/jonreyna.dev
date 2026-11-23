@@ -66,11 +66,17 @@ jobs:
           path: ~/.pub-cache
           key: pub-${{ runner.os }}-dart3.13.7-${{ hashFiles('site/pubspec.lock') }}
 
-      # `make site` builds vitae and renders the résumé that the résumé page shows.
+      # `make site` builds vitae and renders the résumé that the résumé page shows...
       - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
         with:
           go-version-file: tools/vitae/go.mod
           cache-dependency-path: tools/*/go.mod
+
+      # ...and builds the résumé PDFs with pdfLaTeX: a minimal TeX Live with only the
+      # packages jrresume.cls needs, cached between runs.
+      - uses: zauguin/install-texlive@c9f3ea3d51b2e04d092c4f9d208a19542d5dabcf # v4.5.0
+        with:
+          package_file: resume/latex/texlive-packages.txt
 
       - name: Check that no binary files are tracked
         run: make no-binaries

@@ -9,19 +9,21 @@ func TestParse(t *testing.T) {
 
 	t.Parallel()
 	tests := []struct {
-		name, in, plain, html string
+		name, in, plain, html, latex string
 	}{
-		{name: "plain text", in: "plain text", plain: "plain text", html: "plain text"},
-		{name: "emphasis", in: "a *b* c", plain: "a b c", html: "a <em>b</em> c"},
-		{name: "code", in: "run `go test`", plain: "run go test", html: "run <code>go test</code>"},
-		{name: "link and escaping", in: "[site](https://x.dev) & <b>", plain: "site & <b>", html: `<a href="https://x.dev">site</a> &amp; &lt;b&gt;`},
-		{name: "mailto link", in: "[mail](mailto:a@b.c)", plain: "mail", html: `<a href="mailto:a@b.c">mail</a>`},
-		{name: "tie", in: "RFC~8342", plain: "RFC 8342", html: "RFC 8342"},
-		{name: "escapes", in: `\*not\* \~ \[x]`, plain: "*not* ~ [x]", html: "*not* ~ [x]"},
-		{name: "tie in emphasis", in: "*a~b*", plain: "a b", html: "<em>a b</em>"},
-		{name: "escaped star in emphasis", in: `*a\*b*`, plain: "a*b", html: "<em>a*b</em>"},
-		{name: "tilde in code stays", in: "`~/bin`", plain: "~/bin", html: "<code>~/bin</code>"},
-		{name: "empty", in: "", plain: "", html: ""},
+		{name: "plain text", in: "plain text", plain: "plain text", html: "plain text", latex: "plain text"},
+		{name: "emphasis", in: "a *b* c", plain: "a b c", html: "a <em>b</em> c", latex: `a \emph{b} c`},
+		{name: "code", in: "run `go test`", plain: "run go test", html: "run <code>go test</code>", latex: `run \texttt{go test}`},
+		{name: "link and escaping", in: "[site](https://x.dev) & <b>", plain: "site & <b>", html: `<a href="https://x.dev">site</a> &amp; &lt;b&gt;`, latex: `\href{https://x.dev}{site} \& <b>`},
+		{name: "mailto link", in: "[mail](mailto:a@b.c)", plain: "mail", html: `<a href="mailto:a@b.c">mail</a>`, latex: `\href{mailto:a@b.c}{mail}`},
+		{name: "tie", in: "RFC~8342", plain: "RFC 8342", html: "RFC 8342", latex: "RFC~8342"},
+		{name: "escapes", in: `\*not\* \~ \[x]`, plain: "*not* ~ [x]", html: "*not* ~ [x]", latex: `*not* \textasciitilde{} [x]`},
+		{name: "tie in emphasis", in: "*a~b*", plain: "a b", html: "<em>a b</em>", latex: `\emph{a~b}`},
+		{name: "escaped star in emphasis", in: `*a\*b*`, plain: "a*b", html: "<em>a*b</em>", latex: `\emph{a*b}`},
+		{name: "tilde in code stays", in: "`~/bin`", plain: "~/bin", html: "<code>~/bin</code>", latex: `\texttt{\textasciitilde{}/bin}`},
+		{name: "latex specials", in: `50% & $5 #1 a_b {x} ^`, plain: "50% & $5 #1 a_b {x} ^", html: "50% &amp; $5 #1 a_b {x} ^", latex: `50\% \& \$5 \#1 a\_b \{x\} \textasciicircum{}`},
+		{name: "url with percent", in: "[q](https://x.dev/a%20b#c)", plain: "q", html: `<a href="https://x.dev/a%20b#c">q</a>`, latex: `\href{https://x.dev/a\%20b\#c}{q}`},
+		{name: "empty", in: "", plain: "", html: "", latex: ""},
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
@@ -38,6 +40,10 @@ func TestParse(t *testing.T) {
 
 			if got := HTML(spans); got != tc.html {
 				t.Errorf("HTML = %q, want %q", got, tc.html)
+			}
+
+			if got := LaTeX(spans); got != tc.latex {
+				t.Errorf("LaTeX = %q, want %q", got, tc.latex)
 			}
 		})
 	}

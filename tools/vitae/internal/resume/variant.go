@@ -48,4 +48,7 @@ type Variant struct {
 	Exclude []string `yaml:"exclude"`
 	// ShowCourses lists the course tags to show. Empty shows every course.
 	ShowCourses []string `yaml:"show_courses"`
+	// MaxPages is the most pages the variant's PDF may run to; building a longer one
+	// fails. Zero means no limit.
+	MaxPages int `yaml:"max_pages"`
 }

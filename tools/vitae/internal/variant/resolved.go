@@ -13,6 +13,8 @@ type Resolved struct {
 	Variant string
 	// Description says what the variant is for, from the résumé file.
 	Description string
+	// MaxPages is the most pages the PDF may run to; zero means no limit.
+	MaxPages int
 	// Sections are the sections to print, in order.
 	Sections []string
 	// Basics is the header, with the variant's label if it sets one.

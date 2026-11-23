@@ -72,3 +72,4 @@ variants:
     exclude: [legacy]
     max_highlights: 1
     show_courses: [math]
+    max_pages: 1

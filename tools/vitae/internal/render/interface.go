@@ -15,7 +15,7 @@ type Interface interface {
 }
 
 // Formats returns the names of the formats [For] knows, in a fixed order.
-func Formats() []string { return []string{"json"} }
+func Formats() []string { return []string{"json", "tex"} }
 
 // For returns the [Interface] for the named format. The error wraps
 // [ErrUnknownFormat].
@@ -26,6 +26,8 @@ func For(format string) (Interface, error) {
 	switch format {
 	case "json":
 		return Func(JSON), nil
+	case "tex":
+		return Func(LaTeX), nil
 	default:
 		return nil, fmt.Errorf("%w: %q", ErrUnknownFormat, format)
 	}

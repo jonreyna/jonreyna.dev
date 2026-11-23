@@ -107,7 +107,8 @@ func TestRun(t *testing.T) {
 			check: func(t *testing.T, out string) {
 
 				t.Helper()
-				if strings.Count(out, "wrote ") != 2 || !strings.Contains(out, "resume.full.json") {
+				if strings.Count(out, "wrote ") != 4 || !strings.Contains(out, "resume.full.json") ||
+					!strings.Contains(out, "resume.full.tex") {
 					t.Errorf("output %q", out)
 				}
 			},
@@ -125,6 +126,22 @@ func TestRun(t *testing.T) {
 				t.Helper()
 				if !strings.Contains(out, `"phone": "+1 555 0100"`) {
 					t.Error("phone missing")
+				}
+			},
+		},
+		{
+			name: "private overlay adds the phone to the LaTeX",
+			args: func(t *testing.T) []string {
+				t.Helper()
+				overlay := writeFile(t, "p.yaml", "basics:\n  phone: \"+1 555 0100\"\n")
+				return []string{"render", "-i", fixture, "-private", overlay, "-variant", "full", "-format", "tex", "-o", "-"}
+			},
+
+			check: func(t *testing.T, out string) {
+
+				t.Helper()
+				if !strings.Contains(out, `\sep{}+1 555 0100\sep{}`) {
+					t.Error("phone missing from the contact line")
 				}
 			},
 		},
