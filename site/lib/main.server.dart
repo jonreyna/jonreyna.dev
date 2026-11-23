@@ -11,6 +11,7 @@ import 'components/resume_view.dart';
 import 'essay_sections.dart';
 import 'layouts/j_layout.dart';
 import 'main.server.options.dart';
+import 'tex_math.dart';
 
 void main() {
   // Jaspr adds main.client.dart.js to every page whenever a client entry point exists.
@@ -25,6 +26,8 @@ void main() {
     ContentApp(
       // The writing index and the home page list other pages, so load them all first.
       eagerlyLoadAllPages: true,
+      // TeX math ($…$, $$…$$) becomes MathML before the Markdown is parsed.
+      templateEngine: const TexMath(),
       parsers: [MarkdownParser()],
       extensions: [const EssaySectionsExtension()],
       components: [

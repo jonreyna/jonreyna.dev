@@ -94,6 +94,9 @@ jobs:
       - name: Analyze
         run: make check
 
+      - name: Test the site's Dart code
+        run: make site-test
+
       - name: Build and stage dist/
         run: make dist
 

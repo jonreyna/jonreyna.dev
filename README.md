@@ -2,7 +2,7 @@
 
 Source for [jonreyna.dev](https://jonreyna.dev), Jon Reyna’s website: essays, selected work, interactive pieces and a résumé, all built from this repository.
 
-The site is static. It’s built with [Jaspr](https://jaspr.site) and [jaspr_content](https://pub.dev/packages/jaspr_content) from Markdown and served by Cloudflare Workers Static Assets. Reading pages ship no JavaScript; math is MathML rendered at build time.
+The site is static. It’s built with [Jaspr](https://jaspr.site) and [jaspr_content](https://pub.dev/packages/jaspr_content) from Markdown and served by Cloudflare Workers Static Assets. Reading pages ship no JavaScript; math is written in TeX (`$…$`, `$$…$$`) and converted to MathML at build time with Pandoc (see `site/DESIGN.md`).
 
 ## Layout
 
@@ -27,6 +27,7 @@ Needs Dart 3.13 (Jaspr 0.23.5 doesn’t resolve on Dart 3.14 yet), Go for the r�
 ```bash
 make setup    # dart pub get, the Jaspr CLI, and the git hooks (no binaries in git)
 make serve    # build (the résumé page included), stage dist/, serve on http://localhost:8767
+make site-test   # the site's Dart tests, TeX-to-MathML among them
 make deploy   # upload dist/ to Cloudflare
 make resume   # render every variant of resume/resume.yaml into build/resume
 make resume-pdf   # ...and build a PDF of each (fails if one runs past its max_pages)
