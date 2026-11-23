@@ -9,7 +9,7 @@ export PATH := $(if $(DART_HOME),$(DART_HOME)/bin:)$(PATH):$(HOME)/.pub-cache/bi
 # Wrangler, pinned exactly; bump it on purpose.
 WRANGLER ?= npx --yes wrangler@4.158.0
 
-.PHONY: help setup no-binaries fonts site dist serve check verify deploy preview clean vitae go-lint go-test resume-check resume resume-pdf resume-word site-resume resume-private
+.PHONY: help setup no-binaries fonts site dist serve check verify deploy preview clean vitae workflow-lint go-lint go-test resume-check resume resume-pdf resume-word resume-text-check resume-release site-resume resume-private
 
 help:  ## List targets
 	@grep -E '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  %-15s %s\n", $$1, $$2}'
@@ -89,6 +89,18 @@ GOLANGCI_LINT := build/tools/golangci-lint-$(GOLANGCI_LINT_VERSION)/golangci-lin
 
 $(GOLANGCI_LINT):
 	GOBIN=$(CURDIR)/$(dir $(GOLANGCI_LINT)) go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@$(GOLANGCI_LINT_VERSION)
+
+# actionlint checks the GitHub workflows (expressions, action inputs, shell). Pinned and
+# built from source like golangci-lint.
+ACTIONLINT_VERSION := v1.7.12
+ACTIONLINT := build/tools/actionlint-$(ACTIONLINT_VERSION)/actionlint
+
+$(ACTIONLINT):
+	GOBIN=$(CURDIR)/$(dir $(ACTIONLINT)) go install github.com/rhysd/actionlint/cmd/actionlint@$(ACTIONLINT_VERSION)
+
+workflow-lint: $(ACTIONLINT)  ## Lint the GitHub workflows with actionlint
+	$(ACTIONLINT) .github/workflows/*.yml
+	@echo "linted .github/workflows: no issues"
 
 # Go modules under tools/, each linted and tested the same way.
 GO_MODULES := tools/vitae
@@ -186,6 +198,28 @@ endef
 
 resume-word: resume $(WORD_REFERENCE)  ## Build a Word file of every variant into build/resume
 	$(call build-word,build/resume)
+
+# What a parser reads: pdftotext (Poppler) extracts each PDF, and every passage must
+# come back intact and in order (resume/check_pdf_text.py). CI installs Poppler; on a
+# Mac without it this target fails with a note, and the rest of the build doesn't need it.
+resume-text-check:  ## Check that each résumé PDF extracts as its text, in order (needs pdftotext; run after resume-pdf)
+	python3 -I resume/check_pdf_text.py build/resume
+
+# The files CI keeps from each build and attaches to a release, under the names the
+# site's downloads save as: Jon-Reyna-Resume.pdf for the full résumé,
+# Jon-Reyna-Resume-<variant>.pdf for the others. The .tex sources stay out.
+RESUME_RELEASE := build/resume-release
+resume-release:  ## Stage the rendered résumé files under their download names in build/resume-release (run after resume-pdf and resume-word)
+	rm -rf $(RESUME_RELEASE)
+	mkdir -p $(RESUME_RELEASE)
+	for f in build/resume/resume.*.json build/resume/resume.*.pdf build/resume/resume.*.docx \
+		build/resume/resume.*.txt build/resume/resume.*.md; do \
+		test -f $$f || { echo "$$f is missing: run make resume-pdf resume-word first"; exit 1; }; \
+		variant=$$(basename $$f | cut -d. -f2); ext=$${f##*.}; \
+		if [ $$variant = full ]; then name=Jon-Reyna-Resume.$$ext; else name=Jon-Reyna-Resume-$$variant.$$ext; fi; \
+		cp $$f $(RESUME_RELEASE)/$$name; \
+	done
+	@echo "staged $(RESUME_RELEASE): $$(ls $(RESUME_RELEASE) | wc -l | tr -d ' ') files"
 
 # The site's résumé page and downloads come from the same render (public fields only).
 # site/web/resume/ is git-ignored; Jaspr copies it into the build, so the files are

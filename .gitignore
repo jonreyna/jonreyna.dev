@@ -22,3 +22,6 @@
 .DS_Store
 .idea/
 *.iml
+
+# Python bytecode from running the build scripts
+__pycache__/

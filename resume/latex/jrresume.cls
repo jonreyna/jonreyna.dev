@@ -101,12 +101,13 @@
 % \lead{Phrase}: a semibold lead-in for a bullet, for the skim.
 \newcommand{\lead}[1]{{\semibold #1.}\ }
 
-% \skill{Label}{List}: labels in a fixed column; wrapped lines hang under the list.
-\newlength{\skilllabel}
-\setlength{\skilllabel}{11.4em}
+% \skill{Label}{List}: a run-in label, then its list, in one paragraph; wrapped lines
+% hang under it. Not a fixed label column: pdftotext, like the parsers of applicant-
+% tracking systems, reads a column of labels as its own block and puts out every label
+% before any list, so no list stays with its label (make resume-text-check).
 \newcommand{\skill}[2]{%
-  \par\hangindent=\skilllabel\hangafter=1
-  \makebox[\skilllabel][l]{\semibold #1}#2\par\vspace{2pt}}
+  \par\hangindent=1em\hangafter=1
+  {\semibold #1:}\ #2\par\vspace{2pt}}
 
 % \earlier{Text}: the one-line note on earlier work, after the last job.
 \newcommand{\earlier}[1]{%

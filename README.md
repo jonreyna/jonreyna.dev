@@ -31,13 +31,22 @@ make deploy   # upload dist/ to Cloudflare
 make resume   # render every variant of resume/resume.yaml into build/resume
 make resume-pdf   # ...and build a PDF of each (fails if one runs past its max_pages)
 make resume-word  # ...and a Word file of each, with Pandoc
+make resume-release  # stage them under their download names in build/resume-release
 ```
 
 `make help` lists every target.
 
 ## CI/CD
 
-`.github/workflows/site.yml` builds, analyzes and checks the site (`make verify`) on every push and pull request, and weekly. A second job lints and tests `vitae` and validates the résumé strictly. The site build renders every public variant itself: the résumé page shows `resume.full.json`, and `/resume/` serves each rendered file for download. A push to `main` publishes to Cloudflare; a pull request gets a preview version, with its URL commented on the pull request. The Cloudflare steps run once two repository secrets exist:
+`.github/workflows/site.yml` builds, analyzes and checks the site (`make verify`) on every push and pull request, and weekly. A second job lints and tests `vitae`, validates the résumé strictly and lints the workflow (`make workflow-lint`, actionlint). The site build renders every public variant itself: the résumé page shows `resume.full.json`, and `/resume/` serves each rendered file for download. It also checks that each résumé PDF reads back as its text, every passage intact and in order, the way an applicant-tracking system extracts it (`make resume-text-check`, with pdftotext). A push to `main` publishes to Cloudflare; a pull request gets a preview version, with its URL commented on the pull request.
+
+Every run keeps the résumé files (PDF, Word, plain text, Markdown and JSON for each variant, under the names the site's downloads save as) as an artifact named `resume-<commit>`, for 30 days. To keep a version for good, such as one you sent, tag the commit and push the tag; CI attaches the same files to a GitHub release:
+
+```bash
+git tag resume-v2026.11.22 && git push origin resume-v2026.11.22
+```
+
+The Cloudflare steps run once two repository secrets exist:
 
 - `CLOUDFLARE_ACCOUNT_ID`: the account ID from the Cloudflare dashboard.
 - `CLOUDFLARE_API_TOKEN`: an API token made from the "Edit Cloudflare Workers" template, limited to this account.
