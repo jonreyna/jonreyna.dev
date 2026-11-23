@@ -98,6 +98,11 @@ pre {
     var(--code-bg);
 }
 pre code { font-size: inherit; }
+/* Highlighting (lib/code_highlight.dart, Pandoc's token classes): keywords and control
+   flow bold, comments and documentation italic in --muted; every other token keeps
+   the text color, so code stays in the site's two colors. */
+pre code :is(.kw, .cf) { font-weight: 700; }
+pre code :is(.co, .do, .an, .cv, .in, .wa) { font-style: italic; color: var(--muted); }
 .k { font-weight: 700; }
 .c { color: var(--muted); font-style: italic; }
 

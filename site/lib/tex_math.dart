@@ -18,10 +18,9 @@
 /// and a period or comma right after inline math is kept on its line.
 library;
 
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:jaspr_content/jaspr_content.dart';
+
+import 'pandoc.dart';
 
 /// Converts each page's TeX math to MathML before the Markdown is parsed, so the
 /// Markdown parser sees only raw MathML (which it passes through) and never reads a
@@ -33,10 +32,7 @@ class TexMath implements TemplateEngine {
   Future<void> render(Page page, List<Page> pages) async {
     final spans = findMath(page.content);
     if (spans.isEmpty) return;
-    final pandoc = Platform.environment['PANDOC'];
-    if (pandoc == null || pandoc.isEmpty) {
-      throw StateError('${page.path} has TeX math, but PANDOC is not set: build with `make site`');
-    }
+    final pandoc = pandocPath('${page.path} has TeX math, which');
     final mathml = await convertWithPandoc(spans, pandoc, page.path);
     page.apply(content: replaceMath(page.content, spans, mathml));
   }
@@ -214,23 +210,12 @@ bool _blankOrEdge(String source, int newline, {required bool back}) {
 /// order.
 Future<List<String>> convertWithPandoc(List<MathSpan> spans, String pandoc, String path) async {
   final input = spans.map((s) => s.display ? '\$\$${s.tex}\$\$' : '\$${s.tex.trim()}\$').join('\n\n');
-  final process = await Process.start(pandoc, [
-    '--from=markdown',
-    '--to=html',
-    '--math-method=mathml',
-    '--wrap=none',
-    '--fail-if-warnings',
-  ]);
-  process.stdin.write(input);
-  await process.stdin.close();
-  final (stdout, stderr, code) = await (
-    process.stdout.transform(utf8.decoder).join(),
-    process.stderr.transform(utf8.decoder).join(),
-    process.exitCode,
-  ).wait;
-  if (code != 0) {
-    throw StateError('$path: Pandoc could not convert the math (exit $code): $stderr');
-  }
+  final stdout = await runPandoc(
+    pandoc,
+    ['--from=markdown', '--to=html', '--math-method=mathml', '--wrap=none'],
+    input,
+    '$path: converting TeX math',
+  );
   final math = RegExp(r'<math\b.*?</math>', dotAll: true).allMatches(stdout).map((m) => m[0]!).toList();
   if (math.length != spans.length) {
     // Pandoc leaves TeX it can't read as text, still between its dollar signs.
