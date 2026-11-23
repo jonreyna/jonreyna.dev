@@ -37,9 +37,22 @@ class JLayout extends PageLayoutBase {
     if (data['kind'] == 'essay' && data['updated'] is String) {
       yield meta(attributes: {'property': 'article:modified_time'}, content: data['updated'] as String);
     }
+    // The picture beside a shared link: the page's own `image` if it sets one, or the
+    // site's card (`make og-image`, tools/card), 1200×630.
+    yield meta(attributes: {'property': 'og:site_name'}, content: base);
     if (data['image'] case final String image) {
-      yield meta(attributes: {'property': 'og:image'}, content: image);
+      final url = image.startsWith('/') ? 'https://jonreyna.dev$image' : image;
+      yield meta(attributes: {'property': 'og:image'}, content: url);
+    } else {
+      yield meta(attributes: {'property': 'og:image'}, content: 'https://jonreyna.dev/og.png');
+      yield meta(attributes: {'property': 'og:image:width'}, content: '1200');
+      yield meta(attributes: {'property': 'og:image:height'}, content: '630');
+      yield meta(
+        attributes: {'property': 'og:image:alt'},
+        content: 'Jon Reyna: distributed systems & AI infrastructure. jonreyna.dev',
+      );
     }
+    yield meta(name: 'twitter:card', content: 'summary_large_image');
     // A draft is built (so it can be previewed) but, like a noindex page, stays out of
     // search engines, the essay lists, the feed and the sitemap.
     if (data['noindex'] == true || data['draft'] == true) {

@@ -4,7 +4,7 @@ Run by `make verify`. Fails (exit 1) if any page:
   - loads a script other than Jaspr's island bundle (DESIGN.md, principle 4),
   - loads the island bundle without containing an island,
   - lacks a <title>, a lang attribute, or a meta description (the 404 page is exempt
-    from the description),
+    from the description), or an og:image,
 or if a file the deploy needs is missing (including the résumé page and its JSON), or
 if the feed or sitemap is malformed or lists a URL that isn't a published page (one
 staged and not marked noindex), or the sitemap misses a published page.
@@ -35,8 +35,18 @@ for page in sorted(DIST.rglob("*.html")):
         problems.append(f"{rel}: no lang attribute")
     if rel.name != "404.html" and '<meta name="description"' not in html:
         problems.append(f"{rel}: no meta description")
+    if 'property="og:image"' not in html:
+        problems.append(f"{rel}: no og:image")
 
-for required in ("index.html", "404.html", "_headers", "robots.txt", "feed.xml", "sitemap.xml", "resume/index.html", "resume/resume.full.json", "resume/resume.full.pdf",
+# The Open Graph image (tools/card) must be the 1200×630 PNG the pages announce.
+card = DIST / "og.png"
+if card.is_file():
+    head = card.read_bytes()[:24]
+    size = (int.from_bytes(head[16:20], "big"), int.from_bytes(head[20:24], "big"))
+    if head[:8] != b"\x89PNG\r\n\x1a\n" or size != (1200, 630):
+        problems.append(f"og.png: not a 1200×630 PNG (got {size})")
+
+for required in ("index.html", "404.html", "_headers", "robots.txt", "og.png", "feed.xml", "sitemap.xml", "resume/index.html", "resume/resume.full.json", "resume/resume.full.pdf",
                  "resume/resume.full.docx", "resume/resume.full.txt", "resume/resume.full.md"):
     if not (DIST / required).is_file():
         problems.append(f"missing {required}")

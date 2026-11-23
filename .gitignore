@@ -6,9 +6,13 @@
 !/site/web/fonts/OFL.txt
 # The résumé files are rendered by `make site-resume` from resume/resume.yaml.
 /site/web/resume/
+# The Open Graph image is drawn by `make og-image` (tools/card).
+/site/web/og.png
 # Go binaries that `go build` writes into a command's own folder.
 /tools/vitae/vitae
 /tools/vitae/cmd/vitae/vitae
+/tools/card/card
+/tools/card/cmd/card/card
 
 # Deploy staging and Wrangler state
 /dist/

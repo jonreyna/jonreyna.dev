@@ -13,7 +13,7 @@ COMMIT_TIME := $(shell git log -1 --format=%ct 2>/dev/null || echo 0)
 # Wrangler, pinned exactly; bump it on purpose.
 WRANGLER ?= npx --yes wrangler@4.158.0
 
-.PHONY: help setup no-binaries fonts site dist serve check site-test verify deploy preview clean vitae workflow-lint go-lint go-test resume-check resume resume-pdf resume-word resume-text-check resume-release site-resume resume-private
+.PHONY: help setup no-binaries fonts card og-image site dist serve check site-test verify deploy preview clean vitae workflow-lint go-lint go-test resume-check resume resume-pdf resume-word resume-text-check resume-release site-resume resume-private
 
 help:  ## List targets
 	@grep -E '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  %-15s %s\n", $$1, $$2}'
@@ -49,11 +49,43 @@ $(MATH_FONT): $(LIBERTINUS_ZIP)
 
 fonts: $(MATH_FONT)  ## Download the pinned fonts into site/web/fonts (not in git)
 
+# The Open Graph image (the picture beside a shared link) is drawn by tools/card in
+# the masthead's typefaces, Alegreya SC Medium and Alegreya Italic, downloaded from one
+# pinned google/fonts commit and checked like Libertinus. They're used only to draw
+# the image, not served. site/web/og.png is git-ignored.
+GOOGLE_FONTS_COMMIT := 06bfe0d62a98375cb09c942fa18e68bd32cff057
+GOOGLE_FONTS := https://raw.githubusercontent.com/google/fonts/$(GOOGLE_FONTS_COMMIT)/ofl
+ALEGREYA_SC := build/downloads/fonts/AlegreyaSC-Medium.ttf
+ALEGREYA_SC_SHA256 := fa896222115cc9a41c0695a3ee6feafbaba97932e9bb6240520b3feeb560ea2c
+ALEGREYA_ITALIC := build/downloads/fonts/Alegreya-Italic.ttf
+ALEGREYA_ITALIC_SHA256 := fa915eec76227935dc5fb678953c94b71287c360928013cfdb441dfe52f5a391
+CARD := build/bin/card
+OG_IMAGE := site/web/og.png
+
+$(ALEGREYA_SC):
+	mkdir -p $(dir $@)
+	curl -sSfL -o $@.part $(GOOGLE_FONTS)/alegreyasc/AlegreyaSC-Medium.ttf
+	echo "$(ALEGREYA_SC_SHA256)  $@.part" | shasum -a 256 -c -
+	mv $@.part $@
+
+$(ALEGREYA_ITALIC):
+	mkdir -p $(dir $@)
+	curl -sSfL -o $@.part '$(GOOGLE_FONTS)/alegreya/Alegreya-Italic%5Bwght%5D.ttf'
+	echo "$(ALEGREYA_ITALIC_SHA256)  $@.part" | shasum -a 256 -c -
+	mv $@.part $@
+
+card:  ## Build the card CLI (the Open Graph image) into build/bin
+	cd tools/card && go build -o ../../$(CARD) ./cmd/card
+
+og-image: card $(ALEGREYA_SC) $(ALEGREYA_ITALIC)  ## Draw the Open Graph image into site/web/og.png (not in git)
+	$(CARD) -smallcaps $(ALEGREYA_SC) -italic $(ALEGREYA_ITALIC) -name 'Jon Reyna' \
+		-motto 'distributed systems & AI infrastructure' -site jonreyna.dev -o $(OG_IMAGE)
+
 # PANDOC converts the pages' TeX math to MathML and highlights their code
 # (site/lib/tex_math.dart, site/lib/code_highlight.dart). It is
 # defined further down, so it can't be a prerequisite here; site-resume's Word step
 # downloads it.
-site: fonts site-resume  ## Build the static site into site/build/jaspr
+site: fonts og-image site-resume  ## Build the static site into site/build/jaspr
 	cd site && PANDOC=$(CURDIR)/$(PANDOC) jaspr build
 
 # Copy only the site's own files: the build also leaves packages/, .dart_tool/ and a manifest.
@@ -118,7 +150,7 @@ workflow-lint: $(ACTIONLINT)  ## Lint the GitHub workflows with actionlint
 	@echo "linted .github/workflows: no issues"
 
 # Go modules under tools/, each linted and tested the same way.
-GO_MODULES := tools/vitae
+GO_MODULES := tools/vitae tools/card
 
 vitae:  ## Build the vitae CLI into build/bin
 	cd tools/vitae && go build -o ../../$(VITAE) ./cmd/vitae
@@ -253,5 +285,5 @@ resume-private: vitae  ## Render with the private overlay into build/resume-priv
 	$(MAKE) --no-print-directory $(WORD_REFERENCE)
 	$(call build-word,build/resume-private)
 
-clean:  ## Remove build output, the copied résumé and downloaded fonts
-	rm -rf site/build dist .wrangler build site/web/resume $(MATH_FONT)
+clean:  ## Remove build output, the copied résumé, the Open Graph image and downloaded fonts
+	rm -rf site/build dist .wrangler build site/web/resume $(MATH_FONT) $(OG_IMAGE)

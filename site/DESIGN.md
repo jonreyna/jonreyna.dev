@@ -159,7 +159,9 @@ Every page carries:
 - `<link rel="alternate" type="application/atom+xml">` pointing at the feed.
 - Favicon: `favicon.svg`, which switches to leather and copper in dark mode, plus a 180px PNG `apple-touch-icon`.
 - `<meta name="theme-color">` twice: `#f6f0e1` for light and `#1a1612` for dark.
-- Open Graph: `og:type`, `og:title`, `og:description`, `og:url` and `og:image` (1200×630).
+- Open Graph: `og:type`, `og:title`, `og:description`, `og:url`, `og:site_name` and `og:image`, plus `twitter:card` (`summary_large_image`). A page's `image` front matter sets its picture; otherwise it's the site's card, `/og.png`, announced with its size and alt text.
+
+**The Open Graph image** (`/og.png`, 1200×630) is the masthead set as a title page on parchment: the red double rule, the name in Alegreya SC Medium with 0.1em tracking, the tagline in Alegreya italic `--muted`, "jonreyna.dev" in red small capitals, and a single red rule, centered in an 840px column, in the light theme's colors. `make og-image` draws it with `tools/card` (Go) from the two pinned Alegreya fonts; the PNG is never committed. Text that doesn't fit the column stops the build. It sets type without GPOS kerning, which the letter-spaced small capitals don't need.
 - Dates in `<time datetime>`.
 - Essays add `article:published_time` from `date` and, when the front matter has `updated`, `article:modified_time`. A page with `noindex: true` or `draft: true` gets `<meta name="robots" content="noindex">`.
 
@@ -189,7 +191,6 @@ No photos in the design and no icon set. Diagrams are inline SVG drawn in `curre
 ## Still open
 
 - The final favicon: a red "J" in Alegreya SC, outlined to a path at build time. (`favicon.svg` uses Georgia for now.)
-- The Open Graph image (1200×630): the masthead as a title page, on parchment.
 
 ## Review log
 

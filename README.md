@@ -14,6 +14,7 @@ site/        Jaspr project (static mode)
   DESIGN.md  the design system: color, type, components, typesetting rules
 resume/      the résumé as one YAML file (resume.yaml), the single source for every version
 tools/vitae/ Go CLI that validates resume.yaml and renders each variant (see its README)
+tools/card/  Go CLI that draws the Open Graph image (the picture beside a shared link)
 Makefile     the same targets locally and in CI
 wrangler.jsonc
 ```
