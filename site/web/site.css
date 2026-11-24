@@ -11,7 +11,8 @@ a { color: var(--red); text-decoration: none; }
 a:hover { color: var(--red-hover); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
 a:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
 /* Links inside running prose carry an underline, so color is not the only cue. Links that
-   stand alone (the masthead name, the contact line, list titles, "more" links) don't. */
+   stand alone (the masthead name, list titles, "more" links) don't. The contact line's
+   links are set upright in its italic line instead. */
 p:not(.contact, .name, .entry, .more) a:not(sup a):not(.anchor), .ex li > span a, .answers li > span a {
   text-decoration: underline; text-decoration-color: var(--link-line); text-decoration-thickness: 1px; text-underline-offset: 3px;
 }
@@ -44,6 +45,7 @@ p + p { text-indent: var(--indent); }
 .contact { margin-top: var(--space-3); font-style: italic; color: var(--muted); }
 p + p.contact { text-indent: 0; }
 .contact .sep { color: var(--red); font-style: normal; margin: 0 0.45em; }
+.contact a { font-style: normal; }
 
 h2 { font-family: var(--font-sc); font-weight: 500; font-size: var(--size-h2); letter-spacing: 0.06em; color: var(--red); margin: var(--space-5) 0 var(--space-2); line-height: 1.3; }
 h2 .n { margin-right: 0.5rem; }
