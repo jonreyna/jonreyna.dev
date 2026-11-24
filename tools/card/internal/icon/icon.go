@@ -85,7 +85,8 @@ func (ic *Icon) SVG(light, dark Palette) ([]byte, error) {
 	return fmt.Appendf(nil, `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 %[1]d %[1]d">`+
 		`<style>.g{fill:%[2]s}.l{fill:%[3]s}`+
 		`@media (prefers-color-scheme:dark){.g{fill:%[4]s}.l{fill:%[5]s}}</style>`+
-		`<rect class="g" width="%[1]d" height="%[1]d"/><path class="l" d="%[6]s"/></svg>`+"\n",
+		`<rect class="g" fill="%[2]s" width="%[1]d" height="%[1]d"/>`+
+		`<path class="l" fill="%[3]s" d="%[6]s"/></svg>`+"\n",
 		svgSide, cssColor(light.Ground), cssColor(light.Letter),
 		cssColor(dark.Ground), cssColor(dark.Letter), path.String()), nil
 }
