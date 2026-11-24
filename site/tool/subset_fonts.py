@@ -8,7 +8,7 @@ SOURCE_DIR holds the source fonts that make downloaded and checked. For each fac
 FACES this writes OUT_DIR/<name>.<hash>.woff2, where <hash> starts the file's SHA-256,
 so a changed font gets a new URL and the year-long immutable cache (site/web/_headers)
 never serves a stale one. It removes WOFF2 files there that it didn't write, writes the
-@font-face rules to CSS, and writes MANIFEST: the preload URL, and each face's file,
+@font-face rules to CSS, and writes MANIFEST: the preload URLs, and each face's file,
 size and the code points it covers, which site/tool/verify_dist.py checks the built
 pages against.
 
@@ -68,7 +68,7 @@ class Face:
     unicodes: str
     features: tuple = ()  # extra OpenType features; ("*",) keeps them all
     wght: int | None = None  # the weight to pin a variable source at
-    preload: bool = False  # the one face the pages preload
+    preload: bool = False  # every page uses it, so pages fetch it with the HTML
 
 
 FACES = [
@@ -77,9 +77,9 @@ FACES = [
     Face("alegreya-medium", "Alegreya.ttf", "Alegreya", 500, "normal", "text", TEXT,
          tuple(NUMERALS), wght=500),
     Face("alegreya-italic", "Alegreya-Italic.ttf", "Alegreya", 400, "italic", "text", TEXT,
-         tuple(NUMERALS), wght=400),
+         tuple(NUMERALS), wght=400, preload=True),
     Face("alegreya-sc-medium", "AlegreyaSC-Medium.ttf", "Alegreya SC", 500, "normal", "text",
-         TEXT, tuple(NUMERALS)),
+         TEXT, tuple(NUMERALS), preload=True),
     Face("courier-prime-regular", "CourierPrime-Regular.ttf", "Courier Prime", 400, "normal",
          "code", CODE),
     Face("courier-prime-bold", "CourierPrime-Bold.ttf", "Courier Prime", 700, "normal", "code",
@@ -169,7 +169,7 @@ def main(argv):
         encoding="utf-8")
 
     manifest = {
-        "preload": next(f"{url_dir}/{file}" for face, file, _, _ in built if face.preload),
+        "preload": [f"{url_dir}/{file}" for face, file, _, _ in built if face.preload],
         "faces": [{"file": f"{url_dir}/{file}", "family": face.family, "weight": face.weight,
                    "style": face.style, "group": face.group, "bytes": len(data),
                    "codepoints": ranges(codepoints)}

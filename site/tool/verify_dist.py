@@ -6,7 +6,8 @@ font manifest site/tool/subset_fonts.py wrote. Fails (exit 1) if any page:
   - loads the island bundle without containing an island,
   - lacks a <title>, a lang attribute, or a meta description (the 404 page is exempt
     from the description), or an og:image,
-  - doesn't load /fonts.css or preload the manifest's preload font,
+  - doesn't load /fonts.css or preload each of the manifest's preload fonts,
+  - nests a link inside another link,
   - doesn't link the three favicons,
   - shows a character the face that draws it lacks: text in <math> needs the math
     face, text in <code> or <pre> every code face, and other body text every text face,
@@ -35,7 +36,8 @@ FALLBACK = {"\u21a9", "\u25ae", "\u25b8"}
 
 
 class TextByFace(html.parser.HTMLParser):
-    """Collects a page's visible characters by the font group that draws them."""
+    """Collects a page's visible characters by the font group that draws them, and
+    counts links nested inside other links."""
 
     HIDDEN = {"head", "script", "style", "template"}  # text no web font draws
     GROUPS = (("math", {"math"}), ("code", {"code", "pre"}))  # checked in this order
@@ -44,14 +46,21 @@ class TextByFace(html.parser.HTMLParser):
         super().__init__()
         self.depth = {tag: 0 for tag in self.HIDDEN | {"math", "code", "pre"}}
         self.chars = {"text": set(), "code": set(), "math": set()}
+        self.links = 0  # how many <a> elements are open
+        self.nested_links = 0  # <a> elements opened inside another
 
     def handle_starttag(self, tag, attrs):
         if tag in self.depth:
             self.depth[tag] += 1
+        if tag == "a":
+            self.nested_links += self.links > 0
+            self.links += 1
 
     def handle_endtag(self, tag):
         if self.depth.get(tag):
             self.depth[tag] -= 1
+        if tag == "a" and self.links:
+            self.links -= 1
 
     def handle_data(self, data):
         if any(self.depth[tag] for tag in self.HIDDEN):
@@ -98,15 +107,17 @@ for page in sorted(DIST.rglob("*.html")):
     links = [dict(re.findall(r'([\w-]+)="([^"]*)"', tag)) for tag in re.findall(r"<link\b[^>]*>", html)]
     if not any(a.get("rel") == "stylesheet" and a.get("href") == "/fonts.css" for a in links):
         problems.append(f"{rel}: doesn't load /fonts.css")
-    if not any(a.get("rel") == "preload" and a.get("href") == fonts["preload"] and a.get("as") == "font"
-               for a in links):
-        problems.append(f"{rel}: doesn't preload {fonts['preload']}")
+    for url in fonts["preload"]:
+        if not any(a.get("rel") == "preload" and a.get("href") == url and a.get("as") == "font" for a in links):
+            problems.append(f"{rel}: doesn't preload {url}")
     for want in ({"rel": "icon", "href": "/favicon.ico"}, {"rel": "icon", "href": "/favicon.svg"},
                  {"rel": "apple-touch-icon", "href": "/apple-touch-icon.png"}):
         if not any(want.items() <= a.items() for a in links):
             problems.append(f"{rel}: doesn't link {want['href']}")
     text = TextByFace()
     text.feed(html)
+    if text.nested_links:
+        problems.append(f"{rel}: {text.nested_links} links nested inside another link")
     for group, chars in sorted(text.chars.items()):
         if missing := sorted(chars - covered[group] - FALLBACK):
             shown = " ".join(f"U+{ord(c):04X} {c!r}" for c in missing[:8])

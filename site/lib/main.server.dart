@@ -12,6 +12,7 @@ import 'components/resume_view.dart';
 import 'essay_sections.dart';
 import 'layouts/j_layout.dart';
 import 'main.server.options.dart';
+import 'nested_links.dart';
 import 'tex_math.dart';
 
 void main() {
@@ -31,7 +32,8 @@ void main() {
       templateEngine: const TexMath(),
       parsers: [MarkdownParser()],
       // Code blocks are highlighted while the site is built (Pandoc, as for the math).
-      extensions: [const EssaySectionsExtension(), const CodeHighlightExtension()],
+      // A link nested in another (an email address in a link's text) is unwrapped first.
+      extensions: [const NestedLinksExtension(), const EssaySectionsExtension(), const CodeHighlightExtension()],
       components: [
         ...knuthComponents(),
         EssayList.component(),

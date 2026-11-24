@@ -59,13 +59,13 @@ class JLayout extends PageLayoutBase {
     if (data['noindex'] == true || data['draft'] == true) {
       yield meta(name: 'robots', content: 'noindex');
     }
-    // Self-hosted, subset fonts (make fonts). Alegreya regular sets most of every page,
-    // so it is fetched with the HTML rather than after the CSS (DESIGN.md, font budget).
-    yield link(
-      rel: 'preload',
-      href: preloadFont(),
-      attributes: {'as': 'font', 'type': 'font/woff2', 'crossorigin': ''},
-    );
+    // Self-hosted, subset fonts (make fonts). Every page sets text in Alegreya regular,
+    // the italic (the tagline) and Alegreya SC (the name and nav), so those three are
+    // fetched with the HTML rather than after the CSS; arriving late, they reflow the
+    // page (DESIGN.md, font budget).
+    for (final font in preloadFonts()) {
+      yield link(rel: 'preload', href: font, attributes: {'as': 'font', 'type': 'font/woff2', 'crossorigin': ''});
+    }
     yield link(rel: 'stylesheet', href: '/fonts.css');
     yield link(rel: 'stylesheet', href: '/tokens.css');
     yield link(rel: 'stylesheet', href: '/site.css');
