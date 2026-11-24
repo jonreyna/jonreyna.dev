@@ -1,8 +1,8 @@
 ---
-description: Jon Reyna builds distributed systems that keep large fleets of infrastructure in their intended state, and writes about AI infrastructure.
+description: Jon Reyna builds distributed systems that keep large fleets of infrastructure in their intended state, most recently infrastructure for AI inference and AI agents.
 ---
 
-I build distributed systems that keep large fleets of infrastructure in their intended state. For thirteen years that has meant Go, C++, C and Java; most recently, infrastructure for AI inference and AI agents. I’m now learning how models are trained and served, from first principles, and writing it up here.
+I build distributed systems that keep large fleets of infrastructure in their intended state. For thirteen years that has meant Go, C++, C and Java; most recently, infrastructure for AI inference and AI agents. Next I’m learning how models are trained and served, from first principles, and I’ll write it up here.
 
 <p class="contact"><a href="/resume">Résumé</a><span class="sep" aria-hidden="true">·</span><a href="mailto:jon@jonreyna.dev">jon@jonreyna.dev</a><span class="sep" aria-hidden="true">·</span>open to staff and principal roles (remote)</p>
 
@@ -14,10 +14,4 @@ I build distributed systems that keep large fleets of infrastructure in their in
 <p class="work"><span class="t">Temporal middleware</span>, <span class="m">Equinix, 2024–2025.</span> Composable retries, metrics and rollback for the workflows that connect Equinix Fabric to AWS, Google Cloud and Azure.</p>
 <p class="more"><a href="/work">More work, and the story behind each</a></p>
 
-<h2 id="writing">Writing</h2>
-
-<EssayList limit="3"/>
-
-<h2 id="play">Play</h2>
-
-Nothing published yet.
+<EssayList limit="3" heading="Writing" id="writing"/>
