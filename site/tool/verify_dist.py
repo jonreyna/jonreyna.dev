@@ -6,6 +6,7 @@ font manifest site/tool/subset_fonts.py wrote. Fails (exit 1) if any page:
   - loads the island bundle without containing an island,
   - lacks a <title>, a lang attribute, or a meta description (the 404 page is exempt
     from the description), or an og:image,
+  - emits a <base> tag (which breaks in-page #fragment links on subpages),
   - doesn't load /fonts.css or preload each of the manifest's preload fonts,
   - nests a link inside another link,
   - doesn't link the three favicons,
@@ -96,6 +97,8 @@ for page in sorted(DIST.rglob("*.html")):
     # Jaspr marks each pre-rendered island with a comment such as <!--@kalman_demo-->.
     if any(ISLAND_JS in tag for tag in scripts) and "<!--@" not in html:
         problems.append(f"{rel}: loads {ISLAND_JS} but has no island")
+    if re.search(r"<base\b", html):
+        problems.append(f"{rel}: has a <base> tag, which breaks in-page #fragment links on subpages")
     if not re.search(r"<title>[^<]+</title>", html):
         problems.append(f"{rel}: no <title>")
     if not re.search(r"<html[^>]*\blang=", html):

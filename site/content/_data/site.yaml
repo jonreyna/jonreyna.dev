@@ -1,2 +1,6 @@
 titleBase: Jon Reyna
 lang: en
+# Jaspr emits <base href="/"> by default, which causes fragment-only #... links on
+# subpages to resolve to /#... instead of the current page. Every asset and route uses
+# root-relative paths, so omit <base>.
+base: false
