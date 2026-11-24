@@ -7,7 +7,9 @@ font manifest site/tool/subset_fonts.py wrote. Fails (exit 1) if any page:
   - lacks a <title>, a lang attribute, or a meta description (the 404 page is exempt
     from the description), or an og:image,
   - emits a <base> tag (which breaks in-page #fragment links on subpages),
-  - doesn't load /fonts.css or preload each of the manifest's preload fonts,
+  - doesn't load the fonts stylesheet or preload each of the manifest's preload fonts,
+  - links a stylesheet outside /css/, or one whose name's hash doesn't match its
+    content (site/tool/fingerprint_css.py), so the year-long cache could serve it stale,
   - nests a link inside another link,
   - doesn't link the three favicons,
   - shows a character the face that draws it lacks: text in <math> needs the math
@@ -18,6 +20,7 @@ feed or sitemap is malformed or lists a URL that isn't a published page (one sta
 not marked noindex), or the sitemap misses a published page.
 """
 
+import hashlib
 import html.parser
 import json
 import pathlib
@@ -87,6 +90,7 @@ except (OSError, ValueError, KeyError) as e:
     sys.exit(f"verify: can't read the font manifest {FONT_FACES} (run make fonts): {e}")
 
 problems = []
+linked_css = set()
 for page in sorted(DIST.rglob("*.html")):
     rel = page.relative_to(DIST)
     html = page.read_text(encoding="utf-8")
@@ -108,8 +112,18 @@ for page in sorted(DIST.rglob("*.html")):
     if 'property="og:image"' not in html:
         problems.append(f"{rel}: no og:image")
     links = [dict(re.findall(r'([\w-]+)="([^"]*)"', tag)) for tag in re.findall(r"<link\b[^>]*>", html)]
-    if not any(a.get("rel") == "stylesheet" and a.get("href") == "/fonts.css" for a in links):
-        problems.append(f"{rel}: doesn't load /fonts.css")
+    sheets = [a.get("href", "") for a in links if a.get("rel") == "stylesheet"]
+    if not any(re.fullmatch(r"/css/fonts\.[0-9a-f]{10}\.css", href) for href in sheets):
+        problems.append(f"{rel}: doesn't load the fonts stylesheet")
+    for href in sheets:
+        linked_css.add(href)
+        m = re.fullmatch(r"/css/[\w-]+\.([0-9a-f]{10})\.css", href)
+        if not m:
+            problems.append(f"{rel}: stylesheet {href} isn't fingerprinted")
+        elif not (DIST / href.lstrip("/")).is_file():
+            problems.append(f"{rel}: links {href}, which isn't staged")
+        elif hashlib.sha256((DIST / href.lstrip("/")).read_bytes()).hexdigest()[:10] != m.group(1):
+            problems.append(f"{rel}: {href} doesn't match its content's hash")
     for url in fonts["preload"]:
         if not any(a.get("rel") == "preload" and a.get("href") == url and a.get("as") == "font" for a in links):
             problems.append(f"{rel}: doesn't preload {url}")
@@ -125,6 +139,13 @@ for page in sorted(DIST.rglob("*.html")):
         if missing := sorted(chars - covered[group] - FALLBACK):
             shown = " ".join(f"U+{ord(c):04X} {c!r}" for c in missing[:8])
             problems.append(f"{rel}: characters the {group} fonts lack: {shown}" + (" …" if len(missing) > 8 else ""))
+
+# Every stylesheet is fingerprinted under /css/ and linked; a stray one would be cached
+# without a hash, or shipped for nothing.
+for css in sorted(DIST.rglob("*.css")):
+    url = "/" + css.relative_to(DIST).as_posix()
+    if url not in linked_css:
+        problems.append(f"{url.lstrip('/')}: staged stylesheet no page links (or not under /css/)")
 
 # The Open Graph image (tools/card) must be the 1200×630 PNG the pages announce.
 card = DIST / "og.png"
@@ -161,7 +182,7 @@ if touch.is_file():
     if head[:8] != b"\x89PNG\r\n\x1a\n" or size != (180, 180):
         problems.append(f"apple-touch-icon.png: not a 180×180 PNG (got {size})")
 
-for required in ("index.html", "fonts.css", "favicon.svg", "favicon.ico", "apple-touch-icon.png", "404.html", "_headers", "robots.txt", "og.png", "feed.xml", "sitemap.xml", "resume/index.html", "resume/resume.full.json", "resume/resume.full.pdf",
+for required in ("index.html", "favicon.svg", "favicon.ico", "apple-touch-icon.png", "404.html", "_headers", "robots.txt", "og.png", "feed.xml", "sitemap.xml", "resume/index.html", "resume/resume.full.json", "resume/resume.full.pdf",
                  "resume/resume.full.docx", "resume/resume.full.txt", "resume/resume.full.md"):
     if not (DIST / required).is_file():
         problems.append(f"missing {required}")

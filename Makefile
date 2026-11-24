@@ -128,6 +128,8 @@ dist: site  ## Stage the deployable files in dist/
 	cp site/web/_headers dist/_headers
 	# Cloudflare's 404-page handling looks for 404.html; Jaspr writes 404/index.html.
 	mv dist/404/index.html dist/404.html && rmdir dist/404
+	# Stylesheets move to /css/NAME.HASH.css so they can be cached for a year (site/tool/fingerprint_css.py).
+	python3 -I site/tool/fingerprint_css.py dist
 	# The Atom feed and the sitemap, from the staged pages (site/tool/feed_sitemap.py).
 	SOURCE_DATE_EPOCH=$(COMMIT_TIME) python3 -I site/tool/feed_sitemap.py dist
 	@echo "dist: $$(find dist -type f | wc -l | tr -d ' ') files, $$(du -sh dist | cut -f1)"
