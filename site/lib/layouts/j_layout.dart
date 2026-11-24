@@ -66,6 +66,8 @@ class JLayout extends PageLayoutBase {
     for (final font in preloadFonts()) {
       yield link(rel: 'preload', href: font, attributes: {'as': 'font', 'type': 'font/woff2', 'crossorigin': ''});
     }
+    // make dist renames these three for their content, as /css/NAME.HASH.css, and
+    // rewrites these links to match (tool/fingerprint_css.py).
     yield link(rel: 'stylesheet', href: '/fonts.css');
     yield link(rel: 'stylesheet', href: '/tokens.css');
     yield link(rel: 'stylesheet', href: '/site.css');
