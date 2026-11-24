@@ -28,7 +28,9 @@ p a:hover { text-decoration-color: currentColor; }
 .masthead .name { margin: 0; font-family: var(--font-sc); font-size: var(--size-name); font-weight: 500; letter-spacing: 0.1em; line-height: var(--leading-tight); }
 .masthead .name a { color: var(--text); }
 .masthead .name a:hover { text-decoration: none; color: var(--text); }
-.masthead .motto { margin: 0.1rem 0 0.5rem; font-style: italic; color: var(--muted); }
+/* No indent: off the home page the name is a p, so "p + p" below would indent the motto
+   and push it 0.7em right of center. On the home page the name is an h1. */
+.masthead .motto { margin: 0.1rem 0 0.5rem; font-style: italic; color: var(--muted); text-indent: 0; }
 .masthead nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 0 0.2rem; font-family: var(--font-sc); font-weight: 500; letter-spacing: 0.06em; }
 .masthead nav a { color: var(--text); padding: 0 0.3rem; }
 .masthead nav a:hover, .masthead nav a[aria-current] { color: var(--red); text-decoration: none; }
