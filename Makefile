@@ -30,12 +30,38 @@ no-binaries:  ## Fail if git tracks a binary file
 	if [ -n "$$bins" ]; then echo "binary files tracked in git:"; echo "$$bins"; exit 1; fi; \
 	echo "checked tracked files: no binaries"
 
-# Fonts are binaries, so they stay out of git: make downloads each from a pinned
-# release, checks its SHA-256 and unpacks it into site/web/fonts/ (git-ignored).
+# Fonts are binaries, so they stay out of git. make downloads each source font from a
+# pinned release or google/fonts commit into build/downloads/fonts/ and checks its
+# SHA-256; site/tool/subset_fonts.py (fontTools, pinned with hashes in
+# site/tool/requirements.txt) then cuts each face to the characters the site uses. The
+# WOFF2 files land in site/web/fonts/ under content-hashed names, beside
+# site/web/fonts.css (both git-ignored); FONT_FACES lists them for the preload link and
+# `make verify`.
+FONT_SRC := build/downloads/fonts
+GOOGLE_FONTS_COMMIT := 06bfe0d62a98375cb09c942fa18e68bd32cff057
+GOOGLE_FONTS := https://raw.githubusercontent.com/google/fonts/$(GOOGLE_FONTS_COMMIT)/ofl
 LIBERTINUS_VERSION := 7.051
 LIBERTINUS_SHA256 := 4d9be29b5cb380c35af8ba967abcc752ad1e07be1f738a9789c33e0dd7478c92
 LIBERTINUS_ZIP := build/downloads/Libertinus-$(LIBERTINUS_VERSION).zip
-MATH_FONT := site/web/fonts/LibertinusMath-Regular.woff2
+FONT_VENV := build/venv
+FONT_FACES := build/fonts/faces.json
+FONT_CSS := site/web/fonts.css
+
+# $(call font-download,FILE,URL,SHA256) makes the rule that downloads URL to
+# $(FONT_SRC)/FILE.
+define font-download
+$(FONT_SRC)/$(1):
+	mkdir -p $$(@D)
+	curl -sSfL -o $$@.part '$(2)'
+	echo "$(3)  $$@.part" | shasum -a 256 -c -
+	mv $$@.part $$@
+endef
+$(eval $(call font-download,Alegreya.ttf,$(GOOGLE_FONTS)/alegreya/Alegreya%5Bwght%5D.ttf,ba5564634b93a8f8ba57b48cd4f1ae7417d2b4656fbac779028679b00de3cf12))
+$(eval $(call font-download,Alegreya-Italic.ttf,$(GOOGLE_FONTS)/alegreya/Alegreya-Italic%5Bwght%5D.ttf,fa915eec76227935dc5fb678953c94b71287c360928013cfdb441dfe52f5a391))
+$(eval $(call font-download,AlegreyaSC-Medium.ttf,$(GOOGLE_FONTS)/alegreyasc/AlegreyaSC-Medium.ttf,fa896222115cc9a41c0695a3ee6feafbaba97932e9bb6240520b3feeb560ea2c))
+$(eval $(call font-download,CourierPrime-Regular.ttf,$(GOOGLE_FONTS)/courierprime/CourierPrime-Regular.ttf,72f793376f8e2841656bf21d77a5de010f2929bd6956a22ee848ad0c7eb978af))
+$(eval $(call font-download,CourierPrime-Bold.ttf,$(GOOGLE_FONTS)/courierprime/CourierPrime-Bold.ttf,ff1f38786c849d1c41fa8e447960abdb2bd75fdfb0cfcdeb524fad65a5af3638))
+$(eval $(call font-download,CourierPrime-Italic.ttf,$(GOOGLE_FONTS)/courierprime/CourierPrime-Italic.ttf,f1b9a5829789f7e56432a9f3bc7665ef4531dbba1c112639e48bef39621a006b))
 
 $(LIBERTINUS_ZIP):
 	mkdir -p $(dir $@)
@@ -43,36 +69,30 @@ $(LIBERTINUS_ZIP):
 	echo "$(LIBERTINUS_SHA256)  $@.part" | shasum -a 256 -c -
 	mv $@.part $@
 
-$(MATH_FONT): $(LIBERTINUS_ZIP)
-	unzip -o -q -j $< Libertinus-$(LIBERTINUS_VERSION)/static/WOFF2/LibertinusMath-Regular.woff2 -d $(dir $@)
+$(FONT_SRC)/LibertinusMath-Regular.otf: $(LIBERTINUS_ZIP)
+	unzip -o -q -j $< Libertinus-$(LIBERTINUS_VERSION)/static/OTF/LibertinusMath-Regular.otf -d $(dir $@)
 	touch $@
 
-fonts: $(MATH_FONT)  ## Download the pinned fonts into site/web/fonts (not in git)
+FONT_SOURCES := $(addprefix $(FONT_SRC)/,Alegreya.ttf Alegreya-Italic.ttf AlegreyaSC-Medium.ttf \
+	CourierPrime-Regular.ttf CourierPrime-Bold.ttf CourierPrime-Italic.ttf LibertinusMath-Regular.otf)
 
-# The Open Graph image (the picture beside a shared link) is drawn by tools/card in
-# the masthead's typefaces, Alegreya SC Medium and Alegreya Italic, downloaded from one
-# pinned google/fonts commit and checked like Libertinus. They're used only to draw
-# the image, not served. site/web/og.png is git-ignored.
-GOOGLE_FONTS_COMMIT := 06bfe0d62a98375cb09c942fa18e68bd32cff057
-GOOGLE_FONTS := https://raw.githubusercontent.com/google/fonts/$(GOOGLE_FONTS_COMMIT)/ofl
-ALEGREYA_SC := build/downloads/fonts/AlegreyaSC-Medium.ttf
-ALEGREYA_SC_SHA256 := fa896222115cc9a41c0695a3ee6feafbaba97932e9bb6240520b3feeb560ea2c
-ALEGREYA_ITALIC := build/downloads/fonts/Alegreya-Italic.ttf
-ALEGREYA_ITALIC_SHA256 := fa915eec76227935dc5fb678953c94b71287c360928013cfdb441dfe52f5a391
+$(FONT_VENV)/.installed: site/tool/requirements.txt
+	python3 -m venv $(FONT_VENV)
+	$(FONT_VENV)/bin/pip install -q --disable-pip-version-check --require-hashes -r $<
+	touch $@
+
+$(FONT_FACES): site/tool/subset_fonts.py $(FONT_SOURCES) $(FONT_VENV)/.installed
+	$(FONT_VENV)/bin/python -I site/tool/subset_fonts.py $(FONT_SRC) site/web/fonts $(FONT_CSS) $@
+
+fonts: $(FONT_FACES)  ## Download, subset and stage the pinned fonts in site/web/fonts (not in git)
+
+# The Open Graph image (the picture beside a shared link) is drawn by tools/card from
+# two of the same source fonts the site's faces are cut from. site/web/og.png is
+# git-ignored.
+ALEGREYA_SC := $(FONT_SRC)/AlegreyaSC-Medium.ttf
+ALEGREYA_ITALIC := $(FONT_SRC)/Alegreya-Italic.ttf
 CARD := build/bin/card
 OG_IMAGE := site/web/og.png
-
-$(ALEGREYA_SC):
-	mkdir -p $(dir $@)
-	curl -sSfL -o $@.part $(GOOGLE_FONTS)/alegreyasc/AlegreyaSC-Medium.ttf
-	echo "$(ALEGREYA_SC_SHA256)  $@.part" | shasum -a 256 -c -
-	mv $@.part $@
-
-$(ALEGREYA_ITALIC):
-	mkdir -p $(dir $@)
-	curl -sSfL -o $@.part '$(GOOGLE_FONTS)/alegreya/Alegreya-Italic%5Bwght%5D.ttf'
-	echo "$(ALEGREYA_ITALIC_SHA256)  $@.part" | shasum -a 256 -c -
-	mv $@.part $@
 
 card:  ## Build the card CLI (the Open Graph image) into build/bin
 	cd tools/card && go build -o ../../$(CARD) ./cmd/card
@@ -86,7 +106,7 @@ og-image: card $(ALEGREYA_SC) $(ALEGREYA_ITALIC)  ## Draw the Open Graph image i
 # defined further down, so it can't be a prerequisite here; site-resume's Word step
 # downloads it.
 site: fonts og-image site-resume  ## Build the static site into site/build/jaspr
-	cd site && PANDOC=$(CURDIR)/$(PANDOC) jaspr build
+	cd site && PANDOC=$(CURDIR)/$(PANDOC) FONT_FACES=$(CURDIR)/$(FONT_FACES) jaspr build
 
 # Copy only the site's own files: the build also leaves packages/, .dart_tool/ and a manifest.
 dist: site  ## Stage the deployable files in dist/
@@ -110,8 +130,8 @@ check:  ## Static analysis
 site-test: resume-word  ## Run the site's Dart tests (TeX to MathML, code highlighting)
 	cd site && PANDOC=$(CURDIR)/$(PANDOC) dart test
 
-verify: dist-exists  ## Check the staged pages (scripts, titles, descriptions) and the feed and sitemap
-	python3 site/tool/verify_dist.py dist
+verify: dist-exists  ## Check the staged pages (scripts, titles, descriptions, fonts) and the feed and sitemap
+	python3 -I site/tool/verify_dist.py dist $(FONT_FACES)
 
 # deploy and preview upload whatever is in dist/, so CI builds once and the
 # same files are what you checked. Run `make dist` first.
@@ -285,5 +305,5 @@ resume-private: vitae  ## Render with the private overlay into build/resume-priv
 	$(MAKE) --no-print-directory $(WORD_REFERENCE)
 	$(call build-word,build/resume-private)
 
-clean:  ## Remove build output, the copied résumé, the Open Graph image and downloaded fonts
-	rm -rf site/build dist .wrangler build site/web/resume $(MATH_FONT) $(OG_IMAGE)
+clean:  ## Remove build output, the copied résumé, the Open Graph image and the fonts
+	rm -rf site/build dist .wrangler build site/web/resume site/web/fonts/*.woff2 $(FONT_CSS) $(OG_IMAGE)

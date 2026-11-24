@@ -3,6 +3,7 @@ import 'package:jaspr/server.dart';
 import 'package:jaspr_content/jaspr_content.dart';
 
 import '../dates.dart';
+import '../fonts.dart';
 
 /// Design J ("Red and black, with algorithms") as a jaspr_content layout.
 /// See DESIGN.md (in site/) for the rules this follows.
@@ -58,14 +59,14 @@ class JLayout extends PageLayoutBase {
     if (data['noindex'] == true || data['draft'] == true) {
       yield meta(name: 'robots', content: 'noindex');
     }
-    // Google Fonts for now; self-hosted subset WOFF2 files replace this before launch.
-    yield link(rel: 'preconnect', href: 'https://fonts.googleapis.com');
-    yield link(rel: 'preconnect', href: 'https://fonts.gstatic.com', attributes: {'crossorigin': ''});
+    // Self-hosted, subset fonts (make fonts). Alegreya regular sets most of every page,
+    // so it is fetched with the HTML rather than after the CSS (DESIGN.md, font budget).
     yield link(
-      rel: 'stylesheet',
-      href: 'https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,400;0,500;1,400'
-          '&family=Alegreya+SC:wght@500&family=Courier+Prime:wght@400;700&display=swap',
+      rel: 'preload',
+      href: preloadFont(),
+      attributes: {'as': 'font', 'type': 'font/woff2', 'crossorigin': ''},
     );
+    yield link(rel: 'stylesheet', href: '/fonts.css');
     yield link(rel: 'stylesheet', href: '/tokens.css');
     yield link(rel: 'stylesheet', href: '/site.css');
     yield link(rel: 'icon', href: '/favicon.svg', type: 'image/svg+xml');

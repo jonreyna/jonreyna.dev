@@ -1,9 +1,10 @@
 # Dart and Jaspr
 .dart_tool/
 /site/build/
-# Fonts are downloaded by `make fonts`; only their licenses are in git.
+# Fonts are downloaded and subset by `make fonts`; only their licenses are in git.
 /site/web/fonts/*
-!/site/web/fonts/OFL.txt
+!/site/web/fonts/*-OFL.txt
+/site/web/fonts.css
 # The résumé files are rendered by `make site-resume` from resume/resume.yaml.
 /site/web/resume/
 # The Open Graph image is drawn by `make og-image` (tools/card).

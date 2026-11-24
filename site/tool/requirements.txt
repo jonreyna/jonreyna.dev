@@ -1,0 +1,24 @@
+# Python packages for site/tool/subset_fonts.py, pinned by version and SHA-256.
+# `make fonts` installs them into build/venv with `pip install --require-hashes`.
+# fontTools is pure Python; Brotli lists its sdist and the CPython 3.12-3.15 wheels
+# for macOS and Linux, so pip picks a wheel where one fits and builds otherwise.
+fonttools==4.68.0 \
+    --hash=sha256:d76f8fdcb6936f5e1045a0c9dd721a4bf11112e60d1e243bfa1d39f06a8b3104
+brotli==1.2.1 \
+    --hash=sha256:3975fb11f63e212b87a087e4a910187b522c6969a4989ca362d6f85f9dc36acd \
+    --hash=sha256:de499e2492c8106a5e163d3cf5b6726e2797f9234cfbc6055fbb5f9d8f198f39 \
+    --hash=sha256:875975f91870682cca4371260522ad3f22d636e845b5c5355c52bc045c0f75c8 \
+    --hash=sha256:4b9dd0173ca5e01d1eb307d3c184fe8c09bdc168ede560889b1018d216d38c61 \
+    --hash=sha256:a84e0ae14d1efe782a9f143021c4e01d5ed986a140fe5070505cc5978eaf0592 \
+    --hash=sha256:c5302747f969d5ec925810176f7697712a3fa2ea0fae0c7a85aa4ad9325247fd \
+    --hash=sha256:b5b458950312830913f837e179ce9221000ab7a20b4e42d7b48c1fcd79140de1 \
+    --hash=sha256:264fd5b200f6f6170cb551a4b9fcaabf8aa846ddaefe72db4d5f49f9d3743df9 \
+    --hash=sha256:b8b2fc7901b31d5885f26521cf2d74feccdc126a272ba1d879b7545bb25468bc \
+    --hash=sha256:de1bf30d819809a964060356032e6670c9923644666afaaf3d1719d05ddb844e \
+    --hash=sha256:a3942e2d365f009e5e7839114fa315e1a2bcfea12b52064a28f1a7281862a2a7 \
+    --hash=sha256:a998857af4fcd19920bdf5f30f0f1a23f38472a703d33e49168cd4fd32438377 \
+    --hash=sha256:eea17e3cdc6f9aecffe15fe9a9eeba8e8c049a5d347de1561eed2240cdf35a79 \
+    --hash=sha256:761db18dc32b24d00fbedca1013089eb3470053cefa8492bd9c07b11102d72bf \
+    --hash=sha256:aa32b51702a0b6e9fddc0d1dc66cb6ed6af112f1bba0cac2be9039546a862b5c \
+    --hash=sha256:f00ff4b56caf151365c77988eb85a4a71eb26fe63047d4084d5614e06d65e3cf \
+    --hash=sha256:02b2f7b5a83485efe448a44ddf7983def05c3bb1dcf917d4f7154070260e13de
