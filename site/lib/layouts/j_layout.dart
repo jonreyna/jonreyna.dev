@@ -3,6 +3,7 @@ import 'package:jaspr/server.dart';
 import 'package:jaspr_content/jaspr_content.dart';
 
 import '../dates.dart';
+import '../essays.dart';
 import '../fonts.dart';
 
 /// Design J ("Red and black, with algorithms") as a jaspr_content layout.
@@ -59,6 +60,19 @@ class JLayout extends PageLayoutBase {
     if (data['noindex'] == true || data['draft'] == true) {
       yield meta(name: 'robots', content: 'noindex');
     }
+    // The essay index (`essayIndex: true`, /writing) stays out of search engines, the
+    // sitemap and the nav until an essay is published, and the feed link waits too.
+    yield Builder(
+      builder: (context) {
+        final hasEssays = publishedEssays(pageEntries(context.pages)).isNotEmpty;
+        return Component.fragment([
+          if (!hasEssays && data['essayIndex'] == true && data['noindex'] != true && data['draft'] != true)
+            meta(name: 'robots', content: 'noindex'),
+          if (hasEssays)
+            link(rel: 'alternate', type: 'application/atom+xml', href: '/feed.xml', attributes: {'title': 'Jon Reyna'}),
+        ]);
+      },
+    );
     // Self-hosted, subset fonts (make fonts). Every page sets text in Alegreya regular,
     // the italic (the tagline) and Alegreya SC (the name and nav), so those three are
     // fetched with the HTML rather than after the CSS; arriving late, they reflow the
@@ -79,7 +93,6 @@ class JLayout extends PageLayoutBase {
     yield meta(name: 'theme-color', content: '#f6f0e1', attributes: {'media': '(prefers-color-scheme: light)'});
     yield meta(name: 'theme-color', content: '#1a1612', attributes: {'media': '(prefers-color-scheme: dark)'});
     yield link(rel: 'canonical', href: 'https://jonreyna.dev${page.url}');
-    yield link(rel: 'alternate', type: 'application/atom+xml', href: '/feed.xml', attributes: {'title': 'Jon Reyna'});
     yield meta(attributes: {'property': 'og:url', 'content': 'https://jonreyna.dev${page.url}'});
     // Reading pages ship no JavaScript; a page with an island opts in (DESIGN.md, principle 4).
     if (data['islands'] == true) {
@@ -99,14 +112,23 @@ class JLayout extends PageLayoutBase {
         header(classes: 'masthead', [
           if (isHome) h1(classes: 'name', [name]) else p(classes: 'name', [name]),
           p(classes: 'motto', [.text('distributed systems & AI infrastructure')]),
-          nav(attributes: {'aria-label': 'Site'}, [
-            for (final (href, label) in _nav)
-              a(
-                href: href,
-                attributes: {if (_inSection(page.url, href)) 'aria-current': 'page'},
-                [.text(label)],
-              ),
-          ]),
+          Builder(
+            builder: (context) {
+              final hasEssays = publishedEssays(pageEntries(context.pages)).isNotEmpty;
+              return nav(
+                attributes: {'aria-label': 'Site'},
+                [
+                  for (final (href, label) in _nav)
+                    if (hasEssays || href != '/writing')
+                      a(
+                        href: href,
+                        attributes: {if (_inSection(page.url, href)) 'aria-current': 'page'},
+                        [.text(label)],
+                      ),
+                ],
+              );
+            },
+          ),
         ]),
         main_(id: 'main', classes: data['kind'] == 'essay' ? 'essay' : null, [
           if (data['kind'] == 'essay')
@@ -122,24 +144,23 @@ class JLayout extends PageLayoutBase {
           a(href: 'mailto:jon@jonreyna.dev', [.text('jon@jonreyna.dev')]),
           a(href: 'https://github.com/jonreyna', [.text('GitHub')]),
           a(href: 'https://www.linkedin.com/in/jonreyna', [.text('LinkedIn')]),
-          a(href: '/feed.xml', [.text('feed')]),
+          Builder(
+            builder: (context) => publishedEssays(pageEntries(context.pages)).isEmpty
+                ? Component.fragment([])
+                : a(href: '/feed.xml', [.text('feed')]),
+          ),
         ]),
       ]),
     ]);
   }
 
-  /// The four nav items (DESIGN.md, "Masthead"). Play has no page until Phase 6, so it
-  /// points at the home page's section.
-  static const _nav = [
-    ('/work', 'work'),
-    ('/writing', 'writing'),
-    ('/#play', 'play'),
-    ('/resume', 'résumé'),
-  ];
+  /// The nav items (DESIGN.md, "Masthead"). Writing shows once an essay is published.
+  /// Play returns with its first piece (Phase 6), as `('/#play', 'play')` before résumé,
+  /// with its section back on the home page.
+  static const _nav = [('/work', 'work'), ('/writing', 'writing'), ('/resume', 'résumé')];
 
   /// Whether [url] is the nav item's page or one below it (an essay under /writing).
-  static bool _inSection(String url, String href) =>
-      !href.contains('#') && (url == href || url.startsWith('$href/'));
+  static bool _inSection(String url, String href) => !href.contains('#') && (url == href || url.startsWith('$href/'));
 
   /// Ends every essay: who wrote it and the way back to the list.
   Component _essayFoot() => footer(classes: 'essay-foot', [

@@ -17,7 +17,9 @@ font manifest site/tool/subset_fonts.py wrote. Fails (exit 1) if any page:
 or if a file the deploy needs is missing (including the résumé page and its JSON, and
 every font in the manifest), if any staged file still mentions Google Fonts, or if the
 feed or sitemap is malformed or lists a URL that isn't a published page (one staged and
-not marked noindex), or the sitemap misses a published page.
+not marked noindex), or the sitemap misses a published page. Nor may a published page
+say "Nothing published yet." or link to the Writing page or the feed while no essay is
+published, and every link to a home-page section (/#play) must find its section.
 """
 
 import hashlib
@@ -219,6 +221,23 @@ if feed is not None:
     for url in feed:
         if url not in published:
             problems.append(f"feed.xml: lists {url}, which is not a published page")
+
+# Empty sections stay hidden: until an essay is published, no published page says so,
+# links to /writing or the feed, or is the Writing page itself (it is noindex until then).
+home_ids = set(re.findall(r'\bid="([^"]+)"', (DIST / "index.html").read_text(encoding="utf-8"))) \
+    if (DIST / "index.html").is_file() else set()
+for page in sorted(DIST.rglob("*.html")):
+    rel = page.relative_to(DIST)
+    html = page.read_text(encoding="utf-8")
+    url = f"{SITE}/" + rel.as_posix().removesuffix("index.html").removesuffix("/")
+    if url.rstrip("/") in {u.rstrip("/") for u in published}:
+        if "Nothing published yet." in html:
+            problems.append(f"{rel}: shows an empty section (\"Nothing published yet.\")")
+        if feed == [] and re.search(r'href="/(writing|feed\.xml)"', html):
+            problems.append(f"{rel}: links to /writing or the feed, but no essay is published")
+    for anchor in re.findall(r'href="/#([^"]+)"', html):
+        if anchor not in home_ids:
+            problems.append(f"{rel}: links to /#{anchor}, which the home page lacks")
 
 if problems:
     print("\n".join(problems))
