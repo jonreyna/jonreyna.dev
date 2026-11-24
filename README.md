@@ -23,7 +23,7 @@ Planned: `play/` (interactive pieces, each a self-contained bundle).
 
 ## Building
 
-Needs Dart 3.13 (Jaspr 0.23.5 doesn’t resolve on Dart 3.14 yet), Go for the résumé tools, TeX Live with latexmk for the résumé PDFs (the packages are listed in `resume/latex/texlive-packages.txt`), Python 3 and, for deploying, Node. `make` downloads a pinned Pandoc release for the Word files.
+Needs Dart 3.13 (Jaspr 0.23.5 doesn’t resolve on Dart 3.14 yet), Go for the résumé tools, TeX Live with latexmk for the résumé PDFs (the packages are listed in `resume/latex/texlive-packages.txt`), Python 3 and, for deploying, Node. `make` downloads a pinned Pandoc release for the Word files, the math and code highlighting, and installs fontTools (pinned with hashes in `site/tool/requirements.txt`) into `build/venv` to subset the fonts.
 
 ```bash
 make setup    # dart pub get, the Jaspr CLI, and the git hooks (no binaries in git)
@@ -56,5 +56,5 @@ The Cloudflare steps run once two repository secrets exist:
 ## License
 
 - **Writing** (everything in `site/content/` and `resume/`: essays, page text and the résumé): © Jon Reyna, licensed under [Creative Commons Attribution 4.0](https://creativecommons.org/licenses/by/4.0/) ([`LICENSE-CONTENT`](LICENSE-CONTENT)). Reuse it with credit and a link.
-- **Fonts** in `site/web/fonts/`: their own licenses, kept beside them. The font files themselves aren't in git; `make fonts` downloads each from a pinned release and checks its SHA-256. Libertinus Math is under the SIL Open Font License 1.1 ([`OFL.txt`](site/web/fonts/OFL.txt)).
+- **Fonts** in `site/web/fonts/`: their own licenses, kept beside them. The font files themselves aren't in git; `make fonts` downloads each from a pinned source, checks its SHA-256 and subsets it. All four families are under the SIL Open Font License 1.1: Alegreya ([`Alegreya-OFL.txt`](site/web/fonts/Alegreya-OFL.txt)), Alegreya SC ([`AlegreyaSC-OFL.txt`](site/web/fonts/AlegreyaSC-OFL.txt)), Courier Prime ([`CourierPrime-OFL.txt`](site/web/fonts/CourierPrime-OFL.txt)) and Libertinus Math ([`LibertinusMath-OFL.txt`](site/web/fonts/LibertinusMath-OFL.txt)).
 - **Everything else** (code, styles, build files, `DESIGN.md`): [MIT](LICENSE).
