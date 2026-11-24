@@ -29,10 +29,10 @@ FONT_FACES = pathlib.Path(sys.argv[2] if len(sys.argv) > 2 else "build/fonts/fac
 ISLAND_JS = "/main.client.dart.js"
 
 
-# Symbols no pinned font has: ↩ (footnote back-links), ▮ (end of algorithm) and ▸
-# (recommended exercise). Browsers draw them from the system's symbol font, as they did
-# under Google Fonts.
-FALLBACK = {"\u21a9", "\u25ae", "\u25b8"}
+# Symbols no pinned font has: ⁂ (asterism before notes), ↩ (footnote back-links),
+# ▮ (end of algorithm) and ▸ (recommended exercise). Browsers draw them from the
+# system's symbol font, as they did under Google Fonts.
+FALLBACK = {"\u2042", "\u21a9", "\u25ae", "\u25b8"}
 
 
 class TextByFace(html.parser.HTMLParser):

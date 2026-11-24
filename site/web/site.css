@@ -151,8 +151,6 @@ sup.fn a { display: inline-block; line-height: 1; padding: 0.5em 0.7em; margin: 
 
 .site-foot { margin-top: 3.5rem; padding-top: 0.8rem; border-top: var(--rule-single); text-align: center; font-style: italic; display: flex; flex-wrap: wrap; justify-content: center; gap: 0.2rem 1.2rem; }
 
-/* ---- Added for the spike ---- */
-
 /* Footnotes as the markdown package renders them */
 section.footnotes { margin-top: 0; }
 .footnote-ref a, sup a[href^="#fn"] { display: inline-block; line-height: 1; padding: 0.5em 0.7em; margin: -0.5em -0.55em; }
@@ -188,7 +186,7 @@ main { padding-top: var(--space-5); }
 main.essay, main:has(> .page-title) { padding-top: 0; }
 .algorithm > .lead, .algorithm > .lead + p { display: inline; }
 .algorithm > ol { margin-top: var(--space-2); }
-main > table { margin: 1.4rem 0; }
+.content > .table-scroll, main > table { margin: 1.4rem 0; }
 
 /* Markdown inside a component arrives as a paragraph; keep it inline in the list item */
 .algorithm li > p, .ex li > span > p { display: inline; text-indent: 0; }
