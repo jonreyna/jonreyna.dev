@@ -9,6 +9,7 @@ import 'code_highlight.dart';
 import 'components/essay_list.dart';
 import 'components/knuth.dart';
 import 'components/resume_view.dart';
+import 'essay_polish.dart';
 import 'essay_sections.dart';
 import 'layouts/j_layout.dart';
 import 'main.server.options.dart';
@@ -33,7 +34,12 @@ void main() {
       parsers: [MarkdownParser()],
       // Code blocks are highlighted while the site is built (Pandoc, as for the math).
       // A link nested in another (an email address in a link's text) is unwrapped first.
-      extensions: [const NestedLinksExtension(), const EssaySectionsExtension(), const CodeHighlightExtension()],
+      extensions: [
+        const NestedLinksExtension(),
+        const EssaySectionsExtension(),
+        const EssayPolishExtension(),
+        const CodeHighlightExtension(),
+      ],
       components: [
         ...knuthComponents(),
         EssayList.component(),

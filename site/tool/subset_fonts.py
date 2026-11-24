@@ -31,9 +31,9 @@ from fontTools import subset
 from fontTools.ttLib import TTFont
 from fontTools.varLib import instancer
 
-# Body text, small capitals: Latin with its extensions, Greek, punctuation (with ⁂),
-# the euro, trademark and minus signs, and arrows. Alegreya has no ↩ ▮ ▸; verify_dist.py
-# lets the system's symbol font draw those.
+# Body text, small capitals: Latin with its extensions, Greek, punctuation, the euro,
+# trademark and minus signs, and arrows. Alegreya has no ⁂ ↩ ▮ ▸; verify_dist.py lets
+# the system's symbol font draw those.
 TEXT = "U+0020-007E,U+00A0-017F,U+0370-03FF,U+2000-206F,U+20AC,U+2122,U+2190-2199,U+2212"
 # Code: ASCII, Latin-1, punctuation and arrows.
 CODE = "U+0020-007E,U+00A0-00FF,U+2000-206F,U+2190-2199"
