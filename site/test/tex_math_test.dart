@@ -38,6 +38,8 @@ void main() {
       ('an escaped dollar inside display math', 'a \$\$\\\$\$\$ b', [(r'\$', true, false, '')]),
       ('a longer closing fence closes the fence', '```\n\$a\$\n````\n\n\$b\$', [('b', false, false, '')]),
       ('a shorter run does not close the fence', '````\n```\n\$a\$\n````\n\$b\$', [('b', false, false, '')]),
+      ('display math at offset zero', '\$\$x^2\$\$', [('x^2', true, true, '')]),
+      ('display math after leading newline', '\n\$\$x^2\$\$', [('x^2', true, true, '')]),
     ];
     for (final (name, source, want) in cases) {
       test(name, () {
@@ -95,6 +97,16 @@ void main() {
         'a single upright letter stays as it is',
         '<mi mathvariant="normal">d</mi><mi>x</mi>',
         '<mi mathvariant="normal">d</mi><mi>x</mi>',
+      ),
+      (
+        'mover with attributes is left intact',
+        '<mover accent="true"><mi>x</mi><mo>^</mo></mover>',
+        '<mover accent="true"><mi>x</mi><mo>^</mo></mover>',
+      ),
+      (
+        'overbar nested inside mover with attributes',
+        '<mover accent="true"><mover><mi>x</mi><mo accent="true">‾</mo></mover><mo>^</mo></mover>',
+        '<mover accent="true"><mover accent="false"><mi>x</mi><mo>&#xAF;</mo></mover><mo>^</mo></mover>',
       ),
     ];
     for (final (name, input, want) in cases) {

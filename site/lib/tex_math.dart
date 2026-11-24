@@ -111,7 +111,7 @@ List<MathSpan> findMath(String source) {
         throw FormatException(r'unclosed $$ (display math may not contain a blank line)', source, i);
       }
       final end = close + 2;
-      final before = source.lastIndexOf('\n', i - 1);
+      final before = i == 0 ? -1 : source.lastIndexOf('\n', i - 1);
       final after = source.indexOf('\n', end);
       final ownParagraph = source.substring(before + 1, i).trim().isEmpty &&
           source.substring(end, after < 0 ? source.length : after).trim().isEmpty &&
@@ -198,6 +198,7 @@ bool _isSpace(String c) => c == ' ' || c == '\t' || c == '\n';
 bool _blankOrEdge(String source, int newline, {required bool back}) {
   if (newline < 0) return true;
   if (back) {
+    if (newline == 0) return true;
     final prev = source.lastIndexOf('\n', newline - 1);
     return source.substring(prev + 1, newline).trim().isEmpty;
   }
@@ -260,30 +261,37 @@ String polishMathML(String mathml) {
 /// Rewrites each `<mover>` whose last child is an accent bar (U+203E or U+00AF) as
 /// `<mover accent="false">` over U+00AF.
 String _flatOverbars(String m) {
+  const barSuffix = '<mo accent="true">‾</mo>';
   final bar = RegExp(r'<mo accent="true">[‾¯]</mo></mover>');
   final out = StringBuffer();
-  final opens = <int>[]; // offsets in [out] of each open <mover>'s tag
-  final tag = RegExp(r'<mover>|</mover>');
+  final opens = <({int offset, String openTag})>[]; // offsets in [out] of each open <mover>'s tag
+  final tag = RegExp(r'<mover\b[^>]*>|</mover>');
   var pos = 0;
   for (final t in tag.allMatches(m)) {
     out.write(m.substring(pos, t.start));
-    if (t[0] == '<mover>') {
-      opens.add(out.length);
-      out.write('<mover>');
+    if (t[0] != '</mover>') {
+      opens.add((offset: out.length, openTag: t[0]!));
+      out.write(t[0]!);
+      pos = t.end;
+      continue;
+    }
+    if (opens.isEmpty) {
+      out.write('</mover>');
       pos = t.end;
       continue;
     }
     final open = opens.removeLast();
-    final barMatch = bar.matchAsPrefix(m, t.start - '<mo accent="true">‾</mo>'.length);
+    final barStart = t.start - barSuffix.length;
+    final barMatch = barStart >= 0 && open.openTag == '<mover>' ? bar.matchAsPrefix(m, barStart) : null;
     if (barMatch != null) {
       // Drop the bar written so far, write the flat one, and mark the opening tag.
       final text = out.toString();
-      final cut = text.length - '<mo accent="true">‾</mo>'.length;
+      final cut = text.length - barSuffix.length;
       out
         ..clear()
-        ..write(text.substring(0, open))
+        ..write(text.substring(0, open.offset))
         ..write('<mover accent="false">')
-        ..write(text.substring(open + '<mover>'.length, cut))
+        ..write(text.substring(open.offset + '<mover>'.length, cut))
         ..write('<mo>&#xAF;</mo></mover>');
     } else {
       out.write('</mover>');
