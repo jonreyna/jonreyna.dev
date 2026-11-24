@@ -7,13 +7,18 @@
 /site/web/fonts.css
 # The résumé files are rendered by `make site-resume` from resume/resume.yaml.
 /site/web/resume/
-# The Open Graph image is drawn by `make og-image` (tools/card).
+# The Open Graph image and the favicons are drawn by `make og-image` and `make favicon`
+# (tools/card).
 /site/web/og.png
+/site/web/favicon.svg
+/site/web/favicon.ico
+/site/web/apple-touch-icon.png
 # Go binaries that `go build` writes into a command's own folder.
 /tools/vitae/vitae
 /tools/vitae/cmd/vitae/vitae
 /tools/card/card
 /tools/card/cmd/card/card
+/tools/card/cmd/icon/icon
 
 # Deploy staging and Wrangler state
 /dist/

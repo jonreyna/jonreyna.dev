@@ -69,7 +69,11 @@ class JLayout extends PageLayoutBase {
     yield link(rel: 'stylesheet', href: '/fonts.css');
     yield link(rel: 'stylesheet', href: '/tokens.css');
     yield link(rel: 'stylesheet', href: '/site.css');
+    // The SVG for browsers that take one; favicon.ico for the rest and for tools that
+    // ask for /favicon.ico; the PNG for phones' home screens (make favicon).
+    yield link(rel: 'icon', href: '/favicon.ico', attributes: {'sizes': '32x32'});
     yield link(rel: 'icon', href: '/favicon.svg', type: 'image/svg+xml');
+    yield link(rel: 'apple-touch-icon', href: '/apple-touch-icon.png');
     yield meta(name: 'theme-color', content: '#f6f0e1', attributes: {'media': '(prefers-color-scheme: light)'});
     yield meta(name: 'theme-color', content: '#1a1612', attributes: {'media': '(prefers-color-scheme: dark)'});
     yield link(rel: 'canonical', href: 'https://jonreyna.dev${page.url}');

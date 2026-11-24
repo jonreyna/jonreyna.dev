@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <style>
-    .ground { fill: #f6f0e1; } .letter { fill: #9a2a17; }
-    @media (prefers-color-scheme: dark) { .ground { fill: #1a1612; } .letter { fill: #e47d63; } }
-  </style>
-  <rect class="ground" width="64" height="64"/>
-  <text class="letter" x="32" y="48" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="46">J</text>
-</svg>

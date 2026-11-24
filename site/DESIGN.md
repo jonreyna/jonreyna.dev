@@ -1,6 +1,6 @@
 # DESIGN.md: jonreyna.dev
 
-**Direction J, "Red and black, with algorithms."** Chosen 2026-11-20 from ten specimens and revised the same day after a design review (see "Review log" at the end). The token values live in `web/tokens.css` and the interim favicon is `web/favicon.svg`. The page `/specimen` (`content/specimen.md`, not linked and not indexed) exercises every component below; check it after any change to the styles.
+**Direction J, "Red and black, with algorithms."** Chosen 2026-11-20 from ten specimens and revised the same day after a design review (see "Review log" at the end). The token values live in `web/tokens.css`. The page `/specimen` (`content/specimen.md`, not linked and not indexed) exercises every component below; check it after any change to the styles.
 
 ## The idea in one paragraph
 
@@ -157,9 +157,11 @@ Every page carries:
 - `<meta name="description">`, at most about 155 characters, written per page.
 - `<link rel="canonical">` with the page's full https://jonreyna.dev URL.
 - `<link rel="alternate" type="application/atom+xml">` pointing at the feed.
-- Favicon: `favicon.svg`, which switches to leather and copper in dark mode, plus a 180px PNG `apple-touch-icon`.
+- Favicons: `favicon.svg`, which switches to leather and copper in dark mode; `favicon.ico` (16 and 32px) for browsers and tools that ask for that file; and a 180px PNG `apple-touch-icon`.
 - `<meta name="theme-color">` twice: `#f6f0e1` for light and `#1a1612` for dark.
 - Open Graph: `og:type`, `og:title`, `og:description`, `og:url`, `og:site_name` and `og:image`, plus `twitter:card` (`summary_large_image`). A page's `image` front matter sets its picture; otherwise it's the site's card, `/og.png`, announced with its size and alt text.
+
+**The favicon** is a red "J" in Alegreya SC Medium on a parchment tile, square, as nothing on the site is rounded. `make favicon` draws it with `tools/card`'s `icon` command from the pinned font: the SVG's letter is the glyph's outline as a path, so it needs no font, and its colors switch to copper on leather in dark mode. The letter is centered by its ink, since the J's hook drops below the baseline, and stands 80% of the tile's height on the SVG and the ICO, and 62% on the touch icon, whose corners phones round off. None of the three files is committed.
 
 **The Open Graph image** (`/og.png`, 1200×630) is the masthead set as a title page on parchment: the red double rule, the name in Alegreya SC Medium with 0.1em tracking, the tagline in Alegreya italic `--muted`, "jonreyna.dev" in red small capitals, and a single red rule, centered in an 840px column, in the light theme's colors. `make og-image` draws it with `tools/card` (Go) from the two pinned Alegreya fonts; the PNG is never committed. Text that doesn't fit the column stops the build. It sets type without GPOS kerning, which the letter-spaced small capitals don't need.
 - Dates in `<time datetime>`.
@@ -190,7 +192,7 @@ No photos in the design and no icon set. Diagrams are inline SVG drawn in `curre
 
 ## Still open
 
-- The final favicon: a red "J" in Alegreya SC, outlined to a path at build time. (`favicon.svg` uses Georgia for now.)
+Nothing in the design itself; the remaining launch work is in the plan.
 
 ## Review log
 

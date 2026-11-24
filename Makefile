@@ -13,7 +13,7 @@ COMMIT_TIME := $(shell git log -1 --format=%ct 2>/dev/null || echo 0)
 # Wrangler, pinned exactly; bump it on purpose.
 WRANGLER ?= npx --yes wrangler@4.158.0
 
-.PHONY: help setup no-binaries fonts card og-image site dist serve check site-test verify deploy preview clean vitae workflow-lint go-lint go-test resume-check resume resume-pdf resume-word resume-text-check resume-release site-resume resume-private
+.PHONY: help setup no-binaries fonts card og-image icon favicon site dist serve check site-test verify deploy preview clean vitae workflow-lint go-lint go-test resume-check resume resume-pdf resume-word resume-text-check resume-release site-resume resume-private
 
 help:  ## List targets
 	@grep -E '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  %-15s %s\n", $$1, $$2}'
@@ -101,11 +101,24 @@ og-image: card $(ALEGREYA_SC) $(ALEGREYA_ITALIC)  ## Draw the Open Graph image i
 	$(CARD) -smallcaps $(ALEGREYA_SC) -italic $(ALEGREYA_ITALIC) -name 'Jon Reyna' \
 		-motto 'distributed systems & AI infrastructure' -site jonreyna.dev -o $(OG_IMAGE)
 
+# The favicons are a red "J" in Alegreya SC drawn by tools/card's icon command from
+# the font's outline: an SVG that switches with the theme, a favicon.ico (16 and 32
+# pixels) and a 180-pixel apple-touch-icon. All three are git-ignored.
+ICON := build/bin/icon
+FAVICONS := site/web/favicon.svg site/web/favicon.ico site/web/apple-touch-icon.png
+
+icon:  ## Build the icon CLI (the favicons) into build/bin
+	cd tools/card && go build -o ../../$(ICON) ./cmd/icon
+
+favicon: icon $(ALEGREYA_SC)  ## Draw the favicons into site/web (not in git)
+	$(ICON) -font $(ALEGREYA_SC) -letter J -svg site/web/favicon.svg -ico site/web/favicon.ico \
+		-touch site/web/apple-touch-icon.png
+
 # PANDOC converts the pages' TeX math to MathML and highlights their code
 # (site/lib/tex_math.dart, site/lib/code_highlight.dart). It is
 # defined further down, so it can't be a prerequisite here; site-resume's Word step
 # downloads it.
-site: fonts og-image site-resume  ## Build the static site into site/build/jaspr
+site: fonts og-image favicon site-resume  ## Build the static site into site/build/jaspr
 	cd site && PANDOC=$(CURDIR)/$(PANDOC) FONT_FACES=$(CURDIR)/$(FONT_FACES) jaspr build
 
 # Copy only the site's own files: the build also leaves packages/, .dart_tool/ and a manifest.
@@ -305,5 +318,5 @@ resume-private: vitae  ## Render with the private overlay into build/resume-priv
 	$(MAKE) --no-print-directory $(WORD_REFERENCE)
 	$(call build-word,build/resume-private)
 
-clean:  ## Remove build output, the copied résumé, the Open Graph image and the fonts
-	rm -rf site/build dist .wrangler build site/web/resume site/web/fonts/*.woff2 $(FONT_CSS) $(OG_IMAGE)
+clean:  ## Remove build output, the copied résumé, the Open Graph image, the favicons and the fonts
+	rm -rf site/build dist .wrangler build site/web/resume site/web/fonts/*.woff2 $(FONT_CSS) $(OG_IMAGE) $(FAVICONS)

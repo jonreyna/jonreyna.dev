@@ -7,6 +7,7 @@ font manifest site/tool/subset_fonts.py wrote. Fails (exit 1) if any page:
   - lacks a <title>, a lang attribute, or a meta description (the 404 page is exempt
     from the description), or an og:image,
   - doesn't load /fonts.css or preload the manifest's preload font,
+  - doesn't link the three favicons,
   - shows a character the face that draws it lacks: text in <math> needs the math
     face, text in <code> or <pre> every code face, and other body text every text face,
 or if a file the deploy needs is missing (including the résumé page and its JSON, and
@@ -100,6 +101,10 @@ for page in sorted(DIST.rglob("*.html")):
     if not any(a.get("rel") == "preload" and a.get("href") == fonts["preload"] and a.get("as") == "font"
                for a in links):
         problems.append(f"{rel}: doesn't preload {fonts['preload']}")
+    for want in ({"rel": "icon", "href": "/favicon.ico"}, {"rel": "icon", "href": "/favicon.svg"},
+                 {"rel": "apple-touch-icon", "href": "/apple-touch-icon.png"}):
+        if not any(want.items() <= a.items() for a in links):
+            problems.append(f"{rel}: doesn't link {want['href']}")
     text = TextByFace()
     text.feed(html)
     for group, chars in sorted(text.chars.items()):
@@ -125,7 +130,24 @@ for path in sorted(DIST.rglob("*")):
         if re.search(r"fonts\.(googleapis|gstatic)\.com", path.read_text(encoding="utf-8", errors="replace")):
             problems.append(f"{path.relative_to(DIST)}: mentions Google Fonts")
 
-for required in ("index.html", "fonts.css", "404.html", "_headers", "robots.txt", "og.png", "feed.xml", "sitemap.xml", "resume/index.html", "resume/resume.full.json", "resume/resume.full.pdf",
+# The favicons (make favicon): an SVG drawn from the font's outline, so it names no
+# font; an ICO; and the 180×180 touch icon.
+svg = DIST / "favicon.svg"
+if svg.is_file():
+    text = svg.read_text(encoding="utf-8")
+    if not text.startswith("<svg ") or "<path " not in text or "<text" in text or "font-family" in text:
+        problems.append("favicon.svg: not the outlined letter (make favicon)")
+ico = DIST / "favicon.ico"
+if ico.is_file() and ico.read_bytes()[:4] != b"\x00\x00\x01\x00":
+    problems.append("favicon.ico: not an ICO file")
+touch = DIST / "apple-touch-icon.png"
+if touch.is_file():
+    head = touch.read_bytes()[:24]
+    size = (int.from_bytes(head[16:20], "big"), int.from_bytes(head[20:24], "big"))
+    if head[:8] != b"\x89PNG\r\n\x1a\n" or size != (180, 180):
+        problems.append(f"apple-touch-icon.png: not a 180×180 PNG (got {size})")
+
+for required in ("index.html", "fonts.css", "favicon.svg", "favicon.ico", "apple-touch-icon.png", "404.html", "_headers", "robots.txt", "og.png", "feed.xml", "sitemap.xml", "resume/index.html", "resume/resume.full.json", "resume/resume.full.pdf",
                  "resume/resume.full.docx", "resume/resume.full.txt", "resume/resume.full.md"):
     if not (DIST / required).is_file():
         problems.append(f"missing {required}")
