@@ -46,6 +46,12 @@ def meta(page, attr, name):
     return next((t.get("content") for t in tags(page, "meta") if t.get(attr) == name), None)
 
 
+def is_noindex(page):
+    """Returns whether the page's robots meta tag includes noindex."""
+    robots = meta(page, "name", "robots") or ""
+    return "noindex" in {d.strip().lower() for d in robots.split(",")}
+
+
 def canonical(page, rel):
     """Returns the page's canonical URL; every page must have one."""
     href = next((t.get("href") for t in tags(page, "link") if t.get("rel") == "canonical"), None)
@@ -77,7 +83,7 @@ def essay_body(page, url):
     body = m.group(1)
     body = re.sub(r'<header class="essay-head">.*?</header>', "", body, count=1, flags=re.S)
     body = re.sub(r'<footer class="essay-foot">.*?</footer>', "", body, count=1, flags=re.S)
-    body = re.sub(r'\b(href|src)="/', rf'\1="{SITE}/', body)
+    body = re.sub(r'\b(href|src)="/(?!/)', rf'\1="{SITE}/', body)
     body = re.sub(r'\bhref="#', f'href="{url}#', body)
     return body.strip()
 
@@ -96,7 +102,7 @@ def read_pages(dist):
     for path in sorted(dist.rglob("*.html")):
         rel = path.relative_to(dist).as_posix()
         page = path.read_text(encoding="utf-8")
-        if rel == "404.html" or meta(page, "name", "robots") == "noindex":
+        if rel == "404.html" or is_noindex(page):
             continue
         url = canonical(page, rel)
         entry = {"url": url}
