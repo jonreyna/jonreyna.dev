@@ -7,6 +7,16 @@
   font-family: "Alegreya Fallback"; src: local("Georgia");
   size-adjust: 91.6%; ascent-override: 111.4%; descent-override: 38.2%; line-gap-override: 0%;
 }
+/* The italic needs its own: without it the browser slants the upright face above, 12.6%
+   wider than Alegreya italic, and the motto shrinks when the font swaps in. Georgia
+   Italic resized to Alegreya italic's width, within 1% (measured in Chrome, 2026-11-23),
+   with the same line metrics as the upright face (the overrides scale with size-adjust,
+   so these are the upright's ascent and descent divided by 0.794). */
+@font-face {
+  font-family: "Alegreya Fallback"; src: local("Georgia Italic"), local("Georgia-Italic");
+  font-style: italic;
+  size-adjust: 79.4%; ascent-override: 128.5%; descent-override: 44.1%; line-gap-override: 0%;
+}
 
 :root {
   /* Color, light: parchment and ink */
