@@ -138,11 +138,6 @@ serve: dist  ## Serve dist/ on http://localhost:8767
 check:  ## Static analysis
 	cd site && dart analyze
 
-# The site's Dart tests. PANDOC lets the math and highlighting tests run end to end; it comes
-# from site-resume's Word step, like `make site`.
-site-test: resume-word  ## Run the site's Dart tests (TeX to MathML, code highlighting)
-	cd site && PANDOC=$(CURDIR)/$(PANDOC) dart test
-
 verify: dist-exists  ## Check the staged pages (scripts, titles, descriptions, fonts) and the feed and sitemap
 	python3 -I site/tool/verify_dist.py dist $(FONT_FACES)
 
@@ -260,6 +255,11 @@ $(PANDOC): $(PANDOC_ARCHIVE)
 		*) tar -xzf $< -C $(dir $@) --strip-components=2 --wildcards '*/bin/pandoc' ;; \
 	esac
 	touch $@
+
+# The site's Dart tests. PANDOC lets the math and highlighting tests run end to end;
+# placed after $(PANDOC) because GNU Make expands prerequisites when parsed.
+site-test: $(PANDOC)  ## Run the site's Dart tests (TeX to MathML, code highlighting)
+	cd site && PANDOC=$(CURDIR)/$(PANDOC) dart test
 
 $(WORD_REFERENCE): $(PANDOC) resume/word/reference.py
 	mkdir -p $(dir $@)
