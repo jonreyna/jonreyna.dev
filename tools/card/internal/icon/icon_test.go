@@ -126,7 +126,7 @@ func TestSVG(t *testing.T) {
 		{"is a 64-unit square", `^<svg xmlns="http://www\.w3\.org/2000/svg" viewBox="0 0 64 64">`},
 		{"light ground and letter", `\.g\{fill:#f6f0e1\}\.l\{fill:#9a2a17\}`},
 		{"dark ground and letter", `@media \(prefers-color-scheme:dark\)\{\.g\{fill:#1a1612\}\.l\{fill:#e47d63\}\}`},
-		{"a tile under the letter", `<rect class="g" width="64" height="64"/><path class="l" d="M`},
+		{"a tile under the letter", `<rect class="g" fill="#f6f0e1" width="64" height="64"/><path class="l" fill="#9a2a17" d="M`},
 		{"a closed path", `Z"/></svg>\n$`},
 	}
 	for _, tc := range tests {

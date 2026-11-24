@@ -28,7 +28,7 @@ func ExampleIcon_SVG() {
 
 	head, rest, _ := strings.Cut(string(svg), "<style>")
 	fmt.Println(head)
-	fmt.Println(strings.Contains(rest, `<path class="l" d="M`))
+	fmt.Println(strings.Contains(rest, `<path class="l" fill="#9a2a17" d="M`))
 	// Output:
 	// <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
 	// true
