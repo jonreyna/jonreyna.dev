@@ -1,5 +1,5 @@
 # Builds and checks the site on every push and pull request, then:
-#   - push to main  -> publishes to Cloudflare (production)
+#   - push to main  -> publishes to Cloudflare (production), once resume and site pass
 #   - pull request  -> uploads a preview version and comments its URL on the PR
 #   - weekly        -> a build only, so toolchain breakage shows up before you need to publish
 #   - tag resume-v* -> attaches the résumé files to a GitHub release (the release job)
@@ -54,10 +54,6 @@ jobs:
     timeout-minutes: 15
     permissions:
       contents: read
-      pull-requests: write # the preview URL comment
-    env:
-      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -123,24 +119,71 @@ jobs:
           if-no-files-found: error
           retention-days: 30 # tagged releases keep their files for good
 
+      - name: Keep the staged site for deploy
+        if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'pull_request'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: dist-${{ github.sha }}
+          path: dist/
+          if-no-files-found: error
+          retention-days: 1
+
+  # Deploys to Cloudflare only after both resume checks and site verification pass.
+  deploy:
+    needs: [resume, site]
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      pull-requests: write # the preview URL comment
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Check Cloudflare credentials
+        id: cf
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          if [ -n "$CLOUDFLARE_API_TOKEN" ] && [ -n "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Download the staged site
+        if: steps.cf.outputs.configured == 'true'
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: dist-${{ github.sha }}
+          path: dist
+
       - name: Set up Node for Wrangler
-        if: env.CLOUDFLARE_API_TOKEN != '' && ((github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'pull_request')
+        if: steps.cf.outputs.configured == 'true'
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: "26"
 
       - name: Publish to production
-        if: env.CLOUDFLARE_API_TOKEN != '' && github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: steps.cf.outputs.configured == 'true' && github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: make deploy
 
       - name: Upload a preview version
         id: preview
-        if: env.CLOUDFLARE_API_TOKEN != '' && github.event_name == 'pull_request'
+        if: steps.cf.outputs.configured == 'true' && github.event_name == 'pull_request'
         run: |
           make preview ALIAS="pr-${PR_NUMBER}" | tee wrangler.log
           url=$(grep -Eo 'https://pr-[0-9]+-[a-z0-9.-]+\.workers\.dev' wrangler.log | head -n 1)
           echo "url=${url}" >> "$GITHUB_OUTPUT"
         env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
 
       - name: Comment the preview URL
