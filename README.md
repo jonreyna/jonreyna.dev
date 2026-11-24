@@ -53,6 +53,8 @@ The Cloudflare steps run once two repository secrets exist:
 - `CLOUDFLARE_ACCOUNT_ID`: the account ID from the Cloudflare dashboard.
 - `CLOUDFLARE_API_TOKEN`: an API token made from the "Edit Cloudflare Workers" template, limited to this account.
 
+The Worker serves the bare domain, `jonreyna.dev` (a custom domain in `wrangler.jsonc`). `www.jonreyna.dev` is set up in the Cloudflare dashboard, not in this repository: a proxied `AAAA` record for `www` pointing at the placeholder address `100::`, and a Redirect Rule matching `http*://www.jonreyna.dev/*` that sends a 301 to `https://jonreyna.dev/${2}`, keeping the query string. Requests to `www` never reach the Worker.
+
 ## License
 
 - **Writing** (everything in `site/content/` and `resume/`: essays, page text and the résumé): © Jon Reyna, licensed under [Creative Commons Attribution 4.0](https://creativecommons.org/licenses/by/4.0/) ([`LICENSE-CONTENT`](LICENSE-CONTENT)). Reuse it with credit and a link.
