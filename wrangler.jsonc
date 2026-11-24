@@ -14,6 +14,7 @@
   // The zone's mail records (Proton) are untouched. www.jonreyna.dev redirects here
   // through a Redirect Rule set in the dashboard, not here (see README.md).
   "routes": [{ "pattern": "jonreyna.dev", "custom_domain": true }],
-  "workers_dev": true,
+  // Disable the production workers.dev mirror so only jonreyna.dev is indexed; keep PR preview URLs on.
+  "workers_dev": false,
   "preview_urls": true
 }

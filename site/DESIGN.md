@@ -173,7 +173,7 @@ Every page carries:
 
 - **`/feed.xml`**: Atom, one entry per published essay (`kind: essay`, a `date`, not `noindex` or `draft`), newest first. Each entry carries the essay's title, description as the summary, and its full text as rendered (section numbers, MathML, footnotes), with site links made absolute. Dates: `date` (`2027-03` means the 1st, `2027-03-14` midnight UTC) and `updated`.
 - **`/sitemap.xml`**: every page except the 404 page and noindex pages, at its canonical URL. Only essays have a `lastmod`.
-- **`/robots.txt`** (static, in `web/`): allows everything and names the sitemap. Until launch the `X-Robots-Tag: noindex` header in `_headers` keeps the whole site out of search results.
+- **`/robots.txt`** (static, in `web/`): allows everything and names the sitemap.
 
 `make verify` checks that every URL in the feed and sitemap is a published page and that the sitemap misses none.
 
