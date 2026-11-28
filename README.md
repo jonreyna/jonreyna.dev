@@ -15,6 +15,7 @@ site/        Jaspr project (static mode)
 resume/      the résumé as one YAML file (resume.yaml), the single source for every version
 tools/vitae/ Go CLI that validates resume.yaml and renders each variant (see its README)
 tools/card/  Go CLIs that draw the Open Graph image (the picture beside a shared link) and the favicons
+tools/atlas/ Go CLI that checks an atlas plate and lays it out as a woven chart (play/README.md)
 play/        interactive pieces, one directory each (see play/README.md)
 Makefile     the same targets locally and in CI
 wrangler.jsonc

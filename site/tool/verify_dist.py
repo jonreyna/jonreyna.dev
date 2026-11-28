@@ -21,7 +21,8 @@ every font in the manifest), if any staged file still mentions Google Fonts, or 
 feed or sitemap is malformed or lists a URL that isn't a published page (one staged and
 not marked noindex), or the sitemap misses a published page. Nor may a published page
 say "Nothing published yet." or link to the Writing page or the feed while no essay is
-published, and every link to a home-page section (/#play) must find its section.
+published, and every link to a home-page section (/#play) must find its section, as must
+every in-page link (#id) on a Play piece.
 """
 
 import hashlib
@@ -247,6 +248,12 @@ for page in sorted(DIST.rglob("*.html")):
     for anchor in re.findall(r'href="/#([^"]+)"', html):
         if anchor not in home_ids:
             problems.append(f"{rel}: links to /#{anchor}, which the home page lacks")
+    # A Play piece lives on in-page links (an atlas's cards and threads are #k-ID and
+    # #t-ID), so each must find its target on the page.
+    if rel.parts[0] == "play":
+        ids = set(re.findall(r'\bid="([^"]+)"', html))
+        for anchor in sorted(set(re.findall(r'href="#([^"]+)"', html)) - ids):
+            problems.append(f"{rel}: links to #{anchor}, which the page lacks")
 
 if problems:
     print("\n".join(problems))

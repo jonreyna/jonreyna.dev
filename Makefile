@@ -13,7 +13,7 @@ COMMIT_TIME := $(shell git log -1 --format=%ct 2>/dev/null || echo 0)
 # Wrangler, pinned exactly; bump it on purpose.
 WRANGLER ?= npx --yes wrangler@4.158.0
 
-.PHONY: help setup no-binaries fonts card og-image icon favicon play site dist serve check site-test verify deploy preview clean vitae workflow-lint go-lint go-test resume-check resume resume-pdf resume-word resume-text-check resume-release site-resume resume-private
+.PHONY: help setup no-binaries fonts card og-image icon favicon atlas play site dist serve check site-test verify deploy preview clean vitae workflow-lint go-lint go-test resume-check resume resume-pdf resume-word resume-text-check resume-release site-resume resume-private
 
 help:  ## List targets
 	@grep -E '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  %-15s %s\n", $$1, $$2}'
@@ -119,6 +119,18 @@ favicon: icon $(ALEGREYA_SC)  ## Draw the favicons into site/web (not in git)
 # play-<piece>.css, so make dist fingerprints it with the others. D3, which Arbor
 # Ecclesiae draws with, is downloaded from a pinned release and checked like the fonts.
 # site/web/play/ and site/web/play-*.css are git-ignored.
+#
+# An atlas (a woven chart such as Athens and Jerusalem) is built from its plate,
+# play/<piece>/<piece>.yaml, by tools/atlas: its markup goes to build/play/<piece>/,
+# where the play layout reads it (`generated: true`), and its generated rules follow the
+# piece's own stylesheet. Production builds pass ATLAS_FLAGS=-require-checked (CI does
+# on main), which refuses any citation Jon hasn't checked.
+ATLAS := build/bin/atlas
+ATLAS_FLAGS ?=
+ATLAS_PIECES := athens-and-jerusalem
+# The most crossings a layout may have before the build fails, so a data change can't
+# quietly tangle the chart (Athens and Jerusalem had 110 on 2026-11-27).
+ATLAS_MAX_CROSSINGS := 125
 D3_VERSION := 7.9.0
 D3_SHA256 := f2094bbf6141b359722c4fe454eb6c4b0f0e42cc10cc7af921fc158fceb86539
 D3_JS := build/downloads/d3-$(D3_VERSION).min.js
@@ -129,12 +141,20 @@ $(D3_JS):
 	echo "$(D3_SHA256)  $@.part" | shasum -a 256 -c -
 	mv $@.part $@
 
-play: $(D3_JS)  ## Stage the Play pieces into site/web for the site build (not in git)
+atlas:  ## Build the atlas CLI (woven-chart Play pieces) into build/bin
+	cd tools/atlas && go build -o ../../$(ATLAS) ./cmd/atlas
+
+play: $(D3_JS) atlas  ## Stage the Play pieces into site/web for the site build (not in git)
 	rm -rf site/web/play site/web/play-*.css
 	mkdir -p site/web/play/arbor-ecclesiae
 	cp $(D3_JS) site/web/play/arbor-ecclesiae/d3.min.js
 	cp play/arbor-ecclesiae/arbor-ecclesiae.js play/arbor-ecclesiae/D3-LICENSE.txt site/web/play/arbor-ecclesiae/
 	cp play/arbor-ecclesiae/arbor-ecclesiae.css site/web/play-arbor-ecclesiae.css
+	for piece in $(ATLAS_PIECES); do \
+		$(ATLAS) build $(ATLAS_FLAGS) -max-crossings $(ATLAS_MAX_CROSSINGS) -o build/play/$$piece/$$piece.html -css build/play/$$piece/$$piece.rules.css \
+			play/$$piece/$$piece.yaml && \
+		cat play/$$piece/$$piece.css build/play/$$piece/$$piece.rules.css > site/web/play-$$piece.css || exit 1; \
+	done
 
 # PANDOC converts the pages' TeX math to MathML and highlights their code
 # (site/lib/tex_math.dart, site/lib/code_highlight.dart). It is
@@ -202,7 +222,7 @@ workflow-lint: $(ACTIONLINT)  ## Lint the GitHub workflows with actionlint
 	@echo "linted .github/workflows: no issues"
 
 # Go modules under tools/, each linted and tested the same way.
-GO_MODULES := tools/vitae tools/card
+GO_MODULES := tools/vitae tools/card tools/atlas
 
 vitae:  ## Build the vitae CLI into build/bin
 	cd tools/vitae && go build -o ../../$(VITAE) ./cmd/vitae

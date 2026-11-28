@@ -1,0 +1,1288 @@
+# Athens and Jerusalem: atlas Plate I, a woven chart of prophets, philosophers and the
+# first Christian writers, 800 BC to AD 450. tools/atlas lays it out at build time
+# (see play/README.md).
+#
+# Years are numbers, BC negative, with no year 0. A person's `from` and `to` are their
+# lifetime or active years; a book's are its composition window, and `dating` says whose
+# dating it is.
+#
+# Every link cites the passage in the later writer's text. Its fields:
+#   type:    quotes | names | adapts | rejects | argued ("scholars argue")
+#   located: passage      the quote was copied from the linked translation at the cited place
+#            paraphrase   no public-domain translation online; the card paraphrases
+#            scholarship  an `argued` link; `scholarship` names who makes the case
+#   compare: the earlier text, for links whose evidence is a verbal parallel
+#   checked: null until Jon checks the link (date and edition). A production build
+#            refuses any link that is still null.
+#
+# The chart's own voice gives no verdicts, including verdicts about evidence: cards and
+# notes say who claimed what (plan part 06, sourcing rule 5).
+#
+# Quotes from the Ante-Nicene and Nicene Fathers keep New Advent's "you" for "thou"
+# (Jon, 2026-11-27). Restore "thou" only where the difference carries meaning.
+
+plate: athens-and-jerusalem
+kicker: Atlas · Plate I
+title: Athens and Jerusalem
+subtitle: Prophets, philosophers and the first Christian writers, 800 BC to AD 450
+span: [-800, 450]
+scope: >-
+  The lineage that runs from Israel and Greece into the Greek and Latin churches. It
+  leaves out the rabbis, the Syriac writers, the Gnostics and the wider world.
+
+sources:
+  anf: {name: "*Ante-Nicene Fathers*, ed. A. Roberts and J. Donaldson (1885–96)", via: New Advent}
+  npnf1: {name: "*Nicene and Post-Nicene Fathers*, first series, ed. P. Schaff (1886–89)", via: New Advent}
+  npnf2: {name: "*Nicene and Post-Nicene Fathers*, second series, ed. P. Schaff and H. Wace (1890–1900)", via: New Advent}
+  yonge: {name: "C. D. Yonge, *The Works of Philo Judaeus* (1854–55; 1993 printing with Loeb section numbers)", via: Early Jewish Writings}
+  gifford: {name: "E. H. Gifford, Eusebius, *Preparation for the Gospel* (1903)", via: tertullian.org}
+  hicks: {name: "R. D. Hicks, Diogenes Laertius, *Lives of Eminent Philosophers* (Loeb, 1925)", via: Wikisource}
+  mackenna: {name: "Stephen MacKenna, Porphyry, *On the Life of Plotinus* (1917)", via: Wikisource}
+  mackenna_enn: {name: "Stephen MacKenna, Plotinus, *The Six Enneads* (1917–30)", via: Internet Classics Archive}
+  mair: {name: "G. R. Mair, Aratus, *Phaenomena* (Loeb, 1921)", via: Theoi Classical Texts Library}
+  web: {name: "World English Bible", via: eBible.org}
+  brenton: {name: "L. C. L. Brenton, *The Septuagint with Apocrypha* (1851)", via: eBible.org}
+
+lanes:
+  - {id: prophets, name: Prophets and scripture}
+  - {id: philosophers, name: Philosophers}
+  - {id: christians, name: Christian writers}
+
+# Colors name pigments that athens-and-jerusalem.css defines for light and dark. Both
+# sets were checked with the dataviz validator across all 28 pairs (2026-11-27).
+threads:
+  - id: logos
+    name: The Word (Logos)
+    color: gold
+    summary: >-
+      A reason that orders the world and speaks in it, from Heraclitus's *logos* to John's
+      Word made flesh.
+  - id: good
+    name: The Good beyond being
+    color: lapis
+    summary: >-
+      A first principle above being itself, Plato's Good and Plotinus's One, which
+      Augustine found in "the books of the Platonists."
+  - id: being
+    name: He who is
+    color: murex
+    summary: >-
+      God as being itself, from the name at the burning bush (Exodus 3:14 in Greek) and
+      Plato's unchanging being.
+  - id: onegod
+    name: One God, unlike us
+    color: vermilion
+    summary: >-
+      The case against gods made in human images, from Isaiah and Xenophanes to Paul at
+      Athens.
+  - id: creation
+    name: Creation from nothing
+    color: verdigris
+    summary: >-
+      Whether God shaped a matter that was already there, as in the *Timaeus*, or made
+      everything from nothing.
+  - id: soul
+    name: Soul and resurrection
+    color: azure
+    summary: >-
+      Plato's immortal soul against the raised body, and the attempts to hold both.
+  - id: law
+    name: The law written on the heart
+    color: madder
+    summary: >-
+      Jeremiah's new covenant and the Stoics' law of nature, which meet in Paul.
+  - id: priority
+    name: Who taught whom
+    color: lilac
+    summary: >-
+      The claim that Plato learned from Moses, the charge that Christians copied Plato,
+      and how much of Athens a Christian may take.
+
+people:
+  # ---- Prophets and scripture ----
+  - id: torah
+    name: Moses (the Torah)
+    label: Torah
+    lanes: [prophets]
+    from: -500
+    to: -301
+    dating: >-
+      Moses, by tradition; most modern scholars date its final form to the 5th–4th
+      century BC.
+    card: >-
+      The Jewish and Christian writers on this plate, and Numenius, took the Torah to be
+      Moses's own and older than any Greek. That belief (thread "Who taught whom")
+      matters as much as the text.
+    wiki: Torah
+  - id: isaiah
+    name: Isaiah
+    lanes: [prophets]
+    from: -740
+    to: -540
+    dating: >-
+      Isaiah of Jerusalem, fl. c. 740–700 BC, by tradition; most modern scholars give
+      chapters 40–55 to a prophet of the exile, c. 540 BC.
+    card: The one Creator God, and the satire of idols made by hand (40–48).
+    wiki: Isaiah
+  - id: jeremiah
+    name: Jeremiah
+    lanes: [prophets]
+    from: -627
+    to: -586
+    card: The new covenant, the law written on the heart (31:31–34).
+    wiki: Jeremiah
+  - id: maccabees2
+    name: 2 Maccabees
+    lanes: [prophets]
+    from: -124
+    to: -63
+    dating: Most modern scholars date it between about 124 and 63 BC.
+    card: >-
+      Martyrs who die trusting in the resurrection (chapter 7), and creation "not of
+      things that were" (7:28). Daniel 12:2, which most modern scholars date to about
+      165 BC, is often read as the earliest clear statement of resurrection in the
+      Hebrew Bible.
+    wiki: 2_Maccabees
+  - id: wisdom
+    name: Wisdom of Solomon
+    label: Wisdom
+    lanes: [prophets, philosophers]
+    from: -50
+    to: 40
+    dating: >-
+      Solomon, by tradition; most modern scholars place it in Alexandria, c. 50 BC to
+      AD 40.
+    card: >-
+      Greek-educated Jewish wisdom: the soul and the body (9:15), Wisdom as "a breath of
+      the power of God" (7:25), the case against idols (13–15).
+    wiki: Book_of_Wisdom
+  - id: philo
+    name: Philo of Alexandria
+    label: Philo
+    lanes: [prophets, philosophers]
+    from: -20
+    to: 50
+    circa: true
+    card: >-
+      Read the Torah through Plato and the Stoics; the Logos as God's instrument in
+      making the world.
+    wiki: Philo
+
+  # ---- Philosophers ----
+  - id: xenophanes
+    name: Xenophanes
+    lanes: [philosophers]
+    from: -570
+    to: -475
+    circa: true
+    card: One god, unlike mortals in body or thought; mocked gods made in our image.
+    wiki: Xenophanes
+  - id: heraclitus
+    name: Heraclitus
+    lanes: [philosophers]
+    from: -535
+    to: -475
+    circa: true
+    card: The *logos* that orders all things, which most people never hear.
+    wiki: Heraclitus
+  - id: plato
+    name: Plato
+    lanes: [philosophers]
+    from: -428
+    to: -348
+    circa: true
+    card: >-
+      The Good beyond being, unchanging being, the craftsman of the *Timaeus*, the immortal
+      soul.
+    wiki: Plato
+  - id: stoics
+    name: The Stoics
+    label: Stoics
+    lanes: [philosophers]
+    from: -334
+    to: -206
+    members: "Zeno of Citium (334–262 BC), Cleanthes (c. 330–230 BC), Chrysippus (c. 279–206 BC)"
+    card: >-
+      God as the reason (*logos*) that runs through the world, the common law of nature,
+      the seeds of reason. The line Paul quotes is from Aratus's *Phaenomena*.
+    wiki: Stoicism
+  - id: cicero
+    name: Cicero
+    lanes: [philosophers]
+    from: -106
+    to: -43
+    card: >-
+      Carried Stoic natural law into Latin. Augustine says his lost *Hortensius* turned him
+      to philosophy (*Confessions* III.4.7).
+    wiki: Cicero
+  - id: numenius
+    name: Numenius of Apamea
+    label: Numenius
+    lanes: [philosophers]
+    from: 150
+    to: 176
+    circa: true
+    card: A Platonist who, Origen says, quoted Moses and the prophets.
+    wiki: Numenius_of_Apamea
+  - id: celsus
+    name: Celsus
+    lanes: [philosophers]
+    from: 175
+    to: 180
+    circa: true
+    card: >-
+      *The True Word* (c. 178), an attack on Christianity known from Origen's reply, which
+      quotes it at length.
+    wiki: Celsus
+  - id: plotinus
+    name: Plotinus
+    lanes: [philosophers]
+    from: 204
+    to: 270
+    card: The One beyond being, from which everything comes and to which the soul returns.
+    wiki: Plotinus
+  - id: porphyry
+    name: Porphyry
+    lanes: [philosophers]
+    from: 234
+    to: 305
+    circa: true
+    card: >-
+      Plotinus's student and editor; wrote *Against the Christians*; the philosopher
+      Augustine argues with throughout *City of God* X.
+    wiki: Porphyry_(philosopher)
+  - id: victorinus
+    name: Marius Victorinus
+    label: Victorinus
+    lanes: [philosophers, christians]
+    from: 290
+    to: 365
+    circa: true
+    card: >-
+      Rome's most famous teacher of rhetoric; translated the Platonists into Latin and,
+      Augustine says, died a Christian.
+    wiki: Marius_Victorinus
+
+  # ---- Christian writers ----
+  - id: paul
+    name: Paul
+    lanes: [christians]
+    from: 5
+    to: 64
+    circa: true
+    card: >-
+      At Athens he quotes a Greek poet (Acts 17); to the Colossians he warns against
+      "philosophy and vain deceit" (2:8).
+    wiki: Paul_the_Apostle
+  - id: john
+    name: John (the Fourth Gospel)
+    label: John
+    lanes: [christians]
+    from: 90
+    to: 110
+    dating: >-
+      The apostle John, by tradition; most modern scholars date its final form to about
+      AD 90–110.
+    card: '"In the beginning was the Word … and the Word became flesh."'
+    wiki: Gospel_of_John
+  - id: justin
+    name: Justin Martyr
+    label: Justin
+    lanes: [christians]
+    from: 100
+    to: 165
+    circa: true
+    card: >-
+      By his own account (*Dialogue* 2–8), a student of the philosophers who became a
+      Christian. Christians before Christ; the seeds of the Word.
+    wiki: Justin_Martyr
+  - id: theophilus
+    name: Theophilus of Antioch
+    label: Theophilus
+    lanes: [christians]
+    from: 170
+    to: 185
+    circa: true
+    card: "*To Autolycus*: creation out of things that are not, argued against Plato."
+    wiki: Theophilus_of_Antioch
+  - id: clement
+    name: Clement of Alexandria
+    label: Clement
+    lanes: [christians]
+    from: 150
+    to: 215
+    circa: true
+    card: >-
+      Philosophy as a preparatory training for the Greeks, as the Law was for the
+      Hebrews (*Stromata* I.5).
+    wiki: Clement_of_Alexandria
+  - id: tertullian
+    name: Tertullian
+    lanes: [christians]
+    from: 155
+    to: 220
+    circa: true
+    card: >-
+      Carthage. Asks "What has Athens to do with Jerusalem?", and elsewhere cites Zeno and
+      Cleanthes with approval.
+    wiki: Tertullian
+  - id: origen
+    name: Origen
+    lanes: [christians]
+    from: 185
+    to: 253
+    circa: true
+    card: >-
+      Alexandria and Caesarea. His student Gregory says he had his pupils read the
+      philosophers; he answered Celsus.
+    wiki: Origen
+  - id: lactantius
+    name: Lactantius
+    lanes: [christians]
+    from: 250
+    to: 325
+    circa: true
+    card: Jerome says he tutored Constantine's son Crispus (*On Illustrious Men* 80).
+    wiki: Lactantius
+  - id: jerome
+    name: Jerome
+    lanes: [christians]
+    from: 347
+    to: 420
+    circa: true
+    card: Translated the Bible into Latin; by his own account, dreamed he was condemned as a Ciceronian.
+    wiki: Jerome
+  - id: augustine
+    name: Augustine
+    lanes: [christians]
+    from: 354
+    to: 430
+    card: Hippo; from Cicero to the Platonists to Paul. Most threads on this plate end at him.
+    wiki: Augustine_of_Hippo
+
+links:
+  # ================= The Word (Logos) =================
+  - id: L01
+    thread: logos
+    from: heraclitus
+    to: stoics
+    type: adapts
+    cite: Diogenes Laertius VII.134, VII.174
+    quote: >-
+      They hold that there are two principles in the universe, the active principle and
+      the passive. … the active is the reason inherent in this substance, that is God.
+    source: hicks
+    url: https://en.wikisource.org/wiki/Lives_of_the_Eminent_Philosophers/Book_VII
+    note: >-
+      Among Cleanthes' works Diogenes lists "Interpretations of Heraclitus, four books"
+      (VII.174).
+    located: passage
+    checked: null
+  - id: L02
+    thread: logos
+    from: stoics
+    to: philo
+    type: adapts
+    cite: Philo, De fuga et inventione 112; De plantatione 8–9
+    quote: >-
+      For the word of the living God being the bond of every thing, as has been said
+      before, holds all things together, and binds all the parts.
+    source: yonge
+    url: https://www.earlyjewishwritings.com/text/philo/book19.html
+    scholarship:
+      - 'Marian Hillar, "Philo of Alexandria," *Internet Encyclopedia of Philosophy*'
+    note: >-
+      In *De plantatione* 8–9 the "eternal law of the everlasting God" is "the indissoluble
+      bond of the universe." Hillar reads *De plantatione* 8–10 as Philo accepting "the
+      Stoic theory of the immanent Logos as the power or Law binding the opposites in the
+      universe."
+    located: passage
+    checked: null
+  - id: L03
+    thread: logos
+    from: torah
+    to: john
+    type: adapts
+    cite: John 1:1–3
+    quote: >-
+      In the beginning was the Word, and the Word was with God, and the Word was God. …
+      All things were made through him.
+    source: web
+    url: https://ebible.org/eng-web/JHN01.htm
+    compare:
+      cite: Genesis 1:1 (Septuagint, "en archē")
+      url: https://ebible.org/eng-Brenton/GEN01.htm
+    note: The prologue opens with the first words of Genesis, with the Word as the agent of creation.
+    located: passage
+    checked: null
+  - id: L04
+    thread: logos
+    from: philo
+    to: john
+    type: argued
+    cite: John 1:1–14
+    scholarship:
+      - "C. H. Dodd, *The Interpretation of the Fourth Gospel* (Cambridge, 1953)"
+      - 'Daniel Boyarin, "The Gospel of the Memra: Jewish Binitarianism and the Prologue to John," *Harvard Theological Review* 94 (2001)'
+    paraphrase: >-
+      Whether John knew Philo, or drew on the same Jewish speculation about the Word and
+      Wisdom (or on the Targums' *Memra*), is argued.
+    located: scholarship
+    checked: null
+  - id: L05
+    thread: logos
+    from: heraclitus
+    to: justin
+    type: names
+    cite: Justin, 1 Apology 46
+    quote: >-
+      Those who lived reasonably are Christians, even though they have been thought
+      atheists; as, among the Greeks, Socrates and Heraclitus, and men like them.
+    source: anf
+    url: https://www.newadvent.org/fathers/0126.htm
+    note: >-
+      ANF's "reasonably" renders the Greek *hoi meta logou biōsantes*, those who lived
+      "with *logos*," which can mean reason or the Word (A. W. F. Blunt, *The Apologies of
+      Justin Martyr*, Cambridge, 1911, 46.3).
+    located: passage
+    checked: null
+  - id: L06
+    thread: logos
+    from: stoics
+    to: justin
+    type: adapts
+    cite: Justin, 2 Apology 8, 13 (ANF chapter numbers)
+    quote: >-
+      For each man spoke well in proportion to the share he had of the spermatic word,
+      seeing what was related to it. … Whatever things were rightly said among all men,
+      are the property of us Christians.
+    source: anf
+    url: https://www.newadvent.org/fathers/0127.htm
+    note: >-
+      "Spermatic word" (*logos spermatikos*) is a Stoic term. In chapter 8 Justin says the
+      Stoics were admirable in their moral teaching "on account of the seed of reason [the
+      Logos] implanted in every race of men." Chapter numbers differ between editions.
+    located: passage
+    checked: null
+  - id: L07
+    thread: logos
+    from: stoics
+    to: tertullian
+    type: names
+    cite: Tertullian, Apology 21
+    quote: >-
+      Your philosophers, too, regard the Logos — that is, the Word and Reason — as the
+      Creator of the universe. For Zeno lays it down that he is the creator … Cleanthes
+      ascribes all this to spirit.
+    source: anf
+    url: https://www.newadvent.org/fathers/0301.htm
+    located: passage
+    checked: null
+  - id: L08
+    thread: logos
+    from: john
+    to: augustine
+    type: quotes
+    cite: Augustine, Confessions VII.9.13–14
+    quote: >-
+      And therein I read, not indeed in the same words, but to the selfsame effect … that,
+      In the beginning was the Word. … But that the Word was made flesh, and dwelt among
+      us, I read not there.
+    source: npnf1
+    url: https://www.newadvent.org/fathers/110107.htm
+    located: passage
+    checked: null
+  - id: L09
+    thread: logos
+    from: plotinus
+    to: augustine
+    type: names
+    cite: Augustine, Confessions VII.9.13; De beata vita 1.4
+    quote: certain books of the Platonists, translated from Greek into Latin
+    source: npnf1
+    url: https://www.newadvent.org/fathers/110107.htm
+    note: >-
+      Augustine names Plotinus in *De beata vita* 1.4 ("a very few books of Plotinus"; some
+      manuscripts read "Platonis"). Which books he read, Plotinus's, Porphyry's or both, is
+      argued.
+    located: passage
+    checked: null
+
+  # ================= The Good beyond being =================
+  - id: L10
+    thread: good
+    from: plato
+    to: philo
+    type: adapts
+    cite: Philo, De vita contemplativa 2; De praemiis et poenis 40
+    quote: >-
+      The living God, who is superior to the good, and more simple than the one, and more
+      ancient than the unit.
+    source: yonge
+    url: https://www.earlyjewishwritings.com/text/philo/book34.html
+    compare:
+      cite: Plato, Republic VI 509b (the Good "beyond being")
+    note: >-
+      *De praemiis* 40 says it again: "better than good, and more ancient than the unit, and
+      more simple than one."
+    located: passage
+    checked: null
+  - id: L11
+    thread: good
+    from: plato
+    to: numenius
+    type: adapts
+    cite: Numenius, fr. 16 des Places (in Eusebius, Preparation for the Gospel XI.22)
+    quote: >-
+      God the Creator is related to the good, of which He is an imitator, as generation is
+      to essence, of which it is a likeness and an imitation.
+    source: gifford
+    url: https://www.tertullian.org/fathers/eusebius_pe_11_book11.htm
+    note: Fragment 16 in des Places's Budé edition (fr. 25 in Leemans).
+    located: passage
+    checked: null
+  - id: L12
+    thread: good
+    from: plato
+    to: plotinus
+    type: names
+    cite: Plotinus, Enneads V.1.8
+    quote: >-
+      These teachings are, therefore, no novelties, no inventions of today, but long since
+      stated, if not stressed; our doctrine here is the explanation of an earlier and can
+      show the antiquity of these opinions on the testimony of Plato himself.
+    source: mackenna_enn
+    url: https://classics.mit.edu/Plotinus/enneads.5.fifth.html
+    located: passage
+    checked: null
+  - id: L13
+    thread: good
+    from: numenius
+    to: plotinus
+    type: argued
+    cite: Porphyry, Life of Plotinus 17 (and 14)
+    quote: Some of the Greeks began to accuse Plotinus of appropriating the ideas of Numenius.
+    source: mackenna
+    url: https://en.wikisource.org/wiki/Life_of_Plotinus
+    scholarship:
+      - 'E. R. Dodds, "Numenius and Ammonius," in *Les sources de Plotin* (Entretiens Hardt 5, 1960)'
+    note: >-
+      Amelius answered the charge in a treatise, *The Difference between the Doctrines of
+      Plotinus and Numenius*. In chapter 14, Porphyry says Numenius was among the authors
+      read aloud in Plotinus's seminars.
+    located: passage
+    checked: null
+  - id: L14
+    thread: good
+    from: plotinus
+    to: porphyry
+    type: adapts
+    cite: Porphyry, Life of Plotinus 7, 24–26
+    quote: >-
+      I myself, Porphyry of Tyre, was one of Plotinus' very closest friends, and it was to
+      me he entrusted the task of revising his writings.
+    source: mackenna
+    url: https://en.wikisource.org/wiki/Life_of_Plotinus
+    located: passage
+    checked: null
+  - id: L15
+    thread: good
+    from: porphyry
+    to: victorinus
+    type: argued
+    cite: Marius Victorinus, Against Arius
+    scholarship:
+      - "Pierre Hadot, *Porphyre et Victorinus*, 2 vols. (Paris, 1968)"
+    paraphrase: >-
+      Hadot argued that Victorinus's writings against Arius rest on Porphyry's metaphysics;
+      others give more weight to Plotinus.
+    located: scholarship
+    checked: null
+  - id: L16
+    thread: good
+    from: victorinus
+    to: augustine
+    type: names
+    cite: Augustine, Confessions VIII.2.3–5
+    quote: >-
+      I had read certain books of the Platonists, which Victorinus, sometime Professor of
+      Rhetoric at Rome (who died a Christian, as I had been told), had translated into
+      Latin.
+    source: npnf1
+    url: https://www.newadvent.org/fathers/110108.htm
+    located: passage
+    checked: null
+
+  # ================= He who is =================
+  - id: L17
+    thread: being
+    from: torah
+    to: philo
+    type: quotes
+    cite: Philo, De vita Mosis I.75; De mutatione nominum 11
+    quote: >-
+      At first say unto them, I am that I am, that when they have learnt that there is a
+      difference between him that is and him that is not, they may be further taught that
+      there is no name whatever that can properly be assigned to me.
+    source: yonge
+    url: https://www.earlyjewishwritings.com/text/philo/book24.html
+    compare:
+      cite: Exodus 3:14 (Septuagint, "egō eimi ho ōn")
+      url: https://ebible.org/eng-Brenton/EXO03.htm
+    note: 'In *De mutatione nominum* 11 he glosses the name as "It is my nature to be, not to be described by name."'
+    located: passage
+    checked: null
+  - id: L18
+    thread: being
+    from: torah
+    to: augustine
+    type: quotes
+    cite: Augustine, Confessions VII.10.16; De Trinitate V.2.3
+    quote: >-
+      And You cried to me from afar, Yea, verily, 'I Am that I Am.' And I heard this, as
+      things are heard in the heart.
+    source: npnf1
+    url: https://www.newadvent.org/fathers/110107.htm
+    located: passage
+    checked: null
+  - id: L19
+    thread: being
+    from: plato
+    to: augustine
+    type: names
+    cite: Augustine, City of God VIII.11
+    quote: >-
+      As though compared with Him that truly is, because He is unchangeable, those things
+      which have been created mutable are not — a truth which Plato zealously held, and
+      most diligently commended.
+    source: npnf1
+    url: https://www.newadvent.org/fathers/120108.htm
+    note: >-
+      Augustine says this agreement with Exodus 3:14 "most of all inclines me almost to
+      assent to the opinion that Plato was not ignorant of those writings." The same
+      chapter is link L55 on the thread "Who taught whom."
+    located: passage
+    checked: null
+
+  # ================= One God, unlike us =================
+  - id: L20
+    thread: onegod
+    from: isaiah
+    to: paul
+    type: adapts
+    cite: Acts 17:24–25, 29
+    quote: >-
+      The God who made the world and all things in it, he, being Lord of heaven and earth,
+      doesn’t dwell in temples made with hands. He isn’t served by men’s hands, as though
+      he needed anything, seeing he himself gives to all life and breath and all things.
+    source: web
+    url: https://ebible.org/eng-web/ACT17.htm
+    compare:
+      cite: Isaiah 42:5 (and 40:18–20, 44:9–20)
+      quote: >-
+        God Yahweh, he who created the heavens and stretched them out, he who spread out
+        the earth and that which comes out of it, he who gives breath to its people.
+      url: https://ebible.org/eng-web/ISA42.htm
+    located: passage
+    checked: null
+  - id: L21
+    thread: onegod
+    from: wisdom
+    to: paul
+    type: adapts
+    cite: Romans 1:19–23
+    quote: >-
+      For the invisible things of him since the creation of the world are clearly seen,
+      being perceived through the things that are made.
+    source: web
+    url: https://ebible.org/eng-web/ROM01.htm
+    compare:
+      cite: Wisdom 13:5 (and 13:1–9, 14:22–27)
+      quote: >-
+        For from the greatness of the beauty of created things, mankind forms the
+        corresponding perception of their Maker.
+      url: https://ebible.org/eng-web/WIS13.htm
+    scholarship:
+      - "Joseph A. Fitzmyer, *Romans* (Anchor Bible 33, 1993)"
+    located: passage
+    checked: null
+  - id: L22
+    thread: onegod
+    from: stoics
+    to: paul
+    type: quotes
+    cite: Acts 17:28
+    quote: As some of your own poets have said, ‘For we are also his offspring.’
+    source: web
+    url: https://ebible.org/eng-web/ACT17.htm
+    compare:
+      cite: Aratus, Phaenomena 5 (cf. Cleanthes, Hymn to Zeus 4)
+      quote: For we are also his offspring.
+      source: mair
+      url: https://www.theoi.com/Text/AratusPhaenomena.html
+    located: passage
+    checked: null
+  - id: L23
+    thread: onegod
+    from: xenophanes
+    to: clement
+    type: quotes
+    cite: Clement, Stromata V.14; VII.4 (DK 21 B14–16, B23)
+    quote: >-
+      But had the oxen or the lions hands, Or could with hands depict a work like men, …
+      The horses would them like to horses sketch.
+    source: anf
+    url: https://www.newadvent.org/fathers/02105.htm
+    note: >-
+      Clement quotes this in a chapter titled "Greek Plagiarism from the Hebrews." Diels
+      and Kranz give Clement as the source of these lines; VII.4 has the Ethiopians and
+      Thracians who draw their gods like themselves.
+    located: passage
+    checked: null
+  - id: L24
+    thread: onegod
+    from: paul
+    to: augustine
+    type: quotes
+    cite: Augustine, Confessions VII.9.14–15
+    quote: >-
+      And therefore also did I read there, that they had changed the glory of Your
+      incorruptible nature into idols and various forms.
+    source: npnf1
+    url: https://www.newadvent.org/fathers/110107.htm
+    note: >-
+      In the same paragraph he quotes Acts 17:28, "in You we live, and move, and have our
+      being," and Romans 1:21–22, about the Platonists.
+    located: passage
+    checked: null
+
+  # ================= Creation from nothing =================
+  - id: L25
+    thread: creation
+    from: torah
+    to: philo
+    type: quotes
+    cite: Philo, De opificio mundi 2–3
+    quote: >-
+      But Moses … made the beginning of his laws entirely beautiful, and in all respects
+      admirable. … And his exordium, as I have already said, is most admirable; embracing
+      the creation of the world.
+    source: yonge
+    url: https://www.earlyjewishwritings.com/text/philo/book1.html
+    scholarship:
+      - "Frank Egleston Robbins, *The Hexaemeral Literature* (Chicago, 1912)"
+    note: >-
+      The whole treatise is a commentary on Genesis 1–3; Robbins (p. 27) calls it "the
+      first extant work in Greek dealing with the interpretation of the creation story in
+      Genesis."
+    located: passage
+    checked: null
+  - id: L26
+    thread: creation
+    from: plato
+    to: philo
+    type: adapts
+    cite: Philo, De opificio mundi 16–25
+    quote: >-
+      God … when he had determined to create this visible world, previously formed that one
+      which is perceptible only by the intellect, in order that so using an incorporeal
+      model … he might then make this corporeal world.
+    source: yonge
+    url: https://www.earlyjewishwritings.com/text/philo/book1.html
+    compare:
+      cite: Plato, Timaeus 28a–29d (the craftsman looks to an eternal model)
+    scholarship:
+      - "David T. Runia, *Philo of Alexandria and the Timaeus of Plato* (Leiden, 1986)"
+      - "Frank Egleston Robbins, *The Hexaemeral Literature* (Chicago, 1912)"
+    note: >-
+      Whether Philo's matter is itself created is argued. Robbins (p. 28) notes Philo's
+      "thorough familiarity with Plato by his citations of the dialogues, especially the
+      *Timaeus*."
+    located: passage
+    checked: null
+  - id: L27
+    thread: creation
+    from: plato
+    to: justin
+    type: adapts
+    cite: Justin, 1 Apology 10, 59
+    quote: >-
+      He in the beginning did of His goodness, for man's sake, create all things out of
+      unformed matter.
+    source: anf
+    url: https://www.newadvent.org/fathers/0126.htm
+    note: In chapter 59 Justin says Plato borrowed this from Moses (link L46).
+    located: passage
+    checked: null
+  - id: L28
+    thread: creation
+    from: plato
+    to: theophilus
+    type: rejects
+    cite: Theophilus, To Autolycus II.4
+    quote: >-
+      Plato and those of his school acknowledge indeed that God is uncreated … but then
+      they maintain that matter as well as God is uncreated. … But the power of God is
+      manifested in this, that out of things that are not He makes whatever He pleases.
+    source: anf
+    url: https://www.newadvent.org/fathers/02042.htm
+    scholarship:
+      - "Gerhard May, *Creatio ex nihilo* (Edinburgh, 1994; German 1978)"
+    note: May reads Theophilus and Tatian as the first clear statements of *creatio ex nihilo*.
+    located: passage
+    checked: null
+  - id: L29
+    thread: creation
+    from: maccabees2
+    to: origen
+    type: quotes
+    cite: Origen, De principiis II.1.5
+    quote: >-
+      Hear how in the book of Maccabees, where the mother of seven martyrs exhorts her son
+      to endure torture, this truth is confirmed.
+    source: anf
+    url: https://www.newadvent.org/fathers/04122.htm
+    compare:
+      cite: 2 Maccabees 7:28
+      quote: God made them not of things that were.
+      url: https://ebible.org/eng-web/2MA07.htm
+    located: passage
+    checked: null
+  - id: L30
+    thread: creation
+    from: plato
+    to: augustine
+    type: adapts
+    cite: Augustine, Confessions XII.7.7; City of God XI.4
+    quote: >-
+      You, therefore, O Lord … did in the beginning, which is of You, in Your Wisdom, which
+      was born of Your Substance, create something, and that out of nothing.
+    source: npnf1
+    url: https://www.newadvent.org/fathers/110112.htm
+    note: >-
+      He keeps a formless matter but makes it created, and *City of God* XI.4 argues that
+      the world is not "without beginning."
+    located: passage
+    checked: null
+
+  # ================= Soul and resurrection =================
+  - id: L31
+    thread: soul
+    from: plato
+    to: wisdom
+    type: adapts
+    cite: Wisdom 9:15; 8:19–20
+    quote: For a corruptible body weighs down the soul.
+    source: web
+    url: https://ebible.org/eng-web/WIS09.htm
+    compare:
+      cite: Plato, Phaedo 81c
+    scholarship:
+      - "David Winston, *The Wisdom of Solomon* (Anchor Bible 43, 1979)"
+    note: 'In 8:19–20: "I was a clever child, and received a good soul. Or rather, being good, I came into an undefiled body."'
+    located: passage
+    checked: null
+  - id: L32
+    thread: soul
+    from: plato
+    to: justin
+    type: rejects
+    cite: Justin, Dialogue with Trypho 5–6
+    quote: >-
+      Nor ought it to be called immortal; for if it is immortal, it is plainly
+      unbegotten. Justin: It is both unbegotten and immortal, according to some who are
+      styled Platonists.
+    source: anf
+    url: https://www.newadvent.org/fathers/01281.htm
+    note: The old man by the sea argues that the soul is not immortal by its own nature (chapter 5).
+    located: passage
+    checked: null
+  - id: L33
+    thread: soul
+    from: stoics
+    to: tertullian
+    type: names
+    cite: Tertullian, De anima 5 (and 23–24 against Plato)
+    quote: >-
+      Zeno, defining the soul to be a spirit generated with (the body,) constructs his
+      argument in this way: That substance which by its departure causes the living being
+      to die is a corporeal one.
+    source: anf
+    url: https://www.newadvent.org/fathers/0310.htm
+    note: 'ANF titles the chapter "Probable View of the Stoics, that the Soul Has a Corporeal Nature."'
+    located: passage
+    checked: null
+  - id: L34
+    thread: soul
+    from: plato
+    to: origen
+    type: argued
+    cite: Origen, De principiis II.8.3
+    quote: >-
+      Those who have fallen away from the love of God are undoubtedly said to have cooled
+      in their affection for Him, and to have become cold.
+    source: anf
+    url: https://www.newadvent.org/fathers/04122.htm
+    scholarship:
+      - 'Peter W. Martens, "Origen''s Doctrine of Pre-Existence and the Opening Chapters of Genesis," *Zeitschrift für Antikes Christentum* 16 (2012), 516–549'
+      - 'Peter W. Martens, "Embodiment, Heresy, and the Hellenization of Christianity: The Descent of the Soul in Plato and Origen," *Harvard Theological Review* 108 (2015), 594–620'
+      - 'Mark J. Edwards, *Origen against Plato* (Aldershot, 2002)'
+      - 'Mark J. Edwards, "Origen in Paradise: A Response to Peter Martens," *Zeitschrift für Antikes Christentum* 23 (2019), 163–185'
+    paraphrase: >-
+      Whether Origen taught that souls existed before bodies, and whether he took it from
+      Plato, is argued. Martens reads a doctrine of pre-existence in his exegesis of
+      Genesis 1–3; Edwards argues that Origen did not hold the doctrine he was condemned
+      for in the sixth century.
+    note: The sixth-century condemnations (543 and 553) fall outside this plate.
+    located: passage
+    checked: null
+  - id: L35
+    thread: soul
+    from: maccabees2
+    to: origen
+    type: quotes
+    cite: Origen, Exhortation to Martyrdom 22–27
+    paraphrase: >-
+      Origen retells the deaths of Eleazar and of the mother with her seven sons as a model
+      for martyrs.
+    compare:
+      cite: 2 Maccabees 7:9
+      quote: >-
+        The King of the world will raise us who have died for his laws up to an
+        everlasting renewal of life.
+      url: https://ebible.org/eng-web/2MA07.htm
+    note: >-
+      Not in the *Ante-Nicene Fathers*; translated in Rowan A. Greer, *Origen* (Paulist,
+      1979). Eleazar appears at chapter 22 and the mother with her seven sons at 23–27.
+    located: paraphrase
+    checked: null
+  - id: L36
+    thread: soul
+    from: porphyry
+    to: augustine
+    type: rejects
+    cite: Augustine, City of God X.29; XXII.26
+    quote: Why do you maintain that, in order to blessedness, every body must be escaped from?
+    source: npnf1
+    url: https://www.newadvent.org/fathers/120110.htm
+    note: '*City of God* XXII.26: "Porphyry tells us that the soul, in order to be blessed, must escape connection with every kind of body."'
+    located: passage
+    checked: null
+  - id: L37
+    thread: soul
+    from: plato
+    to: augustine
+    type: adapts
+    cite: Augustine, City of God XXII.27
+    quote: >-
+      Statements were made by Plato and Porphyry singly, which if they could have seen
+      their way to hold in common, they might possibly have [become] Christians.
+    source: npnf1
+    url: https://www.newadvent.org/fathers/120122.htm
+    located: passage
+    checked: null
+
+  # ================= The law written on the heart =================
+  - id: L38
+    thread: law
+    from: heraclitus
+    to: stoics
+    type: adapts
+    cite: Diogenes Laertius VII.88; Cleanthes, Hymn to Zeus 20–25
+    quote: >-
+      A life in which we refrain from every action forbidden by the law common to all
+      things, that is to say, the right reason which pervades all things, and is identical
+      with this Zeus.
+    source: hicks
+    url: https://en.wikisource.org/wiki/Lives_of_the_Eminent_Philosophers/Book_VII
+    compare:
+      cite: Heraclitus, DK 22 B114 ("all human laws are nourished by one, the divine")
+    located: passage
+    checked: null
+  - id: L39
+    thread: law
+    from: stoics
+    to: cicero
+    type: adapts
+    cite: Cicero, De re publica III.33 (quoted by Lactantius, Divine Institutes VI.8)
+    quote: >-
+      There is indeed a true law, right reason, agreeing with nature, diffused among all,
+      unchanging, everlasting, which calls to duty by commanding, deters from wrong by
+      forbidding.
+    source: anf
+    url: https://www.newadvent.org/fathers/07016.htm
+    note: >-
+      In *De legibus* I.18–19 Cicero gives a parallel Stoic definition of law as "the
+      highest reason, implanted in nature."
+    located: passage
+    checked: null
+  - id: L40
+    thread: law
+    from: jeremiah
+    to: paul
+    type: adapts
+    cite: 2 Corinthians 3:3–6; Romans 2:15
+    quote: >-
+      Written not with ink, but with the Spirit of the living God; not in tablets of stone,
+      but in tablets that are hearts of flesh.
+    source: web
+    url: https://ebible.org/eng-web/2CO03.htm
+    compare:
+      cite: Jeremiah 31:33 (Septuagint 38:33)
+      quote: I will put my law in their inward parts, and I will write it in their heart.
+      url: https://ebible.org/eng-web/JER31.htm
+    note: 2 Corinthians 3:6 goes on to "a new covenant."
+    located: passage
+    checked: null
+  - id: L41
+    thread: law
+    from: stoics
+    to: paul
+    type: argued
+    cite: Romans 2:14–15
+    quote: >-
+      When Gentiles who don’t have the law do by nature the things of the law, these, not
+      having the law, are a law to themselves, in that they show the work of the law
+      written in their hearts.
+    source: web
+    url: https://ebible.org/eng-web/ROM02.htm
+    scholarship:
+      - "Troels Engberg-Pedersen, *Paul and the Stoics* (Edinburgh, 2000)"
+    note: Whether "by nature" draws on Stoic natural law, or on Jeremiah alone, is argued.
+    located: passage
+    checked: null
+  - id: L42
+    thread: law
+    from: jeremiah
+    to: justin
+    type: quotes
+    cite: Justin, Dialogue with Trypho 11
+    quote: >-
+      And by Jeremiah, concerning this same new covenant, He thus speaks: 'Behold, the days
+      come, says the Lord, that I will make a new covenant with the house of Israel and
+      with the house of Judah.'
+    source: anf
+    url: https://www.newadvent.org/fathers/01282.htm
+    note: 'Justin reads it as "a final law," which he says is Christ.'
+    located: passage
+    checked: null
+  - id: L43
+    thread: law
+    from: cicero
+    to: lactantius
+    type: quotes
+    cite: Lactantius, Divine Institutes VI.8
+    quote: >-
+      That sacred, that heavenly law, which Marcus Tullius, in his third book respecting
+      the Republic, has described almost with a divine voice.
+    source: anf
+    url: https://www.newadvent.org/fathers/07016.htm
+    note: Editors of *De re publica* print III.33 from this quotation.
+    located: passage
+    checked: null
+  - id: L44
+    thread: law
+    from: paul
+    to: augustine
+    type: quotes
+    cite: Augustine, Confessions II.4.9
+    quote: >-
+      Theft is punished by Your law, O Lord, and by the law written in men's hearts, which
+      iniquity itself cannot blot out.
+    source: npnf1
+    url: https://www.newadvent.org/fathers/110102.htm
+    located: passage
+    checked: null
+
+  # ================= Who taught whom =================
+  - id: L45
+    thread: priority
+    from: torah
+    to: philo
+    type: names
+    cite: Philo, Quis rerum divinarum heres sit 214; Legum allegoriae I.108; De specialibus legibus IV.61
+    quote: >-
+      Is not this the thing which the Greeks say that Heraclitus, that great philosopher
+      who is so celebrated among them, put forth as the leading principle of his whole
+      philosophy … For it is in reality an ancient discovery of Moses.
+    source: yonge
+    url: https://www.earlyjewishwritings.com/text/philo/book17.html
+    note: >-
+      *Legum allegoriae* I.108: "Heraclitus … following the doctrine of Moses." *De
+      specialibus legibus* IV.61: "some of the lawgivers among the Greeks, having
+      transcribed some of the laws from the two tables of Moses."
+    located: passage
+    checked: null
+  - id: L46
+    thread: priority
+    from: torah
+    to: justin
+    type: names
+    cite: Justin, 1 Apology 44, 59–60
+    quote: >-
+      It was from our teachers — we mean the account given through the prophets — that
+      Plato borrowed his statement that God, having altered matter which was shapeless,
+      made the world.
+    source: anf
+    url: https://www.newadvent.org/fathers/0126.htm
+    note: >-
+      Chapter 60 says the same of the cross shape in the *Timaeus*. Chapter 44: the
+      philosophers and poets "have received such suggestions from the prophets," "and
+      hence there seem to be seeds of truth among all men."
+    located: passage
+    checked: null
+  - id: L47
+    thread: priority
+    from: torah
+    to: numenius
+    type: names
+    cite: Numenius, fr. 8 des Places (in Eusebius, Preparation for the Gospel XI.10, and Clement, Stromata I.22); Origen, Against Celsus IV.51
+    quote: >-
+      With reason therefore is that saying currently attributed to him, in which it is
+      recorded that he said, 'For what else is Plato than Moses speaking Attic Greek?'
+    source: gifford
+    url: https://www.tertullian.org/fathers/eusebius_pe_11_book11.htm
+    note: >-
+      Eusebius gives it as a saying "currently attributed" to Numenius (*Praep. ev.*
+      XI.10.14, fr. 8 des Places). Origen (*Against Celsus* IV.51) says Numenius "in many
+      of his works quotes from the writings of Moses and the prophets."
+    located: passage
+    checked: null
+  - id: L48
+    thread: priority
+    from: numenius
+    to: clement
+    type: quotes
+    cite: Clement, Stromata I.22; I.17
+    quote: >-
+      And Numenius, the Pythagorean philosopher, expressly writes: For what is Plato, but
+      Moses speaking in Attic Greek?
+    source: anf
+    url: https://www.newadvent.org/fathers/02101.htm
+    note: >-
+      *Stromata* I.17 takes up "All who came before me are thieves and robbers" (John 10:8)
+      for the Greek philosophers. I.5 calls philosophy "a kind of preparatory training to
+      those who attain to faith."
+    located: passage
+    checked: null
+  - id: L49
+    thread: priority
+    from: plato
+    to: celsus
+    type: names
+    cite: Origen, Against Celsus VI.1, VI.15–16, VII.58
+    quote: >-
+      This is an ancient saying, which had been admirably expressed long before, and which
+      they have only reported in a coarser way. For Plato introduces Socrates conversing
+      with Crito.
+    source: anf
+    url: https://www.newadvent.org/fathers/04167.htm
+    note: >-
+      Celsus on "turn the other cheek" (VII.58). VI.1: Celsus places passages "chiefly from
+      Plato" beside Scripture, saying they are "stated much better among the Greeks";
+      VI.15–16 on humility and the camel and the needle.
+    located: passage
+    checked: null
+  - id: L50
+    thread: priority
+    from: celsus
+    to: origen
+    type: rejects
+    cite: Origen, Against Celsus VII.59 (and VI.1–2)
+    quote: >-
+      If the doctrine be sound, and the effect of it good, whether it was made known to the
+      Greeks by Plato or any of the wise men of Greece, or whether it was delivered to the
+      Jews by Moses or any of the prophets …
+    source: anf
+    url: https://www.newadvent.org/fathers/04167.htm
+    located: passage
+    checked: null
+  - id: L51
+    thread: priority
+    from: origen
+    to: porphyry
+    type: rejects
+    cite: Porphyry, Against the Christians III, in Eusebius, Church History VI.19.4–8
+    quote: >-
+      In his life conducting himself as a Christian and contrary to the laws, but in his
+      opinions of material things and of the Deity being like a Greek, and mingling
+      Grecian teachings with foreign fables.
+    source: npnf2
+    url: https://www.newadvent.org/fathers/250106.htm
+    note: >-
+      VI.19.8: "he was continually studying Plato, and he busied himself with the writings
+      of Numenius and Cronius," and others. Eusebius says Porphyry "plainly utters a
+      falsehood" elsewhere in the passage.
+    located: passage
+    checked: null
+  - id: L52
+    thread: priority
+    from: plato
+    to: tertullian
+    type: rejects
+    cite: Tertullian, De praescriptione haereticorum 7
+    quote: >-
+      What indeed has Athens to do with Jerusalem? What concord is there between the
+      Academy and the Church?
+    source: anf
+    url: https://www.newadvent.org/fathers/0311.htm
+    note: >-
+      Just before, he quotes Colossians 2:8, "See that no one beguile you through
+      philosophy and vain deceit." Elsewhere he cites Zeno and Cleanthes with approval
+      (L07, L33).
+    located: passage
+    checked: null
+  - id: L53
+    thread: priority
+    from: cicero
+    to: jerome
+    type: rejects
+    cite: Jerome, Letter 22.30
+    quote: You lie. You are a follower of Cicero and not of Christ.
+    source: npnf2
+    url: https://www.newadvent.org/fathers/3001022.htm
+    note: The judge's words in Jerome's dream.
+    located: passage
+    checked: null
+  - id: L54
+    thread: priority
+    from: torah
+    to: augustine
+    type: adapts
+    cite: Augustine, De doctrina christiana II.40.60
+    quote: >-
+      If those who are called philosophers, and especially the Platonists, have said
+      anything that is true and in harmony with our faith, we are not only not to shrink
+      from it, but to claim it for our own use from those who have unlawful possession of
+      it.
+    source: npnf1
+    url: https://www.newadvent.org/fathers/12022.htm
+    compare:
+      cite: Exodus 12:35–36 (and 3:22)
+      url: https://ebible.org/eng-web/EXO12.htm
+    note: >-
+      He draws the image from the gold the Israelites took from Egypt. Origen had used it
+      in his *Letter to Gregory* 2: "by spoiling the Egyptians, they might have material for
+      the preparation of the things which pertained to the service of God."
+    located: passage
+    checked: null
+  - id: L55
+    thread: priority
+    from: plato
+    to: augustine
+    type: names
+    cite: Augustine, City of God VIII.11; De doctrina christiana II.28.43
+    quote: >-
+      A careful calculation of dates, contained in chronological history, shows that Plato
+      was born about a hundred years after the time in which Jeremiah prophesied.
+    source: npnf1
+    url: https://www.newadvent.org/fathers/120108.htm
+    note: >-
+      In *De doctrina christiana* II.28.43 he had credited Ambrose with showing that Plato
+      was in Egypt when Jeremiah was there. In *City of God* VIII.11 he says that opinion is
+      one "which I myself have expressed in certain of my writings," rejects it on the
+      dates, and still allows that Plato may have studied the Scriptures "through an
+      interpreter." In *Retractationes* II.4 he corrects the *De doctrina* passage itself,
+      saying his memory had betrayed him about Ambrose.
+    located: passage
+    checked: null
