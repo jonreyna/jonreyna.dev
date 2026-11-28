@@ -26,7 +26,10 @@ problems = []
 renamed = {}
 for css in sorted(DIST.glob("*.css")):
     text = css.read_text(encoding="utf-8")
-    for url in re.findall(r"url\(\s*['\"]?([^'\")]+)", text):
+    # A quoted data: URL can hold url() references of its own (an SVG filter's
+    # url(%23n)); they point inside it, so leave them out of the check.
+    outer = re.sub(r"url\(\s*([\"'])data:.*?\1\s*\)", "url(data:)", text)
+    for url in re.findall(r"url\(\s*['\"]?([^'\")]+)", outer):
         if not url.startswith(("/", "data:", "#")):
             problems.append(f"{css.name}: relative url({url}) would break under /css/")
     digest = hashlib.sha256(css.read_bytes()).hexdigest()[:10]

@@ -80,11 +80,11 @@ class JLayout extends PageLayoutBase {
     for (final font in preloadFonts()) {
       yield link(rel: 'preload', href: font, attributes: {'as': 'font', 'type': 'font/woff2', 'crossorigin': ''});
     }
-    // make dist renames these three for their content, as /css/NAME.HASH.css, and
+    // make dist renames each of these for its content, as /css/NAME.HASH.css, and
     // rewrites these links to match (tool/fingerprint_css.py).
-    yield link(rel: 'stylesheet', href: '/fonts.css');
-    yield link(rel: 'stylesheet', href: '/tokens.css');
-    yield link(rel: 'stylesheet', href: '/site.css');
+    for (final href in stylesheets(page)) {
+      yield link(rel: 'stylesheet', href: href);
+    }
     // The SVG for browsers that take one; favicon.ico for the rest and for tools that
     // ask for /favicon.ico; the PNG for phones' home screens (make favicon).
     yield link(rel: 'icon', href: '/favicon.ico', attributes: {'sizes': '32x32'});
@@ -94,11 +94,18 @@ class JLayout extends PageLayoutBase {
     yield meta(name: 'theme-color', content: '#1a1612', attributes: {'media': '(prefers-color-scheme: dark)'});
     yield link(rel: 'canonical', href: 'https://jonreyna.dev${page.url}');
     yield meta(attributes: {'property': 'og:url', 'content': 'https://jonreyna.dev${page.url}'});
-    // Reading pages ship no JavaScript; a page with an island opts in (DESIGN.md, principle 4).
-    if (data['islands'] == true) {
-      yield script(src: '/main.client.dart.js', defer: true);
+    for (final src in scripts(page)) {
+      yield script(src: src, defer: true);
     }
   }
+
+  /// The page's stylesheets, each a file in web/'s root: the fonts, the design
+  /// tokens and the site's styles.
+  List<String> stylesheets(Page page) => const ['/fonts.css', '/tokens.css', '/site.css'];
+
+  /// The page's scripts. Reading pages ship no JavaScript; a page with an island opts
+  /// in with `islands: true` (DESIGN.md, principle 4).
+  List<String> scripts(Page page) => [if (page.data.page['islands'] == true) '/main.client.dart.js'];
 
   @override
   Component buildBody(Page page, Component child) {
@@ -155,9 +162,8 @@ class JLayout extends PageLayoutBase {
   }
 
   /// The nav items (DESIGN.md, "Masthead"). Writing shows once an essay is published.
-  /// Play returns with its first piece (Phase 6), as `('/#play', 'play')` before résumé,
-  /// with its section back on the home page.
-  static const _nav = [('/work', 'work'), ('/writing', 'writing'), ('/resume', 'résumé')];
+  /// Play goes to its section on the home page until it has a page of its own.
+  static const _nav = [('/work', 'work'), ('/writing', 'writing'), ('/#play', 'play'), ('/resume', 'résumé')];
 
   /// Whether [url] is the nav item's page or one below it (an essay under /writing).
   static bool _inSection(String url, String href) => !href.contains('#') && (url == href || url.startsWith('$href/'));

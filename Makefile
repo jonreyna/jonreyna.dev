@@ -13,7 +13,7 @@ COMMIT_TIME := $(shell git log -1 --format=%ct 2>/dev/null || echo 0)
 # Wrangler, pinned exactly; bump it on purpose.
 WRANGLER ?= npx --yes wrangler@4.158.0
 
-.PHONY: help setup no-binaries fonts card og-image icon favicon site dist serve check site-test verify deploy preview clean vitae workflow-lint go-lint go-test resume-check resume resume-pdf resume-word resume-text-check resume-release site-resume resume-private
+.PHONY: help setup no-binaries fonts card og-image icon favicon play site dist serve check site-test verify deploy preview clean vitae workflow-lint go-lint go-test resume-check resume resume-pdf resume-word resume-text-check resume-release site-resume resume-private
 
 help:  ## List targets
 	@grep -E '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | awk -F':.*## ' '{printf "  %-15s %s\n", $$1, $$2}'
@@ -114,11 +114,33 @@ favicon: icon $(ALEGREYA_SC)  ## Draw the favicons into site/web (not in git)
 	$(ICON) -font $(ALEGREYA_SC) -letter J -svg site/web/favicon.svg -ico site/web/favicon.ico \
 		-touch site/web/apple-touch-icon.png
 
+# Play pieces (play/, see play/README.md). A piece's script and its libraries are served
+# from /play/<piece>/, beside the page, and its stylesheet from the root as
+# play-<piece>.css, so make dist fingerprints it with the others. D3, which Arbor
+# Ecclesiae draws with, is downloaded from a pinned release and checked like the fonts.
+# site/web/play/ and site/web/play-*.css are git-ignored.
+D3_VERSION := 7.9.0
+D3_SHA256 := f2094bbf6141b359722c4fe454eb6c4b0f0e42cc10cc7af921fc158fceb86539
+D3_JS := build/downloads/d3-$(D3_VERSION).min.js
+
+$(D3_JS):
+	mkdir -p $(dir $@)
+	curl -sSfL -o $@.part https://cdnjs.cloudflare.com/ajax/libs/d3/$(D3_VERSION)/d3.min.js
+	echo "$(D3_SHA256)  $@.part" | shasum -a 256 -c -
+	mv $@.part $@
+
+play: $(D3_JS)  ## Stage the Play pieces into site/web for the site build (not in git)
+	rm -rf site/web/play site/web/play-*.css
+	mkdir -p site/web/play/arbor-ecclesiae
+	cp $(D3_JS) site/web/play/arbor-ecclesiae/d3.min.js
+	cp play/arbor-ecclesiae/arbor-ecclesiae.js play/arbor-ecclesiae/D3-LICENSE.txt site/web/play/arbor-ecclesiae/
+	cp play/arbor-ecclesiae/arbor-ecclesiae.css site/web/play-arbor-ecclesiae.css
+
 # PANDOC converts the pages' TeX math to MathML and highlights their code
 # (site/lib/tex_math.dart, site/lib/code_highlight.dart). It is
 # defined further down, so it can't be a prerequisite here; site-resume's Word step
 # downloads it.
-site: fonts og-image favicon site-resume  ## Build the static site into site/build/jaspr
+site: fonts og-image favicon site-resume play  ## Build the static site into site/build/jaspr
 	cd site && PANDOC=$(CURDIR)/$(PANDOC) FONT_FACES=$(CURDIR)/$(FONT_FACES) jaspr build
 
 # Copy only the site's own files: the build also leaves packages/, .dart_tool/ and a manifest.
@@ -320,5 +342,6 @@ resume-private: vitae  ## Render with the private overlay into build/resume-priv
 	$(MAKE) --no-print-directory $(WORD_REFERENCE)
 	$(call build-word,build/resume-private)
 
-clean:  ## Remove build output, the copied résumé, the Open Graph image, the favicons and the fonts
-	rm -rf site/build dist .wrangler build site/web/resume site/web/fonts/*.woff2 $(FONT_CSS) $(OG_IMAGE) $(FAVICONS)
+clean:  ## Remove build output, the copied résumé and Play pieces, the Open Graph image, the favicons and the fonts
+	rm -rf site/build dist .wrangler build site/web/resume site/web/play site/web/play-*.css \
+		site/web/fonts/*.woff2 $(FONT_CSS) $(OG_IMAGE) $(FAVICONS)

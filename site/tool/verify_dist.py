@@ -2,7 +2,9 @@
 
 Run by `make verify` as `verify_dist.py DIST FONT_FACES`, where FONT_FACES is the
 font manifest site/tool/subset_fonts.py wrote. Fails (exit 1) if any page:
-  - loads a script other than Jaspr's island bundle (DESIGN.md, principle 4),
+  - loads a script other than Jaspr's island bundle (DESIGN.md, principle 4), except
+    that a Play piece's page, play/PIECE/index.html, may load the staged scripts in its
+    own directory (play/README.md),
   - loads the island bundle without containing an island,
   - lacks a <title>, a lang attribute, or a meta description (the 404 page is exempt
     from the description), or an og:image,
@@ -97,9 +99,16 @@ for page in sorted(DIST.rglob("*.html")):
     rel = page.relative_to(DIST)
     html = page.read_text(encoding="utf-8")
     scripts = re.findall(r"<script\b[^>]*>", html)
+    piece = f"/{rel.parent.as_posix()}/" if len(rel.parts) == 3 and rel.parts[0] == "play" else None
     for tag in scripts:
-        if ISLAND_JS not in tag:
-            problems.append(f"{rel}: script other than the island bundle: {tag}")
+        if ISLAND_JS in tag:
+            continue
+        src = (m.group(1) if (m := re.search(r'\bsrc="([^"]+)"', tag)) else "")
+        if piece and re.fullmatch(re.escape(piece) + r"[\w.-]+\.js", src):
+            if not (DIST / src.lstrip("/")).is_file():
+                problems.append(f"{rel}: loads {src}, which isn't staged")
+            continue
+        problems.append(f"{rel}: script other than the island bundle: {tag}")
     # Jaspr marks each pre-rendered island with a comment such as <!--@kalman_demo-->.
     if any(ISLAND_JS in tag for tag in scripts) and "<!--@" not in html:
         problems.append(f"{rel}: loads {ISLAND_JS} but has no island")

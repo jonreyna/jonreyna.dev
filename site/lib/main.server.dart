@@ -12,6 +12,7 @@ import 'components/resume_view.dart';
 import 'essay_polish.dart';
 import 'essay_sections.dart';
 import 'layouts/j_layout.dart';
+import 'layouts/play_layout.dart';
 import 'main.server.options.dart';
 import 'nested_links.dart';
 import 'tex_math.dart';
@@ -45,7 +46,9 @@ void main() {
         EssayList.component(),
         CustomComponent(pattern: 'Resume', builder: (_, _, _) => const ResumeView()),
       ],
-      layouts: [const JLayout()],
+      // JLayout comes first, so it's the default; a Play piece that fills the window
+      // sets `layout: play`.
+      layouts: [const JLayout(), const PlayLayout()],
       // Design J supplies all styles; turn off jaspr_content's own theme.
       theme: const ContentTheme.none(),
     ),

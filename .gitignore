@@ -7,6 +7,9 @@
 /site/web/fonts.css
 # The résumé files are rendered by `make site-resume` from resume/resume.yaml.
 /site/web/resume/
+# The Play pieces are staged by `make play` from play/.
+/site/web/play/
+/site/web/play-*.css
 # The Open Graph image and the favicons are drawn by `make og-image` and `make favicon`
 # (tools/card).
 /site/web/og.png
