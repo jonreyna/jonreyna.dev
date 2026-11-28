@@ -22,6 +22,10 @@ import 'j_layout.dart';
 /// ```
 ///
 /// `make play` stages the piece's files where the build serves them.
+///
+/// A piece built from data, such as an atlas drawn by tools/atlas, sets
+/// `generated: true`: its markup is then read from build/play/PIECE/PIECE.html, which
+/// `make play` writes, instead of from play/PIECE/.
 class PlayLayout extends JLayout {
   const PlayLayout();
 
@@ -37,7 +41,8 @@ class PlayLayout extends JLayout {
   ];
 
   @override
-  Component buildBody(Page page, Component child) => RawText(_markup(_piece(page)));
+  Component buildBody(Page page, Component child) =>
+      RawText(_markup(_piece(page), generated: page.data.page['generated'] == true));
 
   /// The page's piece, from its `piece:` front matter.
   static String _piece(Page page) => switch (page.data.page['piece']) {
@@ -45,9 +50,16 @@ class PlayLayout extends JLayout {
     final other => throw StateError('${page.url}: `layout: play` needs `piece:` naming a directory in play/, got $other'),
   };
 
-  /// The piece's markup, play/PIECE/PIECE.html, read once per build. The build runs
-  /// in site/, so play/ is one level up.
-  static String _markup(String piece) => _cache[piece] ??= File('../play/$piece/$piece.html').readAsStringSync();
+  /// The piece's markup, play/PIECE/PIECE.html (or build/play/PIECE/PIECE.html for a
+  /// generated piece), read once per build. The build runs in site/, so both are one
+  /// level up.
+  static String _markup(String piece, {required bool generated}) => _cache[piece] ??= () {
+    final file = File(generated ? '../build/play/$piece/$piece.html' : '../play/$piece/$piece.html');
+    if (!file.existsSync()) {
+      throw StateError('${file.path} is missing; run `make play` to build the piece');
+    }
+    return file.readAsStringSync();
+  }();
 
   static final _cache = <String, String>{};
 }

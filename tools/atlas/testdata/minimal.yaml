@@ -1,0 +1,28 @@
+# A small plate for tests: two lanes, two threads, four people, four links.
+plate: minimal
+title: A Small Plate
+subtitle: Four writers, 500 BC to AD 400
+span: [-500, 400]
+scope: Only what the tests need.
+sources:
+  pd: {name: "A Translation (1900)", via: Example}
+lanes:
+  - {id: old, name: Old writers}
+  - {id: new, name: New writers}
+threads:
+  - {id: word, name: The Word, color: gold, summary: "A reason \"that orders\" the world."}
+  - {id: law, name: The law, color: lapis, summary: A law written on the heart.}
+people:
+  - {id: ana, name: Ana, lanes: [old], from: -480, to: -420, circa: true, card: The first.}
+  - {id: ben, name: Ben of Somewhere, label: Ben, lanes: [old, new], from: -20, to: 50, card: Spans both lanes.}
+  - {id: cal, name: Cal, lanes: [new], from: 100, to: 165, card: "Cal's card."}
+  - {id: dee, name: Dee, lanes: [new], from: 354, to: 430, card: The last.}
+links:
+  - {id: L1, thread: word, from: ana, to: ben, type: adapts, cite: Ben 1.1, quote: "In the beginning.", source: pd,
+     url: "https://example.com/ben", located: passage, checked: {on: 2026-11-27, edition: pd}}
+  - {id: L2, thread: word, from: ben, to: cal, type: quotes, cite: Cal 2, quote: "As Ben said.", source: pd,
+     url: "https://example.com/cal", located: passage, checked: {on: 2026-11-27, edition: pd}}
+  - {id: L3, thread: law, from: ana, to: dee, type: rejects, cite: Dee 3, paraphrase: Dee argues against Ana.,
+     located: paraphrase, checked: {on: 2026-11-27, edition: pd}}
+  - {id: L4, thread: law, from: cal, to: dee, type: argued, cite: Dee 4, paraphrase: Whether Dee knew Cal is argued.,
+     scholarship: ["A. Scholar, A Book (2000)"], located: scholarship}

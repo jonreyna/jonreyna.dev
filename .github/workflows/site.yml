@@ -93,8 +93,12 @@ jobs:
       - name: Test the site's Dart code
         run: make site-test
 
+      # Production builds refuse any atlas citation Jon hasn't checked (play/README.md);
+      # pull request previews show unchecked links marked as such.
       - name: Build and stage dist/
-        run: make dist
+        env:
+          ATLAS_FLAGS: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && '-require-checked' || '' }}
+        run: make dist ATLAS_FLAGS="$ATLAS_FLAGS"
 
       - name: Check the built pages
         run: make verify

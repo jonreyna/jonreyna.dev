@@ -181,7 +181,7 @@ Every page carries:
 
 No photos in the design and no icon set. Diagrams are inline SVG drawn in `currentColor`, with red reserved for the one thing the diagram is about. Interactive Play pieces follow the same two colors.
 
-**Atlases are the exception.** A history piece whose colors carry the data, such as Arbor Ecclesiae, where each color names a tradition, keeps its own palette and fills the window (`layout: play`, `lib/layouts/play_layout.dart`) instead of sitting in the page column. It still sets type in the site's faces, Alegreya and Alegreya SC for small capitals, links back to the site, follows the light and dark preference, and loads its scripts only from its own directory under `/play/` (see `play/README.md`).
+**Atlases are the exception.** A history piece whose colors carry the data, such as Arbor Ecclesiae, where each color names a tradition, keeps its own palette and fills the window (`layout: play`, `lib/layouts/play_layout.dart`) instead of sitting in the page column. It still sets type in the site's faces, Alegreya and Alegreya SC for small capitals, links back to the site, follows the light and dark preference, and loads its scripts only from its own directory under `/play/` (see `play/README.md`). A woven chart such as Athens and Jerusalem needs no script at all: its eight thread colors were checked with a palette validator so that every pair stays apart, in light and dark, for normal vision and color blindness, and hovering, opening a card and the outline name each thread, so color is never the only cue.
 
 ## Accessibility
 
