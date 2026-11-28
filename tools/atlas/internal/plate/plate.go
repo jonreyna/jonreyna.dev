@@ -16,6 +16,8 @@ var ErrEmpty = errors.New("empty plate")
 type Plate struct {
 	// ID names the plate and its piece directory, such as "athens-and-jerusalem".
 	ID string `yaml:"plate"`
+	// Kicker is an optional rubric label above the title, such as "Atlas · Plate I".
+	Kicker string `yaml:"kicker"`
 	// Title is the page's heading.
 	Title string `yaml:"title"`
 	// Subtitle is the line under the title.

@@ -118,7 +118,7 @@ func build(args []string, stdout, stderr io.Writer) error {
 
 	var markup, rules bytes.Buffer
 
-	err = errors.Join(render.HTML(&markup, p, l), render.CSS(&rules, p))
+	err = errors.Join(render.HTML(&markup, p, l), render.CSS(&rules, p, l))
 	if err != nil {
 		return fmt.Errorf("render %s: %w", path, err)
 	}

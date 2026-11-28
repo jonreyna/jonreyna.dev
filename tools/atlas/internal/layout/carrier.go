@@ -14,3 +14,15 @@ type carrier struct {
 
 // active reports whether the carrier runs past x.
 func (c *carrier) active(x float64) bool { return c.x0 < x && x < c.x1 }
+
+// reaches reports whether spot is one of the carrier's targets.
+func (c *carrier) reaches(spot int) bool {
+
+	for _, t := range c.targets {
+		if t.spot == spot {
+			return true
+		}
+	}
+
+	return false
+}

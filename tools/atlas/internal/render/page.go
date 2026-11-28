@@ -17,16 +17,26 @@ const (
 	// bandShades is how many fills the bands alternate between.
 	bandShades = 2
 	// laneTextDrop puts a lane's name below its band's top edge.
-	laneTextDrop = 22
+	laneTextDrop = 24
 	// yearAbove and yearBelow place the century labels outside the bands.
-	yearAbove = 10
-	yearBelow = 20
-	// knotHalf is half a knot bar's width (the bar is drawn 10 wide).
-	knotHalf = 5
-	// rejectHalf is half the height of the bar that ends a rejection.
-	rejectHalf = 4
-	// markLine is the legend's line for a link type.
-	markLine = "M0 5H30"
+	yearAbove = 11
+	yearBelow = 21
+	// knotWidth and knotHalf set the knot bar's width (drawn 5 wide).
+	knotWidth = 5
+	knotHalf  = 2.5
+	// knotHitWidth and knotHitHalf set the invisible tap target behind each knot.
+	knotHitWidth = 36
+	knotHitHalf  = 18
+	// knotHitPad extends the tap target slightly above the bar and below the label.
+	knotHitPad = 5
+	// stemMinGap is the smallest gap between a bar's foot and its band foot that
+	// earns a drop stem down to the label.
+	stemMinGap = 4
+	// rejectHalf and rejectHeight set the perpendicular bar ending a rejection.
+	rejectHalf   = 4.5
+	rejectHeight = 9
+	// half splits the chart into left and right halves for card placement.
+	half = 0.5
 )
 
 // page is the markup being written for one plate.
@@ -36,16 +46,25 @@ type page struct {
 	l        *layout.Layout
 	incoming map[string][]*plate.Link
 	outgoing map[string][]*plate.Link
+	knotX    map[string]float64
 }
 
-// newPage indexes the plate's links by the people they join.
+// newPage indexes the plate's links and knot x coordinates by person id.
 func newPage(p *plate.Plate, l *layout.Layout) *page {
 
-	pg := &page{p: p, l: l, incoming: map[string][]*plate.Link{}, outgoing: map[string][]*plate.Link{}}
+	pg := &page{
+		p: p, l: l,
+		incoming: map[string][]*plate.Link{}, outgoing: map[string][]*plate.Link{},
+		knotX: make(map[string]float64, len(l.Knots)),
+	}
 	for i := range p.Links {
 		link := &p.Links[i]
 		pg.incoming[link.To] = append(pg.incoming[link.To], link)
 		pg.outgoing[link.From] = append(pg.outgoing[link.From], link)
+	}
+
+	for _, k := range l.Knots {
+		pg.knotX[k.Person] = k.X
 	}
 
 	return pg
@@ -66,17 +85,24 @@ func (pg *page) linef(format string, args ...any) {
 // name returns a person's full name, set for HTML.
 func (pg *page) name(id string) string { return smart(pg.p.Person(id).Name) }
 
-// head writes the opening of <main>: the way back to the site, the title and the
-// subtitle.
+// head writes the opening of <main>: the folio frame, top bar, title and subtitle.
 func (pg *page) head() {
 
 	pg.line(`<main id="main" class="atlas">`)
+	pg.line(`<div class="folio-frame" aria-hidden="true"><i class="boss"></i><i class="boss"></i>` +
+		`<i class="boss"></i><i class="boss"></i></div>`)
+	pg.line(`<div class="topbar"><a class="home" href="/">jonreyna.dev</a></div>`)
 	pg.line(`<header class="atlas-head">`)
-	pg.line(`<a class="home" href="/">jonreyna.dev</a>`)
+
+	if pg.p.Kicker != "" {
+		pg.linef(`<p class="kicker">%s</p>`, smart(pg.p.Kicker))
+	}
+
 	pg.linef(`<h1>%s</h1>`, smart(pg.p.Title))
 	pg.linef(`<p class="sub">%s</p>`, smart(pg.p.Subtitle))
-	pg.line(`<p class="how">Hover a thread or a name to follow it; select a name for its card and sources,` +
-		` or <a href="#outline">read it all as an outline</a>.</p>`)
+	pg.line(`<p class="how"><span class="pil" aria-hidden="true">¶</span>` +
+		`Hover a thread or a name to follow it; select a name for its card and sources,` +
+		` or <a href="#outline-body">read it all as an outline</a>.</p>`)
 	pg.line(`</header>`)
 }
 
@@ -94,14 +120,14 @@ func (pg *page) legend() {
 	pg.line(`</ul>`)
 	pg.line(`<ul class="kinds">`)
 
-	for _, k := range []struct{ class, mark, label string }{
-		{"y-quotes", markLine, "quotes or names"},
-		{"y-adapts", markLine, "adapts"},
-		{"y-rejects", "M0 5H28M28 1V9", "rejects"},
-		{"y-argued", markLine, "scholars argue"},
+	for _, k := range []struct{ class, svg, label string }{
+		{"y-quotes", `<path d="M0 6H27"/><circle class="dot-solid" cx="27" cy="6" r="2.6"/>`, "quotes or names"},
+		{"y-adapts", `<path d="M0 6H27"/><circle class="dot-hollow" cx="27" cy="6" r="2.8"/>`, "adapts"},
+		{"y-rejects", `<path d="M0 6H29M29 1.5V10.5"/>`, "rejects"},
+		{"y-argued", `<path d="M0 6H27"/><circle class="dot-argued" cx="27" cy="6" r="2.4"/>`, "scholars argue"},
 	} {
-		pg.linef(`<li><svg class="mark %s" viewBox="0 0 30 10" aria-hidden="true"><path d="%s"/></svg>%s</li>`,
-			k.class, k.mark, k.label)
+		pg.linef(`<li><svg class="mark %s" viewBox="0 0 34 12" aria-hidden="true">%s</svg>%s</li>`,
+			k.class, k.svg, k.label)
 	}
 
 	pg.line(`</ul>`)
@@ -109,11 +135,18 @@ func (pg *page) legend() {
 	pg.line(`</nav>`)
 }
 
-// chart writes the figure: the SVG and its caption.
+// chart writes the figure: the sticky lane rail for narrow screens, the SVG and its caption.
 func (pg *page) chart() {
 
 	pg.line(`<figure class="chart" id="chart">`)
 	pg.line(`<div class="frame">`)
+	pg.line(`<div class="lane-rail" aria-hidden="true">`)
+
+	for _, b := range pg.l.Bands {
+		pg.linef(`<span class="lane-tag lane-%s">%s</span>`, b.Lane, smart(b.Name))
+	}
+
+	pg.line(`</div>`)
 	pg.linef(`<svg viewBox="0 0 %s %s" role="group" aria-label="%s: the chart. Each name is a link to its card.">`,
 		num(pg.l.Width), num(pg.l.Height), attr(pg.p.Title))
 	pg.bands()
@@ -122,8 +155,9 @@ func (pg *page) chart() {
 	pg.knots()
 	pg.line(`</svg>`)
 	pg.line(`</div>`)
-	pg.linef(`<figcaption>%s The time scale stretches where the writers crowd; the century marks show by how much.`+
-		`</figcaption>`, smart(pg.p.Scope))
+	pg.linef(`<figcaption><span class="pil" aria-hidden="true">¶</span>%s`+
+		` The time scale stretches where the writers crowd; the century marks show by how much.</figcaption>`,
+		smart(pg.p.Scope))
 	pg.line(`</figure>`)
 }
 
@@ -137,7 +171,7 @@ func (pg *page) bands() {
 			i%bandShades, num(b.Top), num(pg.l.Width), num(b.Bottom-b.Top))
 
 		lines := laneLines(b.Name)
-		pg.linef(`<text class="lane" x="12" y="%s">`, num(b.Top+laneTextDrop))
+		pg.linef(`<text class="lane" x="14" y="%s">`, num(b.Top+laneTextDrop))
 
 		for j, s := range lines {
 			dy := "0"
@@ -145,7 +179,7 @@ func (pg *page) bands() {
 				dy = "1.2em"
 			}
 
-			pg.linef(`<tspan x="12" dy="%s">%s</tspan>`, dy, smart(s))
+			pg.linef(`<tspan x="14" dy="%s">%s</tspan>`, dy, smart(s))
 		}
 
 		pg.line(`</text>`)
@@ -226,31 +260,87 @@ func (pg *page) knots() {
 	for _, k := range pg.l.Knots {
 		person := pg.p.Person(k.Person)
 		n := len(pg.incoming[k.Person]) + len(pg.outgoing[k.Person])
-		pg.linef(`<a class="knot k-%s" href="#k-%s" aria-label="%s, %s, %d links">`,
-			k.Person, k.Person, attr(person.Name), attr(person.Dates()), n)
-		pg.linef(`<rect class="bar" x="%s" y="%s" width="10" height="%s" rx="5"/>`,
-			num(k.X-knotHalf), num(k.Top), num(k.Bottom-k.Top))
+		pg.linef(`<a class="%s" href="#k-%s" aria-label="%s, %s, %d links">`,
+			pg.knotClass(k.Person), k.Person, attr(person.Name), attr(person.Dates()), n)
+		pg.linef(`<rect class="knot-hit" x="%s" y="%s" width="%d" height="%s"/>`,
+			num(k.X-knotHitHalf), num(k.Top-knotHitPad), knotHitWidth, num(k.LabelY-k.Top+knotHitPad+knotHitPad))
+
+		if k.Bottom < k.StemBottom-stemMinGap {
+			pg.linef(`<line class="stem" x1="%[1]s" y1="%[2]s" x2="%[1]s" y2="%[3]s"/>`,
+				num(k.X), num(k.Bottom), num(k.StemBottom))
+		}
+
+		pg.linef(`<rect class="bar" x="%s" y="%s" width="%d" height="%s" rx="%s"/>`,
+			num(k.X-knotHalf), num(k.Top), knotWidth, num(k.Bottom-k.Top), num(knotHalf))
 		pg.linef(`<text class="name" x="%s" y="%s">%s</text>`, num(k.X), num(k.LabelY), smart(k.Label))
 		pg.line(`</a>`)
 	}
+
+	pg.ends()
+	pg.line(`</g>`)
+}
+
+// ends writes the arrival marks on every knot's left edge, shaped by link type.
+func (pg *page) ends() {
 
 	pg.line(`<g class="ends" aria-hidden="true">`)
 
 	for _, k := range pg.l.Knots {
 		for _, e := range k.Ends {
 			class := "end t-" + e.Thread + " y-" + string(e.Type) + " k-" + e.From + " k-" + k.Person
-			if e.Type == plate.LinkRejects {
-				pg.linef(`<path class="%s" d="M%s %sv8"/>`, class, num(e.X-1), num(e.Y-rejectHalf))
 
-				continue
+			switch e.Type {
+			case plate.LinkRejects:
+				pg.linef(`<path class="%s" d="M%s %sv%d"/>`, class, num(e.X-1), num(e.Y-rejectHalf), rejectHeight)
+			case plate.LinkAdapts:
+				pg.linef(`<circle class="%s dot-hollow" cx="%s" cy="%s" r="2.8"/>`, class, num(e.X), num(e.Y))
+			case plate.LinkArgued:
+				pg.linef(`<circle class="%s dot-argued" cx="%s" cy="%s" r="2.4"/>`, class, num(e.X), num(e.Y))
+			case plate.LinkQuotes, plate.LinkNames:
+				pg.linef(`<circle class="%s dot-solid" cx="%s" cy="%s" r="2.6"/>`, class, num(e.X), num(e.Y))
 			}
-
-			pg.linef(`<circle class="%s" cx="%s" cy="%s" r="2.4"/>`, class, num(e.X), num(e.Y))
 		}
 	}
 
 	pg.line(`</g>`)
-	pg.line(`</g>`)
+}
+
+// knotClass returns a knot's classes: its own id, every thread that touches it, and
+// every neighbor joined to it (so CSS focus keeps the neighborhood bright).
+func (pg *page) knotClass(id string) string {
+
+	threads := map[string]bool{}
+	peers := map[string]bool{}
+
+	for _, l := range pg.incoming[id] {
+		threads[l.Thread] = true
+		peers[l.From] = true
+	}
+
+	for _, l := range pg.outgoing[id] {
+		threads[l.Thread] = true
+		peers[l.To] = true
+	}
+
+	tids := make([]string, 0, len(threads))
+	for t := range threads {
+		tids = append(tids, "t-"+t)
+	}
+
+	pids := make([]string, 0, len(peers))
+	for peer := range peers {
+		pids = append(pids, "n-"+peer)
+	}
+
+	slices.Sort(tids)
+	slices.Sort(pids)
+
+	parts := make([]string, 0, 2+len(tids)+len(pids))
+	parts = append(parts, "knot", "k-"+id)
+	parts = append(parts, tids...)
+	parts = append(parts, pids...)
+
+	return strings.Join(parts, " ")
 }
 
 // laneLines breaks a lane's name into short lines at spaces.
@@ -288,8 +378,15 @@ func (pg *page) cards() {
 // that arrives at them, then the links that leave them.
 func (pg *page) card(person *plate.Person) {
 
-	pg.linef(`<article class="card" id="k-%[1]s" aria-labelledby="k-%[1]s-name">`, person.ID)
-	pg.linef(`<p class="close"><a href="#chart">Close</a></p>`)
+	side := "card-right"
+	if pg.knotX[person.ID] > pg.l.Width*half {
+		side = "card-left"
+	}
+
+	pg.linef(`<article class="card %[2]s" id="k-%[1]s" aria-labelledby="k-%[1]s-name">`, person.ID, side)
+	pg.line(`<a class="scrim" href="#chart" tabindex="-1" aria-label="Close card"></a>`)
+	pg.line(`<div class="card-panel">`)
+	pg.line(`<p class="close"><a href="#chart">Close</a></p>`)
 	pg.linef(`<h2 id="k-%s-name">%s</h2>`, person.ID, smart(person.Name))
 	pg.linef(`<p class="dates">%s</p>`, smart(person.Dates()))
 
@@ -300,48 +397,63 @@ func (pg *page) card(person *plate.Person) {
 	}
 
 	if in := pg.incoming[person.ID]; len(in) > 0 {
-		pg.line(`<h3>Drew on</h3>`)
+		pg.line(`<h3>Sources &amp; responses</h3>`)
 		pg.line(`<ul class="links">`)
 
 		for _, l := range in {
-			pg.evidence(l)
+			pg.evidence(l, person.ID)
 		}
 
 		pg.line(`</ul>`)
 	}
 
 	if out := pg.outgoing[person.ID]; len(out) > 0 {
-		pg.line(`<h3>Taken up by</h3>`)
+		pg.line(`<h3>Cited or answered by</h3>`)
 		pg.line(`<ul class="links">`)
 
 		for _, l := range out {
 			pg.linef(`<li class="t-%s y-%s">%s <span class="ref">(<cite>%s</cite>)</span></li>`,
-				l.Thread, l.Type, pg.claim(l), smart(l.Cite))
+				l.Thread, l.Type, pg.claim(l, person.ID), smart(l.Cite))
 		}
 
 		pg.line(`</ul>`)
 	}
 
 	pg.linef(`<p class="more"><a href="https://en.wikipedia.org/wiki/%s">Wikipedia</a></p>`, attr(person.Wiki))
+	pg.line(`</div>`)
 	pg.line(`</article>`)
 }
 
-// claim writes a link as a sentence: "Justin names Heraclitus", with both names
-// linked to their cards and the thread named.
-func (pg *page) claim(l *plate.Link) string {
-	return fmt.Sprintf(`<span class="thread">%s</span> <a href="#k-%s">%s</a> <b>%s</b> <a href="#k-%s">%s</a>`,
-		smart(pg.p.Thread(l.Thread).Name), l.To, pg.name(l.To), l.Type.Verb(), l.From, pg.name(l.From))
+// claim writes a link as a sentence ("Justin names Heraclitus") with a link to the
+// thread and to each person other than selfID.
+func (pg *page) claim(l *plate.Link, selfID string) string {
+
+	return fmt.Sprintf(`<a class="thread" href="#t-%s">%s</a> %s <b>%s</b> %s`,
+		l.Thread, smart(pg.p.Thread(l.Thread).Name), pg.personRef(l.To, selfID), l.Type.Verb(), pg.personRef(l.From, selfID))
+}
+
+// personRef returns a person's name linked to their card, or plain text when it is
+// the card already open.
+func (pg *page) personRef(id, selfID string) string {
+
+	if id == selfID {
+		return pg.name(id)
+	}
+
+	return fmt.Sprintf(`<a href="#k-%s">%s</a>`, id, pg.name(id))
 }
 
 // evidence writes one link with everything that supports it.
-func (pg *page) evidence(l *plate.Link) {
+func (pg *page) evidence(l *plate.Link, selfID string) {
 
 	pg.linef(`<li class="t-%s y-%s" id="%s">`, l.Thread, l.Type, l.ID)
-	pg.linef(`<p class="claim">%s</p>`, pg.claim(l))
+	pg.linef(`<p class="claim">%s</p>`, pg.claim(l, selfID))
 
 	if l.Quote != "" {
 		pg.linef(`<blockquote><p>%s</p></blockquote>`, smart(l.Quote))
-	} else {
+	}
+
+	if l.Paraphrase != "" {
 		pg.linef(`<p class="paraphrase">%s</p>`, smart(l.Paraphrase))
 	}
 
@@ -355,7 +467,7 @@ func (pg *page) evidence(l *plate.Link) {
 	if c := l.Compare; c != nil {
 		text := "Compare <cite>" + smart(c.Cite) + "</cite>"
 		if c.Quote != "" {
-			text += ": " + "“" + smart(c.Quote) + "”"
+			text += ": “" + smart(c.Quote) + "”"
 		}
 
 		if c.URL != "" {
@@ -401,6 +513,7 @@ func (pg *page) outline() {
 
 	pg.line(`<details class="outline" id="outline">`)
 	pg.line(`<summary>Read as an outline</summary>`)
+	pg.line(`<div class="outline-body" id="outline-body">`)
 	pg.linef(`<p>%s</p>`, smart(pg.p.Scope))
 
 	for _, t := range pg.p.Threads {
@@ -411,7 +524,7 @@ func (pg *page) outline() {
 
 		for i := range pg.p.Links {
 			if l := &pg.p.Links[i]; l.Thread == t.ID {
-				pg.linef(`<li>%s (<cite>%s</cite>): %s</li>`, pg.claim(l), smart(l.Cite), quoted(l))
+				pg.linef(`<li>%s (<cite>%s</cite>): %s</li>`, pg.claim(l, ""), smart(l.Cite), quoted(l))
 			}
 		}
 
@@ -420,6 +533,7 @@ func (pg *page) outline() {
 	}
 
 	pg.bibliography()
+	pg.line(`</div>`)
 	pg.line(`</details>`)
 }
 
@@ -448,8 +562,11 @@ func (pg *page) bibliography() {
 		}
 	}
 
-	slices.Sort(sources)
-	slices.Sort(scholarship)
+	byText := func(a, b string) int {
+		return strings.Compare(strings.ReplaceAll(a, "*", ""), strings.ReplaceAll(b, "*", ""))
+	}
+	slices.SortFunc(sources, byText)
+	slices.SortFunc(scholarship, byText)
 
 	pg.line(`<section class="bibliography">`)
 	pg.line(`<h2>Sources</h2>`)

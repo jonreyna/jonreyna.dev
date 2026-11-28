@@ -21,7 +21,7 @@ type Options struct {
 	MinTracks int
 	// KnotWidth is a knot bar's width.
 	KnotWidth float64
-	// Bend is how far before a knot a branch leaves its carrier.
+	// Bend is how far before a knot a same-lane branch leaves its carrier.
 	Bend float64
 	// CharWidth estimates the width of one character of a knot label.
 	CharWidth float64
@@ -38,9 +38,9 @@ func Defaults() Options {
 
 	//nolint:mnd // these numbers are the chart's chosen dimensions
 	return Options{
-		Width: 1840, Gutter: 132, Right: 36, Axis: 30, BandPad: 18, TrackGap: 9,
-		LabelRow: 26, MinTracks: 6, KnotWidth: 10, Bend: 34, CharWidth: 7.4, LabelPad: 14,
-		Iterations: 40000, Seed: 1,
+		Width: 1840, Gutter: 150, Right: 40, Axis: 28, BandPad: 18, TrackGap: 10.5,
+		LabelRow: 26, MinTracks: 6, KnotWidth: 5, Bend: 36, CharWidth: 8.2, LabelPad: 20,
+		Iterations: 60000, Seed: 1,
 	}
 }
 

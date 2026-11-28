@@ -1,9 +1,10 @@
 <main id="main" class="atlas">
+<div class="folio-frame" aria-hidden="true"><i class="boss"></i><i class="boss"></i><i class="boss"></i><i class="boss"></i></div>
+<div class="topbar"><a class="home" href="/">jonreyna.dev</a></div>
 <header class="atlas-head">
-<a class="home" href="/">jonreyna.dev</a>
 <h1>A Small Plate</h1>
 <p class="sub">Four writers, 500 BC to AD 400</p>
-<p class="how">Hover a thread or a name to follow it; select a name for its card and sources, or <a href="#outline">read it all as an outline</a>.</p>
+<p class="how"><span class="pil" aria-hidden="true">¶</span>Hover a thread or a name to follow it; select a name for its card and sources, or <a href="#outline-body">read it all as an outline</a>.</p>
 </header>
 <nav class="legend" aria-label="Threads">
 <ul class="threads">
@@ -11,159 +12,182 @@
 <li id="t-law" class="t-law"><a href="#t-law"><span class="swatch"></span>The law</a><span class="summary">A law written on the heart.</span></li>
 </ul>
 <ul class="kinds">
-<li><svg class="mark y-quotes" viewBox="0 0 30 10" aria-hidden="true"><path d="M0 5H30"/></svg>quotes or names</li>
-<li><svg class="mark y-adapts" viewBox="0 0 30 10" aria-hidden="true"><path d="M0 5H30"/></svg>adapts</li>
-<li><svg class="mark y-rejects" viewBox="0 0 30 10" aria-hidden="true"><path d="M0 5H28M28 1V9"/></svg>rejects</li>
-<li><svg class="mark y-argued" viewBox="0 0 30 10" aria-hidden="true"><path d="M0 5H30"/></svg>scholars argue</li>
+<li><svg class="mark y-quotes" viewBox="0 0 34 12" aria-hidden="true"><path d="M0 6H27"/><circle class="dot-solid" cx="27" cy="6" r="2.6"/></svg>quotes or names</li>
+<li><svg class="mark y-adapts" viewBox="0 0 34 12" aria-hidden="true"><path d="M0 6H27"/><circle class="dot-hollow" cx="27" cy="6" r="2.8"/></svg>adapts</li>
+<li><svg class="mark y-rejects" viewBox="0 0 34 12" aria-hidden="true"><path d="M0 6H29M29 1.5V10.5"/></svg>rejects</li>
+<li><svg class="mark y-argued" viewBox="0 0 34 12" aria-hidden="true"><path d="M0 6H27"/><circle class="dot-argued" cx="27" cy="6" r="2.4"/></svg>scholars argue</li>
 </ul>
 <p class="all"><a href="#chart">Show every thread</a></p>
 </nav>
 <figure class="chart" id="chart">
 <div class="frame">
-<svg viewBox="0 0 1840 274" role="group" aria-label="A Small Plate: the chart. Each name is a link to its card.">
+<div class="lane-rail" aria-hidden="true">
+<span class="lane-tag lane-old">Old writers</span>
+<span class="lane-tag lane-new">New writers</span>
+</div>
+<svg viewBox="0 0 1840 285" role="group" aria-label="A Small Plate: the chart. Each name is a link to its card.">
 <g class="bands">
-<rect class="band band-0" x="0" y="30" width="1840" height="107"/>
-<text class="lane" x="12" y="52">
-<tspan x="12" dy="0">Old writers</tspan>
+<rect class="band band-0" x="0" y="28" width="1840" height="114.5"/>
+<text class="lane" x="14" y="52">
+<tspan x="14" dy="0">Old writers</tspan>
 </text>
-<rect class="band band-1" x="0" y="137" width="1840" height="107"/>
-<text class="lane" x="12" y="159">
-<tspan x="12" dy="0">New writers</tspan>
+<rect class="band band-1" x="0" y="142.5" width="1840" height="114.5"/>
+<text class="lane" x="14" y="166.5">
+<tspan x="14" dy="0">New writers</tspan>
 </text>
 </g>
 <g class="axis" aria-hidden="true">
-<line class="tick" x1="132" y1="30" x2="132" y2="244"/>
-<text class="year" x="132" y="20">500 BC</text><text class="year" x="132" y="264">500 BC</text>
-<line class="tick" x1="317.8" y1="30" x2="317.8" y2="244"/>
-<text class="year" x="317.8" y="20">400 BC</text><text class="year" x="317.8" y="264">400 BC</text>
-<line class="tick" x1="503.6" y1="30" x2="503.6" y2="244"/>
-<text class="year" x="503.6" y="20">300 BC</text><text class="year" x="503.6" y="264">300 BC</text>
-<line class="tick" x1="689.3" y1="30" x2="689.3" y2="244"/>
-<text class="year" x="689.3" y="20">200 BC</text><text class="year" x="689.3" y="264">200 BC</text>
-<line class="tick" x1="875.1" y1="30" x2="875.1" y2="244"/>
-<text class="year" x="875.1" y="20">100 BC</text><text class="year" x="875.1" y="264">100 BC</text>
-<line class="tick" x1="1062.7" y1="30" x2="1062.7" y2="244"/>
-<text class="year" x="1062.7" y="20">AD 1</text><text class="year" x="1062.7" y="264">AD 1</text>
-<line class="tick" x1="1246.7" y1="30" x2="1246.7" y2="244"/>
-<text class="year" x="1246.7" y="20">AD 100</text><text class="year" x="1246.7" y="264">AD 100</text>
-<line class="tick" x1="1432.4" y1="30" x2="1432.4" y2="244"/>
-<text class="year" x="1432.4" y="20">AD 200</text><text class="year" x="1432.4" y="264">AD 200</text>
-<line class="tick" x1="1618.2" y1="30" x2="1618.2" y2="244"/>
-<text class="year" x="1618.2" y="20">AD 300</text><text class="year" x="1618.2" y="264">AD 300</text>
-<line class="tick" x1="1804" y1="30" x2="1804" y2="244"/>
-<text class="year" x="1804" y="20">AD 400</text><text class="year" x="1804" y="264">AD 400</text>
+<line class="tick" x1="150" y1="28" x2="150" y2="257"/>
+<text class="year" x="150" y="17">500 BC</text><text class="year" x="150" y="278">500 BC</text>
+<line class="tick" x1="333.3" y1="28" x2="333.3" y2="257"/>
+<text class="year" x="333.3" y="17">400 BC</text><text class="year" x="333.3" y="278">400 BC</text>
+<line class="tick" x1="516.7" y1="28" x2="516.7" y2="257"/>
+<text class="year" x="516.7" y="17">300 BC</text><text class="year" x="516.7" y="278">300 BC</text>
+<line class="tick" x1="700" y1="28" x2="700" y2="257"/>
+<text class="year" x="700" y="17">200 BC</text><text class="year" x="700" y="278">200 BC</text>
+<line class="tick" x1="883.3" y1="28" x2="883.3" y2="257"/>
+<text class="year" x="883.3" y="17">100 BC</text><text class="year" x="883.3" y="278">100 BC</text>
+<line class="tick" x1="1068.5" y1="28" x2="1068.5" y2="257"/>
+<text class="year" x="1068.5" y="17">AD 1</text><text class="year" x="1068.5" y="278">AD 1</text>
+<line class="tick" x1="1250" y1="28" x2="1250" y2="257"/>
+<text class="year" x="1250" y="17">AD 100</text><text class="year" x="1250" y="278">AD 100</text>
+<line class="tick" x1="1433.3" y1="28" x2="1433.3" y2="257"/>
+<text class="year" x="1433.3" y="17">AD 200</text><text class="year" x="1433.3" y="278">AD 200</text>
+<line class="tick" x1="1616.7" y1="28" x2="1616.7" y2="257"/>
+<text class="year" x="1616.7" y="17">AD 300</text><text class="year" x="1616.7" y="278">AD 300</text>
+<line class="tick" x1="1800" y1="28" x2="1800" y2="257"/>
+<text class="year" x="1800" y="17">AD 400</text><text class="year" x="1800" y="278">AD 400</text>
 </g>
 <g class="threads" aria-hidden="true">
-<path class="s t-word f-2 k-ana k-ben" d="M229.9 57H1049.8"/>
-<path class="s t-word f-2 b y-adapts k-ana k-ben" d="M1049.8 57C1066.8 57 1066.8 155 1083.8 155"/>
-<path class="s t-word f-3 k-ben k-cal" d="M1093.8 155H1268"/>
-<path class="s t-word f-3 b y-quotes k-ben k-cal" d="M1268 155H1302"/>
-<path class="s t-law f-3 k-ana k-dee" d="M229.9 48H1722.3"/>
-<path class="s t-law f-3 b y-rejects k-ana k-dee" d="M1722.3 48C1739.3 48 1739.3 149 1756.3 149"/>
-<path class="s t-law f-1 k-cal k-dee" d="M1312 155H1722.3"/>
-<path class="s t-law f-1 b y-argued k-cal k-dee" d="M1722.3 155H1756.3"/>
-<path class="hit t-word f-2 k-ana k-ben" d="M229.9 57H1049.8"><title>The Word, from Ana</title></path>
-<path class="hit t-word f-2 b y-adapts k-ana k-ben" d="M1049.8 57C1066.8 57 1066.8 155 1083.8 155"><title>Ben of Somewhere adapts Ana · The Word</title></path>
-<path class="hit t-word f-3 k-ben k-cal" d="M1093.8 155H1268"><title>The Word, from Ben of Somewhere</title></path>
-<path class="hit t-word f-3 b y-quotes k-ben k-cal" d="M1268 155H1302"><title>Cal quotes Ben of Somewhere · The Word</title></path>
-<path class="hit t-law f-3 k-ana k-dee" d="M229.9 48H1722.3"><title>The law, from Ana</title></path>
-<path class="hit t-law f-3 b y-rejects k-ana k-dee" d="M1722.3 48C1739.3 48 1739.3 149 1756.3 149"><title>Dee rejects Ana · The law</title></path>
-<path class="hit t-law f-1 k-cal k-dee" d="M1312 155H1722.3"><title>The law, from Cal</title></path>
-<path class="hit t-law f-1 b y-argued k-cal k-dee" d="M1722.3 155H1756.3"><title>Dee may draw on Cal · The law</title></path>
+<path class="s t-word f-2 k-ana k-ben" d="M244.2 56.5H1055.7"/>
+<path class="s t-word f-2 b y-adapts k-ana k-ben" d="M1055.7 56.5C1073.7 56.5 1073.7 160.5 1091.7 160.5"/>
+<path class="s t-word f-3 k-ben k-cal" d="M1096.7 160.5H1271.1"/>
+<path class="s t-word f-3 b y-quotes k-ben k-cal" d="M1271.1 160.5H1307.1"/>
+<path class="s t-law f-3 k-ana k-dee" d="M244.2 46H1705.3"/>
+<path class="s t-law f-3 b y-rejects k-ana k-dee" d="M1705.3 46C1730.3 46 1730.3 159.5 1755.3 159.5"/>
+<path class="s t-law f-1 k-cal k-dee" d="M1312.1 160.5H1719.3"/>
+<path class="s t-law f-1 b y-argued k-cal k-dee" d="M1719.3 160.5C1737.3 160.5 1737.3 167.5 1755.3 167.5"/>
+<path class="hit t-word f-2 k-ana k-ben" d="M244.2 56.5H1055.7"><title>The Word, from Ana</title></path>
+<path class="hit t-word f-2 b y-adapts k-ana k-ben" d="M1055.7 56.5C1073.7 56.5 1073.7 160.5 1091.7 160.5"><title>Ben of Somewhere adapts Ana · The Word</title></path>
+<path class="hit t-word f-3 k-ben k-cal" d="M1096.7 160.5H1271.1"><title>The Word, from Ben of Somewhere</title></path>
+<path class="hit t-word f-3 b y-quotes k-ben k-cal" d="M1271.1 160.5H1307.1"><title>Cal quotes Ben of Somewhere · The Word</title></path>
+<path class="hit t-law f-3 k-ana k-dee" d="M244.2 46H1705.3"><title>The law, from Ana</title></path>
+<path class="hit t-law f-3 b y-rejects k-ana k-dee" d="M1705.3 46C1730.3 46 1730.3 159.5 1755.3 159.5"><title>Dee rejects Ana · The law</title></path>
+<path class="hit t-law f-1 k-cal k-dee" d="M1312.1 160.5H1719.3"><title>The law, from Cal</title></path>
+<path class="hit t-law f-1 b y-argued k-cal k-dee" d="M1719.3 160.5C1737.3 160.5 1737.3 167.5 1755.3 167.5"><title>Dee may draw on Cal · The law</title></path>
 </g>
 <g class="knots">
-<a class="knot k-ana" href="#k-ana" aria-label="Ana, c. 480–420 BC, 2 links">
-<rect class="bar" x="219.9" y="39" width="10" height="63" rx="5"/>
-<text class="name" x="224.9" y="128.3">Ana</text>
+<a class="knot k-ana t-law t-word n-ben n-dee" href="#k-ana" aria-label="Ana, c. 480–420 BC, 2 links">
+<rect class="knot-hit" x="223.7" y="34" width="36" height="104.8"/>
+<line class="stem" x1="241.7" y1="63.5" x2="241.7" y2="107.5"/>
+<rect class="bar" x="239.2" y="39" width="5" height="24.5" rx="2.5"/>
+<text class="name" x="241.7" y="133.8">Ana</text>
 </a>
-<a class="knot k-ben" href="#k-ben" aria-label="Ben of Somewhere, 20 BC – AD 50, 2 links">
-<rect class="bar" x="1083.8" y="39" width="10" height="170" rx="5"/>
-<text class="name" x="1088.8" y="235.3">Ben</text>
+<a class="knot k-ben t-word n-ana n-cal" href="#k-ben" aria-label="Ben of Somewhere, 20 BC – AD 50, 2 links">
+<rect class="knot-hit" x="1076.2" y="94.5" width="36" height="158.8"/>
+<line class="stem" x1="1094.2" y1="167.5" x2="1094.2" y2="222"/>
+<rect class="bar" x="1091.7" y="99.5" width="5" height="68" rx="2.5"/>
+<text class="name" x="1094.2" y="248.3">Ben</text>
 </a>
-<a class="knot k-cal" href="#k-cal" aria-label="Cal, 100–165, 2 links">
-<rect class="bar" x="1302" y="146" width="10" height="63" rx="5"/>
-<text class="name" x="1307" y="235.3">Cal</text>
+<a class="knot k-cal t-law t-word n-ben n-dee" href="#k-cal" aria-label="Cal, 100–165, 2 links">
+<rect class="knot-hit" x="1291.6" y="146.5" width="36" height="106.8"/>
+<line class="stem" x1="1309.6" y1="171.5" x2="1309.6" y2="222"/>
+<rect class="bar" x="1307.1" y="151.5" width="5" height="20" rx="2.5"/>
+<text class="name" x="1309.6" y="248.3">Cal</text>
 </a>
-<a class="knot k-dee" href="#k-dee" aria-label="Dee, 354–430, 2 links">
-<rect class="bar" x="1756.3" y="146" width="10" height="63" rx="5"/>
-<text class="name" x="1761.3" y="235.3">Dee</text>
+<a class="knot k-dee t-law n-ana n-cal" href="#k-dee" aria-label="Dee, 354–430, 2 links">
+<rect class="knot-hit" x="1739.8" y="147.5" width="36" height="105.8"/>
+<line class="stem" x1="1757.8" y1="174.5" x2="1757.8" y2="222"/>
+<rect class="bar" x="1755.3" y="152.5" width="5" height="22" rx="2.5"/>
+<text class="name" x="1757.8" y="248.3">Dee</text>
 </a>
 <g class="ends" aria-hidden="true">
-<circle class="end t-word y-adapts k-ana k-ben" cx="1083.8" cy="155" r="2.4"/>
-<circle class="end t-word y-quotes k-ben k-cal" cx="1302" cy="155" r="2.4"/>
-<path class="end t-law y-rejects k-ana k-dee" d="M1755.3 145v8"/>
-<circle class="end t-law y-argued k-cal k-dee" cx="1756.3" cy="155" r="2.4"/>
+<circle class="end t-word y-adapts k-ana k-ben dot-hollow" cx="1091.7" cy="160.5" r="2.8"/>
+<circle class="end t-word y-quotes k-ben k-cal dot-solid" cx="1307.1" cy="160.5" r="2.6"/>
+<path class="end t-law y-rejects k-ana k-dee" d="M1754.3 155v9"/>
+<circle class="end t-law y-argued k-cal k-dee dot-argued" cx="1755.3" cy="167.5" r="2.4"/>
 </g>
 </g>
 </svg>
 </div>
-<figcaption>Only what the tests need. The time scale stretches where the writers crowd; the century marks show by how much.</figcaption>
+<figcaption><span class="pil" aria-hidden="true">¶</span>Only what the tests need. The time scale stretches where the writers crowd; the century marks show by how much.</figcaption>
 </figure>
 <section class="cards" aria-label="People">
-<article class="card" id="k-ana" aria-labelledby="k-ana-name">
+<article class="card card-right" id="k-ana" aria-labelledby="k-ana-name">
+<a class="scrim" href="#chart" tabindex="-1" aria-label="Close card"></a>
+<div class="card-panel">
 <p class="close"><a href="#chart">Close</a></p>
 <h2 id="k-ana-name">Ana</h2>
 <p class="dates">c. 480–420 BC</p>
 <p>The first.</p>
-<h3>Taken up by</h3>
+<h3>Cited or answered by</h3>
 <ul class="links">
-<li class="t-word y-adapts"><span class="thread">The Word</span> <a href="#k-ben">Ben of Somewhere</a> <b>adapts</b> <a href="#k-ana">Ana</a> <span class="ref">(<cite>Ben 1.1</cite>)</span></li>
-<li class="t-law y-rejects"><span class="thread">The law</span> <a href="#k-dee">Dee</a> <b>rejects</b> <a href="#k-ana">Ana</a> <span class="ref">(<cite>Dee 3</cite>)</span></li>
+<li class="t-word y-adapts"><a class="thread" href="#t-word">The Word</a> <a href="#k-ben">Ben of Somewhere</a> <b>adapts</b> Ana <span class="ref">(<cite>Ben 1.1</cite>)</span></li>
+<li class="t-law y-rejects"><a class="thread" href="#t-law">The law</a> <a href="#k-dee">Dee</a> <b>rejects</b> Ana <span class="ref">(<cite>Dee 3</cite>)</span></li>
 </ul>
 <p class="more"><a href="https://en.wikipedia.org/wiki/">Wikipedia</a></p>
+</div>
 </article>
-<article class="card" id="k-ben" aria-labelledby="k-ben-name">
+<article class="card card-left" id="k-ben" aria-labelledby="k-ben-name">
+<a class="scrim" href="#chart" tabindex="-1" aria-label="Close card"></a>
+<div class="card-panel">
 <p class="close"><a href="#chart">Close</a></p>
 <h2 id="k-ben-name">Ben of Somewhere</h2>
 <p class="dates">20 BC – AD 50</p>
 <p>Spans both lanes.</p>
-<h3>Drew on</h3>
+<h3>Sources &amp; responses</h3>
 <ul class="links">
 <li class="t-word y-adapts" id="L1">
-<p class="claim"><span class="thread">The Word</span> <a href="#k-ben">Ben of Somewhere</a> <b>adapts</b> <a href="#k-ana">Ana</a></p>
+<p class="claim"><a class="thread" href="#t-word">The Word</a> Ben of Somewhere <b>adapts</b> <a href="#k-ana">Ana</a></p>
 <blockquote><p>In the beginning.</p></blockquote>
 <p class="ref"><cite>Ben 1.1</cite>, <a href="https://example.com/ben">A Translation (1900)</a>, via Example</p>
 </li>
 </ul>
-<h3>Taken up by</h3>
+<h3>Cited or answered by</h3>
 <ul class="links">
-<li class="t-word y-quotes"><span class="thread">The Word</span> <a href="#k-cal">Cal</a> <b>quotes</b> <a href="#k-ben">Ben of Somewhere</a> <span class="ref">(<cite>Cal 2</cite>)</span></li>
+<li class="t-word y-quotes"><a class="thread" href="#t-word">The Word</a> <a href="#k-cal">Cal</a> <b>quotes</b> Ben of Somewhere <span class="ref">(<cite>Cal 2</cite>)</span></li>
 </ul>
 <p class="more"><a href="https://en.wikipedia.org/wiki/">Wikipedia</a></p>
+</div>
 </article>
-<article class="card" id="k-cal" aria-labelledby="k-cal-name">
+<article class="card card-left" id="k-cal" aria-labelledby="k-cal-name">
+<a class="scrim" href="#chart" tabindex="-1" aria-label="Close card"></a>
+<div class="card-panel">
 <p class="close"><a href="#chart">Close</a></p>
 <h2 id="k-cal-name">Cal</h2>
 <p class="dates">100–165</p>
 <p>Cal’s card.</p>
-<h3>Drew on</h3>
+<h3>Sources &amp; responses</h3>
 <ul class="links">
 <li class="t-word y-quotes" id="L2">
-<p class="claim"><span class="thread">The Word</span> <a href="#k-cal">Cal</a> <b>quotes</b> <a href="#k-ben">Ben of Somewhere</a></p>
+<p class="claim"><a class="thread" href="#t-word">The Word</a> Cal <b>quotes</b> <a href="#k-ben">Ben of Somewhere</a></p>
 <blockquote><p>As Ben said.</p></blockquote>
 <p class="ref"><cite>Cal 2</cite>, <a href="https://example.com/cal">A Translation (1900)</a>, via Example</p>
 </li>
 </ul>
-<h3>Taken up by</h3>
+<h3>Cited or answered by</h3>
 <ul class="links">
-<li class="t-law y-argued"><span class="thread">The law</span> <a href="#k-dee">Dee</a> <b>may draw on</b> <a href="#k-cal">Cal</a> <span class="ref">(<cite>Dee 4</cite>)</span></li>
+<li class="t-law y-argued"><a class="thread" href="#t-law">The law</a> <a href="#k-dee">Dee</a> <b>may draw on</b> Cal <span class="ref">(<cite>Dee 4</cite>)</span></li>
 </ul>
 <p class="more"><a href="https://en.wikipedia.org/wiki/">Wikipedia</a></p>
+</div>
 </article>
-<article class="card" id="k-dee" aria-labelledby="k-dee-name">
+<article class="card card-left" id="k-dee" aria-labelledby="k-dee-name">
+<a class="scrim" href="#chart" tabindex="-1" aria-label="Close card"></a>
+<div class="card-panel">
 <p class="close"><a href="#chart">Close</a></p>
 <h2 id="k-dee-name">Dee</h2>
 <p class="dates">354–430</p>
 <p>The last.</p>
-<h3>Drew on</h3>
+<h3>Sources &amp; responses</h3>
 <ul class="links">
 <li class="t-law y-rejects" id="L3">
-<p class="claim"><span class="thread">The law</span> <a href="#k-dee">Dee</a> <b>rejects</b> <a href="#k-ana">Ana</a></p>
+<p class="claim"><a class="thread" href="#t-law">The law</a> Dee <b>rejects</b> <a href="#k-ana">Ana</a></p>
 <p class="paraphrase">Dee argues against Ana.</p>
 <p class="ref"><cite>Dee 3</cite></p>
 </li>
 <li class="t-law y-argued" id="L4">
-<p class="claim"><span class="thread">The law</span> <a href="#k-dee">Dee</a> <b>may draw on</b> <a href="#k-cal">Cal</a></p>
+<p class="claim"><a class="thread" href="#t-law">The law</a> Dee <b>may draw on</b> <a href="#k-cal">Cal</a></p>
 <p class="paraphrase">Whether Dee knew Cal is argued.</p>
 <p class="ref"><cite>Dee 4</cite></p>
 <p class="scholar">A. Scholar, A Book (2000)</p>
@@ -171,25 +195,27 @@
 </li>
 </ul>
 <p class="more"><a href="https://en.wikipedia.org/wiki/">Wikipedia</a></p>
+</div>
 </article>
 </section>
 <details class="outline" id="outline">
 <summary>Read as an outline</summary>
+<div class="outline-body" id="outline-body">
 <p>Only what the tests need.</p>
 <section class="t-word">
 <h2>The Word</h2>
 <p>A reason “that orders” the world.</p>
 <ol>
-<li><span class="thread">The Word</span> <a href="#k-ben">Ben of Somewhere</a> <b>adapts</b> <a href="#k-ana">Ana</a> (<cite>Ben 1.1</cite>): “In the beginning.”</li>
-<li><span class="thread">The Word</span> <a href="#k-cal">Cal</a> <b>quotes</b> <a href="#k-ben">Ben of Somewhere</a> (<cite>Cal 2</cite>): “As Ben said.”</li>
+<li><a class="thread" href="#t-word">The Word</a> <a href="#k-ben">Ben of Somewhere</a> <b>adapts</b> <a href="#k-ana">Ana</a> (<cite>Ben 1.1</cite>): “In the beginning.”</li>
+<li><a class="thread" href="#t-word">The Word</a> <a href="#k-cal">Cal</a> <b>quotes</b> <a href="#k-ben">Ben of Somewhere</a> (<cite>Cal 2</cite>): “As Ben said.”</li>
 </ol>
 </section>
 <section class="t-law">
 <h2>The law</h2>
 <p>A law written on the heart.</p>
 <ol>
-<li><span class="thread">The law</span> <a href="#k-dee">Dee</a> <b>rejects</b> <a href="#k-ana">Ana</a> (<cite>Dee 3</cite>): Dee argues against Ana.</li>
-<li><span class="thread">The law</span> <a href="#k-dee">Dee</a> <b>may draw on</b> <a href="#k-cal">Cal</a> (<cite>Dee 4</cite>): Whether Dee knew Cal is argued.</li>
+<li><a class="thread" href="#t-law">The law</a> <a href="#k-dee">Dee</a> <b>rejects</b> <a href="#k-ana">Ana</a> (<cite>Dee 3</cite>): Dee argues against Ana.</li>
+<li><a class="thread" href="#t-law">The law</a> <a href="#k-dee">Dee</a> <b>may draw on</b> <a href="#k-cal">Cal</a> (<cite>Dee 4</cite>): Whether Dee knew Cal is argued.</li>
 </ol>
 </section>
 <section class="bibliography">
@@ -203,5 +229,6 @@
 <li>A. Scholar, A Book (2000)</li>
 </ul>
 </section>
+</div>
 </details>
 </main>

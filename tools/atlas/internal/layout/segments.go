@@ -36,7 +36,7 @@ func segments(a *arrangement) []Segment {
 
 			out = append(out, Segment{
 				Thread: c.thread, Link: t.link.ID, Type: t.link.Type, Strength: t.link.Type.Strength(),
-				People: []string{source, a.spots[t.spot].person.ID}, D: branch(t, c.y, a.o.Bend),
+				People: []string{source, a.spots[t.spot].person.ID}, D: branch(t, c.y),
 			})
 		}
 	}
@@ -46,13 +46,13 @@ func segments(a *arrangement) []Segment {
 
 // branch returns the path from the carrier at height y into the knot: straight when
 // it arrives at the same height, otherwise an S-curve.
-func branch(t carrierTarget, y, bend float64) string {
+func branch(t carrierTarget, y float64) string {
 
 	if math.Abs(t.port-y) < sameHeight {
 		return "M" + num(t.branchX) + " " + num(y) + "H" + num(t.left)
 	}
 
-	mid := num(t.branchX + bend/2)
+	mid := num((t.branchX + t.left) * half)
 
 	return "M" + num(t.branchX) + " " + num(y) +
 		"C" + mid + " " + num(y) + " " + mid + " " + num(t.port) + " " + num(t.left) + " " + num(t.port)

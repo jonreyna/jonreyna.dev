@@ -12,6 +12,10 @@ import (
 // errNoRoom marks a later knot drawn too close to its earlier one for a branch.
 var errNoRoom = errors.New("no room for a branch")
 
+// extraBendPerLane widens a cross-lane branch's sweep per lane crossed, so links
+// arriving from different lanes fan into a hub instead of dropping in one column.
+const extraBendPerLane = 14.0
+
 // buildCarriers makes one carrier for each thread and earlier knot, in the order the
 // links first name them, in the lane nearest its targets. It fails if a later knot is
 // drawn too close to, or left of, its earlier one for a branch to reach it.
@@ -49,9 +53,16 @@ func buildCarriers(p *plate.Plate, spots []knotSpot, o *Options) ([]*carrier, er
 	}
 
 	for _, c := range carriers {
+		c.lane = nearestLane(&spots[c.source], c.targets, spots)
+		for j := range c.targets {
+			t := &c.targets[j]
+			dist := spots[t.spot].distance(c.lane)
+			bend := o.Bend + float64(dist)*extraBendPerLane
+			t.branchX = max(c.x0, t.left-bend)
+		}
+
 		slices.SortStableFunc(c.targets, func(a, b carrierTarget) int { return cmp.Compare(a.branchX, b.branchX) })
 		c.x1 = c.targets[len(c.targets)-1].branchX
-		c.lane = nearestLane(&spots[c.source], c.targets, spots)
 	}
 
 	return carriers, nil

@@ -5,16 +5,21 @@ import (
 	"io"
 	"strings"
 
+	"github.com/jonreyna/jonreyna.dev/tools/atlas/internal/layout"
 	"github.com/jonreyna/jonreyna.dev/tools/atlas/internal/plate"
 )
 
-// dimmed is what a faded thread is drawn at while another is in focus.
-const dimmed = ".1"
+// Focus opacities and percentage multiplier for lane-rail layout rules.
+const (
+	dimmed     = ".1"
+	dimmedKnot = ".26"
+	percent    = 100.0
+)
 
-// CSS writes the rules that depend on the plate: each thread's color, and the rules
-// that dim everything but one thread, or one knot's links, while it is hovered,
-// focused or opened.
-func CSS(w io.Writer, p *plate.Plate) error {
+// CSS writes the rules that depend on the plate: each thread's color, sticky lane
+// rail positions for narrow viewports, and focus rules that dim everything outside
+// one thread or one knot's neighborhood while it is hovered, focused or opened.
+func CSS(w io.Writer, p *plate.Plate, l *layout.Layout) error {
 
 	var b strings.Builder
 
@@ -24,12 +29,20 @@ func CSS(w io.Writer, p *plate.Plate) error {
 		fmt.Fprintf(&b, ".t-%s { --c: var(--%s); }\n", t.ID, t.Color)
 	}
 
+	if l != nil && l.Height > 0 {
+		for _, band := range l.Bands {
+			topPct := band.Top / l.Height * percent
+			heightPct := (band.Bottom - band.Top) / l.Height * percent
+			fmt.Fprintf(&b, ".lane-rail .lane-%s { top: %.2f%%; height: %.2f%%; }\n", band.Lane, topPct, heightPct)
+		}
+	}
+
 	for _, t := range p.Threads {
-		focus(&b, "t-"+t.ID, ".legend .%[1]s:hover, .legend .%[1]s:focus-within, .hit.%[1]s:hover, #%[1]s:target")
+		focusThread(&b, "t-"+t.ID)
 	}
 
 	for i := range p.People {
-		focus(&b, "k-"+p.People[i].ID, ".knot.%[1]s:hover, .knot.%[1]s:focus-visible, #%[1]s:target")
+		focusKnot(&b, p.People[i].ID)
 	}
 
 	_, err := io.WriteString(w, b.String())
@@ -40,11 +53,24 @@ func CSS(w io.Writer, p *plate.Plate) error {
 	return nil
 }
 
-// focus writes one rule: while any of triggers (a format with the class keep as its
-// argument) matches, every path and end mark without class keep fades.
-func focus(b *strings.Builder, keep, triggers string) {
+// focusThread writes the rules that dim non-matching strands, ends and knots while
+// a thread is hovered, focused or targeted.
+func focusThread(b *strings.Builder, keep string) {
 
-	has := fmt.Sprintf(triggers, keep)
+	has := fmt.Sprintf(".legend .%[1]s:hover, .legend .%[1]s:focus-within, .hit.%[1]s:hover, #%[1]s:target", keep)
 	fmt.Fprintf(b, ".atlas:has(%[1]s) .s:not(.%[2]s),\n.atlas:has(%[1]s) .end:not(.%[2]s) { opacity: %[3]s; }\n",
 		has, keep, dimmed)
+	fmt.Fprintf(b, ".atlas:has(%[1]s) .knot:not(.%[2]s) { opacity: %[3]s; }\n", has, keep, dimmedKnot)
+}
+
+// focusKnot writes the rules that dim unrelated strands, ends and knots while a
+// knot is hovered, focused or has its card open.
+func focusKnot(b *strings.Builder, id string) {
+
+	keep := "k-" + id
+	has := fmt.Sprintf(".knot.%[1]s:hover, .knot.%[1]s:focus-visible, #%[1]s:target", keep)
+	fmt.Fprintf(b, ".atlas:has(%[1]s) .s:not(.%[2]s),\n.atlas:has(%[1]s) .end:not(.%[2]s) { opacity: %[3]s; }\n",
+		has, keep, dimmed)
+	fmt.Fprintf(b, ".atlas:has(%[1]s) .knot:not(.%[2]s):not(.n-%[3]s) { opacity: %[4]s; }\n",
+		has, keep, id, dimmedKnot)
 }

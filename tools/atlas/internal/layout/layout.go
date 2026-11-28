@@ -57,9 +57,10 @@ func knots(a *arrangement) []Knot {
 	out := make([]Knot, len(a.spots))
 	for i := range a.spots {
 		s := &a.spots[i]
+		sp := a.spans[i]
 		out[i] = Knot{
 			Person: s.person.ID, Label: s.person.Short(), X: s.x,
-			Top: a.bands[s.lo].knotTop(a.o), Bottom: a.bands[s.hi].knotBottom(a.o),
+			Top: sp.top, Bottom: sp.bottom, StemBottom: a.bands[s.hi].knotBottom(a.o),
 			LabelY: a.bands[s.hi].Bottom - a.o.LabelRow/2 + a.o.LabelRow/6,
 		}
 	}

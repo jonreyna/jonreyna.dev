@@ -12,6 +12,9 @@ type Knot struct {
 	Top float64
 	// Bottom is the bar's lower end.
 	Bottom float64
+	// StemBottom is the foot of the knot's band above its label, where a quiet drop
+	// stem lands when Bottom sits above it.
+	StemBottom float64
 	// LabelY is the label's baseline.
 	LabelY float64
 	// Ends are the marks where links arrive at the bar.

@@ -44,7 +44,7 @@ func build(t *testing.T) (string, string) {
 		t.Fatal(err)
 	}
 
-	if err = CSS(&c, p); err != nil {
+	if err = CSS(&c, p, l); err != nil {
 		t.Fatal(err)
 	}
 
@@ -136,6 +136,9 @@ func TestSmart(t *testing.T) {
 		{`Cal's card`, "Cal’s card"},
 		{`as ('Moses') said`, "as (‘Moses’) said"},
 		{`a < b & "c"`, "a &lt; b &amp; “c”"},
+		{`Plato's *Timaeus* and *City of God* X`, "Plato’s <em>Timaeus</em> and <em>City of God</em> X"},
+		{`(*Stromata* I.5) and "*logos*,"`, "(<em>Stromata</em> I.5) and “<em>logos</em>,”"},
+		{`a * b stays literal`, "a * b stays literal"},
 	}
 
 	for _, tc := range tests {
