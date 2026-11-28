@@ -1,0 +1,111 @@
+<main id="main" class="arbor">
+<div class="frame" aria-hidden="true"><i class="boss"></i><i class="boss"></i><i class="boss"></i><i class="boss"></i></div>
+<svg id="folio" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="f-gilt" x1="0" y1="0" x2="1" y2="1">
+      <stop class="stop-gold-0" offset="0"/>
+      <stop class="stop-gold-1" offset=".3"/>
+      <stop class="stop-gold-2" offset=".48"/>
+      <stop class="stop-gold-3" offset=".64"/>
+      <stop class="stop-gold-4" offset="1"/>
+    </linearGradient>
+  </defs>
+  <g id="folio-art"></g>
+</svg>
+
+<header class="title" id="title">
+  <button class="initial" id="btnTitle" type="button" aria-expanded="true" aria-controls="titleText" aria-label="Hide title" title="Hide title">
+    <svg viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+      <defs>
+        <filter id="i-tool" x="0" y="0" width="1" height="1">
+          <feTurbulence type="fractalNoise" baseFrequency="1.3" numOctaves="1" seed="4" result="n"/>
+          <feSpecularLighting in="n" surfaceScale="1.1" specularConstant=".75" specularExponent="18" lighting-color="#fff3cc" result="s">
+            <feDistantLight azimuth="225" elevation="55"/>
+          </feSpecularLighting>
+          <feComposite in="s" in2="SourceAlpha" operator="in" result="lit"/>
+          <feBlend in="SourceGraphic" in2="lit" mode="screen"/>
+        </filter>
+      </defs>
+      <rect x="1" y="1" width="62" height="62" rx="1.5" fill="url(#f-gilt)" filter="url(#i-tool)"/>
+      <rect class="k-gold-0" x="1" y="1" width="62" height="62" rx="1.5" fill="none" stroke-width=".8"/>
+      <rect class="p-lapis-deep k-gold-0" x="6.5" y="6.5" width="51" height="51" stroke-width=".7"/>
+      <g fill="none" stroke="#f6efe0" stroke-linecap="round" opacity=".8">
+        <rect x="9" y="9" width="46" height="46" stroke-width=".45" opacity=".7"/>
+        <path stroke-width=".7" d="M12.5,49 c-1.5,-6 1,-12 6,-12.5 c3,-.3 4,3 1.6,4.4 c-1.6,.9 -3,-.6 -1.9,-1.8"/>
+        <path stroke-width=".7" d="M51.5,49 c1.5,-6 -1,-12 -6,-12.5 c-3,-.3 -4,3 -1.6,4.4 c1.6,.9 3,-.6 1.9,-1.8"/>
+        <path stroke-width=".6" d="M14,16 c4,-3 7,1 11,-1.5 M50,16 c-4,-3 -7,1 -11,-1.5"/>
+      </g>
+      <g fill="#f6efe0" opacity=".85">
+        <circle cx="12.2" cy="12.2" r=".9"/><circle cx="14.6" cy="12" r=".6"/><circle cx="12" cy="14.6" r=".6"/>
+        <circle cx="51.8" cy="12.2" r=".9"/><circle cx="49.4" cy="12" r=".6"/><circle cx="52" cy="14.6" r=".6"/>
+        <circle cx="12.2" cy="51.8" r=".9"/><circle cx="51.8" cy="51.8" r=".9"/>
+        <circle cx="32" cy="27.5" r=".8"/>
+      </g>
+      <text class="serif k-gold-0" x="32" y="50.5" text-anchor="middle" font-size="45" font-weight="500" fill="url(#f-gilt)" stroke-width=".7">A</text>
+      <rect class="k-rubric" x="6.5" y="6.5" width="51" height="51" fill="none" stroke-width=".5" opacity=".55"/>
+    </svg>
+  </button>
+  <div class="title-text" id="titleText">
+    <h1><span class="vh">A</span>rbor Ecclesiae</h1>
+    <p class="h2">The Branching of the Church</p>
+    <p class="sub">From the Apostolic Age to the Reformation, c. 49 – 1700</p>
+    <p class="hint"><span class="pil">¶</span>Time grows outward like the rings of a tree. Living traditions end in a leaf; those that died out fade where they ended. Hover for detail; click a node to fold its branch; scroll or pinch to zoom.</p>
+  </div>
+  <button class="fold" id="btnFold" type="button" aria-label="Hide title" title="Hide title">×</button>
+</header>
+
+<svg id="chart" viewBox="-660 -660 1320 1320" preserveAspectRatio="xMidYMid meet" role="group"
+     aria-label="Radial tree of Christian traditions from about AD 49 to 1700, drawn as an illuminated wheel of growth rings. The root is at the centre and time increases outward.">
+  <defs id="defs"></defs>
+  <text id="measure" class="insc-lbl" visibility="hidden" aria-hidden="true"></text>
+  <g id="viewport">
+    <g id="wood" class="intro"></g>
+    <g id="insc"><g id="insc-base"></g><g id="insc-fam" class="faded"></g></g>
+    <g id="wash"></g>
+    <g id="tails"></g>
+    <g id="limbs"></g>
+    <g id="leaves"></g>
+    <g id="nodes"></g>
+    <g id="labels"></g>
+  </g>
+</svg>
+
+<nav class="controls panel" aria-label="Controls">
+  <a class="home" href="/">jonreyna.dev</a><span class="sep">·</span>
+  <button type="button" id="btnExpand">Expand all</button><span class="sep">·</span>
+  <button type="button" id="btnCollapse">Collapse branches</button><span class="sep">·</span>
+  <button type="button" id="btnReset">Reset view</button>
+</nav>
+
+<details class="legend panel" id="legend">
+  <summary>Key</summary>
+  <div class="lg-body">
+    <div class="lg-sec">
+      <div class="lg-row"><svg width="26" height="8"><line class="k-trunk" x1="1" y1="4" x2="25" y2="4" stroke-width="2.6" stroke-linecap="round"/></svg>Great Church (undivided)</div>
+      <div class="lg-row"><svg width="26" height="8"><line class="k-east" x1="1" y1="4" x2="25" y2="4" stroke-width="2.6" stroke-linecap="round"/></svg>Church of the East</div>
+      <div class="lg-row"><svg width="26" height="8"><line class="k-oriental" x1="1" y1="4" x2="25" y2="4" stroke-width="2.6" stroke-linecap="round"/></svg>Oriental Orthodox</div>
+      <div class="lg-row"><svg width="26" height="8"><line class="k-orthodox" x1="1" y1="4" x2="25" y2="4" stroke-width="2.6" stroke-linecap="round"/></svg>Eastern Orthodox</div>
+      <div class="lg-row"><svg width="26" height="8"><line class="k-catholic" x1="1" y1="4" x2="25" y2="4" stroke-width="2.6" stroke-linecap="round"/></svg>Catholic</div>
+      <div class="lg-row"><svg width="26" height="8"><line class="k-protestant" x1="1" y1="4" x2="25" y2="4" stroke-width="2.6" stroke-linecap="round"/></svg>Protestant &amp; earlier reformers</div>
+    </div>
+    <div class="lg-sec">
+      <div class="lg-row"><svg width="26" height="14"><line class="k-ink-muted" x1="1" y1="7" x2="14" y2="7" stroke-width="1.2" stroke-linecap="round"/><path class="p-ink-muted" transform="translate(14,7) rotate(90) scale(.85)" d="M0,-.4C-1.8,.5 -4.5,-.5 -5.9,-4.6C-4.5,-4.8 -3.3,-5.4 -2.7,-6.6C-2.4,-8.6 -1.2,-10.3 0,-12.3C1.2,-10.3 2.4,-8.6 2.7,-6.6C3.3,-5.4 4.5,-4.8 5.9,-4.6C4.5,-.5 1.8,.5 0,-.4Z"/></svg>Living lineage, ending in a leaf</div>
+      <div class="lg-row"><svg width="26" height="8"><defs><linearGradient id="lgFade" gradientUnits="userSpaceOnUse" x1="1" y1="0" x2="25" y2="0"><stop stop-opacity=".9" class="stop-extinct" offset="0"/><stop stop-opacity="0" class="stop-extinct" offset="1"/></linearGradient></defs><line x1="1" y1="4" x2="25" y2="4" stroke="url(#lgFade)" stroke-width="1.2" stroke-dasharray="3 2.4"/></svg>Extinct, fading where it ended</div>
+      <div class="lg-row"><svg width="26" height="12"><circle class="k-gold-0" cx="13" cy="6" r="4.8" fill="url(#f-gilt)" stroke-width=".6"/><circle class="k-gold-0" cx="13" cy="6" r="2.1" fill="none" stroke-width=".55"/></svg>Council or schism, <span class="lg-r">named in red</span></div>
+      <div class="lg-row"><svg width="26" height="12"><circle class="p-ink-faint k-ink-muted" cx="11" cy="7" r="3.2" stroke-width=".8" stroke-dasharray=".7 1.2"/><text class="p-ink-muted" x="15.5" y="4.5" font-size="9" font-style="italic">?</text></svg>Uncertain origin or descent</div>
+      <div class="lg-row"><svg width="26" height="14"><circle class="p-ink-faint" cx="3" cy="7" r="2"/><circle class="p-ink-faint" cx="10" cy="7" r="3.6"/><circle class="p-ink-faint" cx="20" cy="7" r="5.6"/></svg>Influence (node and leaf size)</div>
+      <div class="lg-row"><svg width="26" height="14"><path class="k-ring-strong" d="M2,13 A11,11 0 0 1 24,13" fill="none" stroke-width=".8"/><path class="k-ring-strong" d="M7,13 A6,6 0 0 1 19,13" fill="none" stroke-width=".8"/></svg>Rings mark centuries; wide rings, eventful ones</div>
+      <div class="lg-row"><svg width="26" height="14"><text class="p-rubric" x="13" y="11" text-anchor="middle" font-size="10" letter-spacing=".1em">M</text></svg>Numbered <span class="lg-r">C</span>&nbsp;100 · <span class="lg-r">D</span>&nbsp;500 · <span class="lg-r">M</span>&nbsp;1000</div>
+    </div>
+  </div>
+</details>
+
+<details class="outline panel" id="outline">
+  <summary>View as outline</summary>
+  <div class="ol-body" id="outlineBody"></div>
+</details>
+
+<div class="tip" id="tip" role="tooltip" aria-hidden="true"></div>
+<div class="nod3" id="nod3" hidden>The tree’s script didn’t load. Reload the page to try again, or <a href="/">go back to jonreyna.dev</a>.</div>
+<noscript><div class="nod3">The tree is drawn with JavaScript; turn it on to see it, or <a href="/">go back to jonreyna.dev</a>.</div></noscript>
+</main>

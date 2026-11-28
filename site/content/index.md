@@ -15,3 +15,7 @@ I build distributed systems that keep large fleets of infrastructure in their in
 <p class="more"><a href="/work">More work, and the story behind each</a></p>
 
 <EssayList limit="3" heading="Writing" id="writing"/>
+
+<h2 id="play">Play</h2>
+
+<p class="entry"><a class="t" href="/play/arbor-ecclesiae">Arbor Ecclesiae</a>, <span class="m">2026.</span> The branching of the church from the Council of Jerusalem to about 1700, drawn as a tree that grows outward in rings: councils and schisms on the trunk, living traditions ending in a leaf. Hover for detail, fold a branch, or read it as an outline.</p>
